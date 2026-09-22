@@ -31,8 +31,8 @@ public class Player : Entity
         _hangingTextures = [textures.Get("playerBar_1"), textures.Get("playerBar_2")];
         _action = PlayerAction.StandRight;
     }
-    public override bool Gravity => !(OnLadder || OnBar);
-    protected override double WalkingSpeed => 30;
+    protected override bool Gravity => !(OnLadder || OnBar) || true;
+    protected override double WalkingSpeed => 22;
     protected override double ClimbingSpeed => 0.4;
     protected override double HangingSpeed => 0.4;
     private bool OnTopOfLadder => OnLadder && ((Ladder)CurrentInteractable!).OnTopOfIt(this);
@@ -42,7 +42,7 @@ public class Player : Entity
             return;
         _action =  GetAction(GetDirection());
         if (Jump())
-            SetNewVelocity(Direction.Up, 75);
+            SetNewVelocity(Direction.Up, 40);
         SetNewTexture(GetNewTexture());
     }
     private Direction GetDirection()

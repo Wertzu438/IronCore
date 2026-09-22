@@ -12,26 +12,23 @@ public abstract class Entity : Sprite
     private double _currentHealth;
     private int _lastDamageTimeMs;
     private Interactable? _currentInteractable;
-    private int _fallHeight;
     public Entity(int x, int y, RGB?[,] texture, int maxHealth, Clock clock) : base(x, y, texture, 1, true, true)
     {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;
         _clock = clock;
         _lastDamageTimeMs = 0;
-        _fallHeight = 0;
         _currentInteractable = null;
     }
-    public override bool Gravity => !(OnLadder || OnBar);
     public bool Alive => _currentHealth > 0;
     public Interactable? CurrentInteractable
     {
-        get => _currentInteractable;
-        set => _currentInteractable = value;
+        get => _currentInteractable; set => _currentInteractable = value;
     }
     protected abstract double WalkingSpeed { get; }
     protected abstract double ClimbingSpeed { get; }
     protected abstract double HangingSpeed { get; }
+    protected override bool Gravity => !(OnLadder || OnBar);
     protected bool OnLadder => _currentInteractable is Ladder;
     protected bool OnBar => _currentInteractable is Bar;
     public abstract void Update();
@@ -56,7 +53,7 @@ public abstract class Entity : Sprite
     {
         if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             return false;
-        MoveOnX(direction, 1,WalkingSpeed);
+        MoveOnX(direction, 65,WalkingSpeed);
         return true;
     }
     protected bool Climb(Direction direction)

@@ -7,16 +7,19 @@ public class SpriteManager
         private readonly HashSet<Sprite> _sprites;
         private readonly Scene _scene;
         private readonly Sprite?[,] _map;
+        private double _deltaTime;
         internal  SpriteManager(Scene scene)
         {
             _sprites = [];
             _scene = scene;
             _map = new Sprite?[_scene.Width, _scene.Height];
         }
+        public double DeltaTime => _deltaTime is not 0 ? _deltaTime : throw new InvalidOperationException("The delta time shouldn't be zero.");
         public int Count => _sprites.Count;
         public void Update(double deltaTime)
         {
-            MoveSprites(deltaTime);
+            _deltaTime = deltaTime;
+            MoveSprites();
             UpdateMap();
         }
         public Sprite Add(Sprite sprite)
@@ -60,10 +63,10 @@ public class SpriteManager
         }
         public bool Contains(Sprite sprite) => _sprites.Contains(sprite);
         public List<T> GetAllSpritesOfType<T>() => _sprites.OfType<T>().ToList();
-        private void MoveSprites(double deltaTime)
+        private void MoveSprites()
         {
             foreach (var sprite in _sprites)
-                sprite.UpdatePosition(deltaTime);
+                sprite.UpdatePosition();
         }
         private void UpdateMap()
         {
