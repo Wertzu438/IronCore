@@ -1,0 +1,13 @@
+## .NET
+bin/
+obj/
+.vs/
+
+## Rider / IntelliJ
+.idea/
+
+## VS Code
+.vscode/
+
+## macOS
+.DS_Store
