@@ -4,7 +4,7 @@ namespace MCR_Engine.Objects;
 
 public abstract class Sprite
 {
-    private const double DefaultGaravity = 90, DefaultDeceleration = 40;
+    private const double DefaultGravity = 160, DefaultDeceleration = 40;
     private double _velocityX, _velocityY;
     private readonly bool _collision;
     private double _x,  _y;
@@ -19,7 +19,6 @@ public abstract class Sprite
         Visible = true;
         Gravity = gravity;
     }
-    public bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
     public RGB?[,] Texture => (RGB?[,])_texture.Clone();
     public int Width => _texture.GetLength(0);
     public int Height => _texture.GetLength(1);
@@ -43,6 +42,7 @@ public abstract class Sprite
     {
         protected get => field ?? throw new InvalidOperationException("Sprite manager is not set."); set => field = value;
     }
+    protected bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
     protected virtual bool Gravity => field;
     public void UpdatePosition()
     {
@@ -60,7 +60,10 @@ public abstract class Sprite
                 _y += velocityStepsY[i];
             if (!IsCollided(out _))
                 continue;
-            _x = xOld; _y = yOld;
+            _y = yOld;
+            if (!IsCollided(out _))
+                continue;
+            _x = xOld; 
             break;
         }
         ApplyDeceleration();
@@ -105,7 +108,7 @@ public abstract class Sprite
             throw new InvalidOperationException("Gravity is set to false.");
         if (IsFloorBeneath())
             return;
-        AddVelocity(Direction.Down, DefaultGaravity, 40);
+        AddVelocity(Direction.Down, DefaultGravity, 40);
     }
     private void ApplyDeceleration()
     {
