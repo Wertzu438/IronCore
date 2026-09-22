@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCR-Engine", "MCR-Engine\MCR-Engine.csproj", "{084E3FCC-6469-4C0A-BF83-414B10A7094D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpOn", "JumpOn\JumpOn.csproj", "{C4EEF9EE-DC59-45F3-AAAE-DAA4F1C60D6F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{084E3FCC-6469-4C0A-BF83-414B10A7094D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{084E3FCC-6469-4C0A-BF83-414B10A7094D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{084E3FCC-6469-4C0A-BF83-414B10A7094D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{084E3FCC-6469-4C0A-BF83-414B10A7094D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4EEF9EE-DC59-45F3-AAAE-DAA4F1C60D6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4EEF9EE-DC59-45F3-AAAE-DAA4F1C60D6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4EEF9EE-DC59-45F3-AAAE-DAA4F1C60D6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4EEF9EE-DC59-45F3-AAAE-DAA4F1C60D6F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

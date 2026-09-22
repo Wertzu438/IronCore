@@ -1,0 +1,37 @@
+﻿using JumpOn.Entities;
+using JumpOn.Interactables;
+using MCR_Engine.Core;
+using MCR_Engine.Objects;
+
+namespace JumpOn;
+
+public static class LevelLoader
+{
+    public static Scene Read(string filePath, Engine engine)
+    {
+        Scene scene;
+        using (var reader = new StreamReader(filePath))
+        {
+            if (reader.EndOfStream)
+                throw new ArgumentException("invalide format - 0");
+            string[] line = reader.ReadLine().Split(",");
+            if (line.Length == 3 && int.TryParse(line[0], out int width) && int.TryParse(line[1], out int height))
+                scene = new Scene(engine.Camera, width, height, Textures.ConvertNullableTexture(engine.Textures.Get(line[2])));
+            else throw new ArgumentException("invalide format - A");
+            while (!reader.EndOfStream)
+            {
+                line = reader.ReadLine().Split(",");
+                int x = int.Parse(line[1]), y = int.Parse(line[2]);
+                Sprite sprite = (line[0]) switch 
+                {
+                    "SolidObj" => new SolidObject(x, y, Textures.CreateExpansion(engine.Textures.Get(line[3]), Enum.Parse<Direction>(line[4]), int.Parse(line[5]))),
+                    "Ladder" => new Ladder(x, y, engine.Textures, int.Parse(line[3])),
+                    "Bar" => new Bar(x, y, engine.Textures, int.Parse(line[3])),
+                    _ => throw new ArgumentException("invalide format"),
+                };
+                scene.Sprites.Add(sprite);
+            }
+        }
+        return scene;
+    }
+}
