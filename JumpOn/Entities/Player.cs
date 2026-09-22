@@ -16,6 +16,7 @@ public class Player : Entity
     private readonly RGB?[][,] _walkingTextures;
     private readonly RGB?[][,] _climbingTextures;
     private readonly RGB?[][,] _hangingTextures;
+    private (int LastCoordinateChanged, int Index) _textureInfo;
     private PlayerAction _action;
     public Player(int x, int y, Textures textures, Input input, Clock clock) : base(x, y, Textures.DebuggingTexture(1, 1), 5, clock)
     {
@@ -30,6 +31,7 @@ public class Player : Entity
         _climbingTextures = [textures.Get("playerLadder_1"), textures.Get("playerLadder_2")];
         _hangingTextures = [textures.Get("playerBar_1"), textures.Get("playerBar_2")];
         _action = PlayerAction.StandRight;
+        _textureInfo = (0, 0);
     }
     protected override bool Gravity => !(OnLadder || OnBar) || true;
     protected override double WalkingSpeed => 22;
@@ -72,22 +74,42 @@ public class Player : Entity
         {
             action = direction is Direction.Left ? PlayerAction.WalkLeft : PlayerAction.WalkRight;
         }
-        else action = (direction is Direction.Left ? PlayerAction.StandLeft : PlayerAction.StandRight);
+        else if (_action is PlayerAction.WalkLeft or PlayerAction.WalkRight && !Move)
+        {
+            action = (_action is PlayerAction.WalkLeft ? PlayerAction.StandLeft : PlayerAction.StandRight);
+        }
+        else return _action;
         return action;
     }
     private RGB?[,] GetNewTexture()
     {
-        if (_action is PlayerAction.StandLeft or PlayerAction.StandRight) 
-            return _standingTextures[_action is PlayerAction.StandRight ? 0 : 1];
+        if (_action is PlayerAction.StandLeft)
+            return _standingTextures[1];
+        if (_action is PlayerAction.StandRight)
+            return _standingTextures[0];
         if (_action is PlayerAction.WalkRight)
-            return _walkingTextures[2];
+            return _walkingTextures[2 + SetTextureIndex(_walkingTextures.Length / 2, X)];
         if (_action is PlayerAction.WalkLeft)
-            return _walkingTextures[0];
+            return _walkingTextures[SetTextureIndex(_walkingTextures.Length / 2, X)];
         if (_action is PlayerAction.Climb)
-            return _climbingTextures[0];
+            return _climbingTextures[SetTextureIndex(_climbingTextures.Length, X)];
         if (_action is PlayerAction.Hang)
-            return _hangingTextures[0];
+            return _hangingTextures[SetTextureIndex(_hangingTextures.Length, X)];
         throw new NotImplementedException();
+    }
+
+    private int SetTextureIndex(int textureCount, int coordinate)
+    {
+        if (!ChangeTexture(coordinate))
+            return _textureInfo.Index;
+        return _textureInfo.Index = (_textureInfo.Index + 1 >= textureCount ? 0 : _textureInfo.Index + 1);
+    }
+    private bool ChangeTexture(int coordinate)
+    {
+        if (coordinate % 5 != 0 || _textureInfo.LastCoordinateChanged == coordinate)
+            return false;
+        _textureInfo.LastCoordinateChanged = coordinate;
+        return true;
     }
     private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && (OnTopOfLadder || (IsFloorBeneath() && Gravity)));
 }

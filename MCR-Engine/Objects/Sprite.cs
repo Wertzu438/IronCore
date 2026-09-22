@@ -19,6 +19,7 @@ public abstract class Sprite
         Visible = true;
         Gravity = gravity;
     }
+    public bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
     public RGB?[,] Texture => (RGB?[,])_texture.Clone();
     public int Width => _texture.GetLength(0);
     public int Height => _texture.GetLength(1);
@@ -43,7 +44,6 @@ public abstract class Sprite
         protected get => field ?? throw new InvalidOperationException("Sprite manager is not set."); set => field = value;
     }
     protected virtual bool Gravity => field;
-    private bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
     public void UpdatePosition()
     {
         if (Gravity) 
