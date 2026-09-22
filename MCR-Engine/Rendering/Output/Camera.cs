@@ -24,29 +24,29 @@ public class Camera
         set =>  _followedSprite = value;
     }
     private int SpriteX => _followedSprite is null ? 0 : (_followedSprite.X - XOffset);
-    private int SpriteY => _followedSprite is null ? 0 : ((_followedSprite.Y / 2) - YOffset);
+    private int SpriteY => _followedSprite is null ? 0 : (((_followedSprite.Y + _followedSprite.Height / 2) / 2) - YOffset);
     public void RecalculateOffset()
     {
         int width = Console.WindowWidth, height = Console.WindowHeight;
         int spriteX = SpriteX, spriteY = SpriteY;
         int firstBorderX = CalculateDistance(width, 30), secondBorderX = CalculateDistance(width, 28);
-        int firstBorderY = CalculateDistance(height, 25), secondBorderY = CalculateDistance(height, 10);
-        int deadZoneX = CalculateDistance(width, 15), deadZoneY = CalculateDistance(width, 28);
+        int firstBorderY = CalculateDistance(height, 40), secondBorderY = CalculateDistance(height, 28);
+        int antiJitterZoneX = CalculateDistance(width, 15), antiJitterZoneY = CalculateDistance(height, 15);
         double newX = _xOffset, newY = _yOffset;
-        if (spriteX > width - firstBorderX + deadZoneX)
+        if (spriteX > width - firstBorderX + antiJitterZoneX)
         {
             newX += spriteX > width - secondBorderX ? SlowSpeedX : FastSpeedX;
         }
-        else if (spriteX < firstBorderX - deadZoneX)
+        else if (spriteX < firstBorderX - antiJitterZoneX)
         {
             newX -= spriteX < secondBorderX ? SlowSpeedX : FastSpeedX;
         }
         
-        if (spriteY > height - firstBorderY)
+        if (spriteY > height - firstBorderY + antiJitterZoneY)
         {
             newY += spriteY > Console.WindowHeight - secondBorderY ? FastSpeedY : SlowSpeedY;
         }
-        else if (spriteY < firstBorderY)
+        else if (spriteY < firstBorderY - antiJitterZoneY)
         {
             newY -= spriteY < secondBorderY ? FastSpeedY : SlowSpeedY;
         }
