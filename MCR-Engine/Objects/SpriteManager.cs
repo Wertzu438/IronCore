@@ -34,7 +34,7 @@ public class SpriteManager
         {
             foreach (var currentSprite in _sprites)
             {
-                if ((searchFor is not null && !searchFor.Contains(currentSprite.GetType())) || currentSprite == searchingSprite || !SpritesOverlap(currentSprite, searchingSprite))
+                if ((searchFor is not null && !searchFor.Contains(currentSprite.GetType())) || !currentSprite.Collision || currentSprite == searchingSprite || !SpritesOverlap(currentSprite, searchingSprite))
                     continue;
                 collidedSprite = currentSprite;
                 return true;
@@ -56,7 +56,7 @@ public class SpriteManager
                     case Direction.Right: xAdd++; break;
                 }
                 int x = xStart + xAdd, y = yStart + yAdd;
-                if (!_scene.ValidPixelCoordinates(x, y) || (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y].GetType()) && (!onlyWithCollision || _map[x, y].Visible))))
+                if (!_scene.ValidPixelCoordinates(x, y) || (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y].GetType())) && (!onlyWithCollision || _map[x, y].Collision)))
                     break;
             } while (true);
             return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;

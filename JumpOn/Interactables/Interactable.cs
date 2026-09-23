@@ -18,4 +18,14 @@ public abstract class Interactable : Sprite
         entity = sprite as Entity;
         return true;
     }
+    public static List<Interactable> LoadInteractables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Interactable>();
+
+    public static void UpdateInteractables(List<Interactable> interactables)
+    {
+        foreach (Interactable interactable in interactables)
+        {
+            
+        }
+        interactable.U
+    }
 }

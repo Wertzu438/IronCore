@@ -22,6 +22,7 @@ public abstract class Sprite
     public RGB?[,] Texture => (RGB?[,])_texture.Clone();
     public int Width => _texture.GetLength(0);
     public int Height => _texture.GetLength(1);
+    public bool Collision => _collision && Visible;
     public int X
     {
         get => (int)_x; protected set => _x = value; 
