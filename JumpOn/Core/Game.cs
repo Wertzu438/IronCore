@@ -32,17 +32,20 @@ public class Game
     public void Play()
     {
         Ladder l = _sprites.GetAllSpritesOfType<Ladder>()[0];
-        SolidObject b = _sprites.GetAllSpritesOfType<SolidObject>()[0];
+        //SolidObject b = _sprites.GetAllSpritesOfType<SolidObject>()[0];
         Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
+        List<Interactable> interactables = Interactable.LoadInteractables(_sprites);
         //b.AddMoveToQueue(0.7, 0, 1000);
         _camera.FollowedSprite = p;
         Stopwatch sw = Stopwatch.StartNew();
         double lastTime = sw.Elapsed.TotalSeconds;
         do
         {
+            p.SetInteractable(null);
             double currentTime = sw.Elapsed.TotalSeconds;
             double deltaTime = currentTime - lastTime;
             lastTime = currentTime;
+            Interactable.Update(interactables);
             p.Update();
             _scene.Update(deltaTime);
             //Thread.Sleep(Math.Max(1, 10 - (int)sw.ElapsedMilliseconds));

@@ -34,7 +34,13 @@ public class SpriteManager
         {
             foreach (var currentSprite in _sprites)
             {
-                if ((searchFor is not null && !searchFor.Contains(currentSprite.GetType())) || !currentSprite.Collision || currentSprite == searchingSprite || !SpritesOverlap(currentSprite, searchingSprite))
+                if (searchFor is not null && !searchFor.Contains(currentSprite.GetType()))
+                    continue;
+                if (currentSprite == searchingSprite)
+                    continue;
+                if (!currentSprite.Collision)
+                    continue;
+                if (!SpritesOverlap(currentSprite, searchingSprite))
                     continue;
                 collidedSprite = currentSprite;
                 return true;

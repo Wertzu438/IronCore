@@ -50,7 +50,7 @@ public abstract class Entity : Sprite
     {
         if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             return false;
-        MoveOnX(direction, 160,WalkingSpeed);
+        MoveOnX(direction, 180,WalkingSpeed);
         return true;
     }
     protected bool Climb(Direction direction)
@@ -58,7 +58,7 @@ public abstract class Entity : Sprite
         if (!OnLadder || Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
             return false;
         X = ((Ladder)CurrentInteractable!).CenterPlayer(Width);
-        MoveOnY(direction, ClimbingSpeed);
+        MoveOnY(direction, 120, ClimbingSpeed);
         return true;
     }
     protected bool Hang(Direction direction)
@@ -74,21 +74,20 @@ public abstract class Entity : Sprite
             CurrentInteractable = null;
             return false;
         }
-        MoveOnX(direction, 1,HangingSpeed);
+        MoveOnX(direction, 100,HangingSpeed);
         return true;
     }
     private void MoveOnX(Direction direction, double acceleration, double maxSpeed)
     {
         if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             throw new ArgumentException("Invalid direction");
-        //SetNewVelocity(direction, maxSpeed);
-        //return;
         AddVelocity(direction, acceleration, maxSpeed);
     }
-    private void MoveOnY(Direction direction, double speed)
+    private void MoveOnY(Direction direction, double acceleration, double maxSpeed)
     {
         if (Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
             throw new ArgumentException("Invalid direction");
+        AddVelocity(direction, acceleration, maxSpeed);
     }
     private bool GetFallDamage(out double fallDamage)
     {

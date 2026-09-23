@@ -13,19 +13,16 @@ public abstract class Interactable : Sprite
     protected virtual bool IsEntityInteracting(out Entity? entity)
     {
         entity = null;
-        if (!Visible || !IsCollided(out Sprite? sprite, [typeof(Entity)]))
+        if (!Visible || !IsCollided(out Sprite? sprite, [typeof(Player)]))
             return false;
         entity = sprite as Entity;
         return true;
     }
     public static List<Interactable> LoadInteractables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Interactable>();
-
-    public static void UpdateInteractables(List<Interactable> interactables)
+    public static void Update(List<Interactable> interactables)
     {
         foreach (Interactable interactable in interactables)
-        {
-            
-        }
-        interactable.U
+            if (interactable.IsEntityInteracting(out Entity? entity))
+                entity!.SetInteractable(interactable);
     }
 }

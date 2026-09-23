@@ -4,7 +4,7 @@ namespace MCR_Engine.Objects;
 
 public abstract class Sprite
 {
-    private const double DefaultGravity = 180, DefaultDeceleration = 60;
+    private const double DefaultGravity = 370, DefaultDeceleration = 60;
     private double _velocityX, _velocityY;
     private readonly bool _collision;
     private double _x,  _y;
@@ -47,6 +47,8 @@ public abstract class Sprite
     protected virtual bool Gravity => field;
     public void UpdatePosition()
     {
+        if (!Visible)
+            return;
         if (Gravity) 
             HandleGravity();
         if (!Move) return;
@@ -109,7 +111,7 @@ public abstract class Sprite
             throw new InvalidOperationException("Gravity is set to false.");
         if (IsFloorBeneath())
             return;
-        AddVelocity(Direction.Down, DefaultGravity, double.MaxValue);
+        AddVelocity(Direction.Down, DefaultGravity, 150);
     }
     private void ApplyDeceleration()
     {
@@ -125,7 +127,7 @@ public abstract class Sprite
     }
     private double[] GetVelocitySteps(double velocity)
     {
-        double[] velocitySteps = new double[(int)velocity + 1];
+        double[] velocitySteps = new double[Math.Abs((int)velocity) + 1];
         double velocityPerStep = velocity / velocitySteps.Length;
         for (int i = 0; i < velocitySteps.Length; i++)
         {

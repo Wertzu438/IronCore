@@ -33,10 +33,10 @@ public class Player : Entity
         _action = PlayerAction.StandRight;
         _textureInfo = (0, 0);
     }
-    protected override bool Gravity => !(OnLadder || OnBar) || true;
+    protected override bool Gravity => !(OnLadder || OnBar);
     protected override double WalkingSpeed => 40;
-    protected override double ClimbingSpeed => 0.4;
-    protected override double HangingSpeed => 0.4;
+    protected override double ClimbingSpeed => 20;
+    protected override double HangingSpeed => 20;
     private bool OnTopOfLadder => OnLadder && ((Ladder)CurrentInteractable!).OnTopOfIt(this);
     public override void Update()
     {
@@ -44,7 +44,7 @@ public class Player : Entity
             return;
         _action =  GetAction(GetDirection());
         if (Jump())
-            SetNewVelocity(Direction.Up, 70);
+            SetNewVelocity(Direction.Up, 100);
         SetNewTexture(GetNewTexture());
     }
     private Direction GetDirection()
@@ -92,7 +92,7 @@ public class Player : Entity
         if (_action is PlayerAction.WalkLeft)
             return _walkingTextures[SetTextureIndex(_walkingTextures.Length / 2, X)];
         if (_action is PlayerAction.Climb)
-            return _climbingTextures[SetTextureIndex(_climbingTextures.Length, X)];
+            return _climbingTextures[SetTextureIndex(_climbingTextures.Length, Y)];
         if (_action is PlayerAction.Hang)
             return _hangingTextures[SetTextureIndex(_hangingTextures.Length, X)];
         throw new NotImplementedException();
