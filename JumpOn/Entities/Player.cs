@@ -34,7 +34,7 @@ public class Player : Entity
         _textureInfo = (0, 0);
     }
     protected override bool Gravity => !(OnLadder || OnBar) || true;
-    protected override double WalkingSpeed => 33;
+    protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 0.4;
     protected override double HangingSpeed => 0.4;
     private bool OnTopOfLadder => OnLadder && ((Ladder)CurrentInteractable!).OnTopOfIt(this);
@@ -44,7 +44,7 @@ public class Player : Entity
             return;
         _action =  GetAction(GetDirection());
         if (Jump())
-            SetNewVelocity(Direction.Up, 60);
+            SetNewVelocity(Direction.Up, 70);
         SetNewTexture(GetNewTexture());
     }
     private Direction GetDirection()
