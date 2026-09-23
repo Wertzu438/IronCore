@@ -61,7 +61,6 @@ internal class Renderer
     {
         int frames = 0;
         Stopwatch sw = Stopwatch.StartNew();
-        //ArgumentNullException.ThrowIfNull(_pairs);
         while (_action is not ProcessAction.Stop)
         {
             while (_action is ProcessAction.Pause || _pairs is null)
@@ -70,7 +69,6 @@ internal class Renderer
                 Thread.Sleep(1000);
             }
             _state = ProcessState.Running;
-            //_camera.RecalculateOffset();
             _ui.UpdateMap();
             PixelPair[,] snapshotPairs = (PixelPair[,])_pairs.Clone();
             _output.Clear();
