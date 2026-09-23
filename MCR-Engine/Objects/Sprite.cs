@@ -71,6 +71,9 @@ public abstract class Sprite
         }
         ApplyDeceleration();
     }
+
+    public void StopMovingX() => _velocityX = 0;
+    public void StopMovingY() => _velocityY = 0;
     public RGB? GetColor(int x, int y) => _texture[x, y];
     public bool CoordinatesOnSprite(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
     protected void AddVelocity(Direction direction, double acceleration, double maxVelocity)

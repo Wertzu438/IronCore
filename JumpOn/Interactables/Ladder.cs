@@ -18,7 +18,7 @@ public class Ladder : Interactable
             throw new Exception("player ate too many burgers");
         return X + offset;
     }
-    public bool OnTopOfIt(Entity entity) => entity.Y + entity.Height <= Y+1;
+    public bool OnTopOfIt(Entity entity) => entity.Y + entity.Height <= Y;
     private static RGB?[,] CreateTexture(Textures textures, int amount) =>
         Textures.CreateExpansion(textures.Get(TextureName), Direction.Down, amount);
 }

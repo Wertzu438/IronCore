@@ -33,11 +33,10 @@ public class Player : Entity
         _action = PlayerAction.StandRight;
         _textureInfo = (0, 0);
     }
-    protected override bool Gravity => !(OnLadder || OnBar);
+    protected override bool Gravity => !(OnLadder || OnBar || OnTopOfLadder);
     protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 20;
     protected override double HangingSpeed => 20;
-    private bool OnTopOfLadder => OnLadder && ((Ladder)CurrentInteractable!).OnTopOfIt(this);
     public override void Update()
     {
         if (!Alive)
@@ -74,7 +73,7 @@ public class Player : Entity
         {
             action = direction is Direction.Left ? PlayerAction.WalkLeft : PlayerAction.WalkRight;
         }
-        else if (_action is PlayerAction.WalkLeft or PlayerAction.WalkRight && !Move)
+        else if ((_action is PlayerAction.WalkLeft or PlayerAction.WalkRight && !Move) || (_action is PlayerAction.Climb or PlayerAction.Hang))
         {
             action = (_action is PlayerAction.WalkLeft ? PlayerAction.StandLeft : PlayerAction.StandRight);
         }

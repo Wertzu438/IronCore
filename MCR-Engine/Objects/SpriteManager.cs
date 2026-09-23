@@ -40,7 +40,7 @@ public class SpriteManager
                     continue;
                 if (!currentSprite.Collision)
                     continue;
-                if (!SpritesOverlap(currentSprite, searchingSprite))
+                if (/*!SpritesOverlap(currentSprite, searchingSprite)*/ !SpriteBordersTouching(currentSprite, searchingSprite))
                     continue;
                 collidedSprite = currentSprite;
                 return true;
@@ -114,7 +114,8 @@ public class SpriteManager
                 for (int x = 0; x < _scene.Width; x++)
                     _map[x, y] = null;
         }
-        private static bool SpritesOverlap(Sprite s1, Sprite s2)
+        public bool SpriteBordersTouching(Sprite s1, Sprite s2) => s1.X + s1.Width > s2.X && s1.Y + s1.Height > s2.Y && s1.X < s2.X + s2.Width && s1.Y < s2.Y + s2.Height;
+        public static bool SpritesOverlap(Sprite s1, Sprite s2)
         {
             for (int y = 0; y < s1.Height; y++)
             {

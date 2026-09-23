@@ -5,7 +5,7 @@ namespace MCR_Engine.Rendering.Output;
 public class Camera
 {
     private const double SlowSpeedX = 0.7, FastSpeedX = 2.2;
-    private const double SlowSpeedY = 0.5, FastSpeedY = 1.0;
+    private const double SlowSpeedY = 0.2, FastSpeedY = 1.0;
     private readonly Renderer _render;
     private Sprite? _followedSprite;
     private double _xOffset, _yOffset;

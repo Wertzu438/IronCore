@@ -27,6 +27,7 @@ public abstract class Entity : Sprite
     protected override bool Gravity => !(OnLadder || OnBar);
     protected bool OnLadder => CurrentInteractable is Ladder;
     protected bool OnBar => CurrentInteractable is Bar;
+    protected bool OnTopOfLadder => OnLadder && ((Ladder)CurrentInteractable!).OnTopOfIt(this);
     public abstract void Update();
     public void Damage (double damage, bool critical)
     {
@@ -55,16 +56,18 @@ public abstract class Entity : Sprite
     }
     protected bool Climb(Direction direction)
     {
-        if (!OnLadder || Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
+        if (!OnLadder || Contains(direction, [Direction.None, Direction.Left, Direction.Right]) || OnTopOfLadder)
             return false;
+        StopMovingX();
         X = ((Ladder)CurrentInteractable!).CenterPlayer(Width);
-        MoveOnY(direction, 120, ClimbingSpeed);
+        MoveOnY(direction, ClimbingSpeed);
         return true;
     }
     protected bool Hang(Direction direction)
     {
         if (!OnBar)
             return false;
+        StopMovingY();
         Y = ((Bar)CurrentInteractable!).HangOnIt();
         if (Contains(direction, [Direction.None, Direction.Up]))
             return true;
@@ -74,7 +77,8 @@ public abstract class Entity : Sprite
             CurrentInteractable = null;
             return false;
         }
-        MoveOnX(direction, 100,HangingSpeed);
+        SetNewVelocity(direction, HangingSpeed);
+        //MoveOnX(direction, 400,HangingSpeed);
         return true;
     }
     private void MoveOnX(Direction direction, double acceleration, double maxSpeed)
@@ -83,11 +87,11 @@ public abstract class Entity : Sprite
             throw new ArgumentException("Invalid direction");
         AddVelocity(direction, acceleration, maxSpeed);
     }
-    private void MoveOnY(Direction direction, double acceleration, double maxSpeed)
+    private void MoveOnY(Direction direction, double speed)
     {
         if (Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
             throw new ArgumentException("Invalid direction");
-        AddVelocity(direction, acceleration, maxSpeed);
+        SetNewVelocity(direction, speed);
     }
     private bool GetFallDamage(out double fallDamage)
     {
