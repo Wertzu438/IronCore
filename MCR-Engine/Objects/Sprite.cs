@@ -6,7 +6,7 @@ public abstract class Sprite
 {
     private const double DefaultGravity = 370, DefaultDeceleration = 60;
     private double _velocityX, _velocityY;
-    private readonly bool _collision;
+    private readonly bool _collision, _gravity;
     private double _x,  _y;
     private RGB?[,] _texture;
     protected Sprite(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
@@ -15,9 +15,9 @@ public abstract class Sprite
         _texture = texture;
         Layer = layer;
         _collision = collision;
+        _gravity = gravity;
         _velocityX = _velocityY = 0;
         Visible = true;
-        Gravity = gravity;
     }
     public RGB?[,] Texture => (RGB?[,])_texture.Clone();
     public int Width => _texture.GetLength(0);
@@ -25,11 +25,11 @@ public abstract class Sprite
     public bool Collision => _collision && Visible;
     public int X
     {
-        get => (int)_x; protected set => _x = value; 
+        get => (int)_x; set => _x = value; 
     }
     public int Y
     {
-        get => (int)_y; protected set => _y = value; 
+        get => (int)_y; set => _y = value; 
     }
     public bool Visible
     {
@@ -44,7 +44,7 @@ public abstract class Sprite
         protected get => field ?? throw new InvalidOperationException("Sprite manager is not set."); set => field = value;
     }
     protected bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
-    protected virtual bool Gravity => field;
+    protected virtual bool Gravity => _gravity;
     public void UpdatePosition()
     {
         if (!Visible)
@@ -63,10 +63,8 @@ public abstract class Sprite
                 _y += velocityStepsY[i];
             if (!IsCollided(out _))
                 continue;
-            _y = yOld;
-            if (!IsCollided(out _))
-                continue;
             _x = xOld; 
+            _y = yOld;
             break;
         }
         ApplyDeceleration();
@@ -110,10 +108,14 @@ public abstract class Sprite
     protected bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0;
     private void HandleGravity()
     {
-        if (!Gravity)
-            throw new InvalidOperationException("Gravity is set to false.");
+        if (!Gravity || !_collision)
+            throw new InvalidOperationException("Gravity is set to or sprite has no collision false.");
         if (IsFloorBeneath())
+        {
+            if (_velocityY > 0)
+                StopMovingY();
             return;
+        }
         AddVelocity(Direction.Down, DefaultGravity, 150);
     }
     private void ApplyDeceleration()

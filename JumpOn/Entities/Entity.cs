@@ -1,4 +1,5 @@
-﻿using JumpOn.Interactables;
+﻿using System.Diagnostics;
+using JumpOn.Interactables;
 using MCR_Engine.Core;
 using MCR_Engine.Objects;
 
@@ -27,7 +28,6 @@ public abstract class Entity : Sprite
     protected override bool Gravity => !(OnLadder || OnBar);
     protected bool OnLadder => CurrentInteractable is Ladder;
     protected bool OnBar => CurrentInteractable is Bar;
-    protected bool OnTopOfLadder => OnLadder && ((Ladder)CurrentInteractable!).OnTopOfIt(this);
     public abstract void Update();
     public void Damage (double damage, bool critical)
     {
@@ -56,10 +56,10 @@ public abstract class Entity : Sprite
     }
     protected bool Climb(Direction direction)
     {
-        if (!OnLadder || Contains(direction, [Direction.None, Direction.Left, Direction.Right]) || OnTopOfLadder)
+        if (!OnLadder || Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
             return false;
         StopMovingX();
-        X = ((Ladder)CurrentInteractable!).CenterPlayer(Width);
+        ((Ladder)CurrentInteractable!).CenterEntity(this);
         MoveOnY(direction, ClimbingSpeed);
         return true;
     }

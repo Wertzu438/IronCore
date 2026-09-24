@@ -33,7 +33,6 @@ public class Player : Entity
         _action = PlayerAction.StandRight;
         _textureInfo = (0, 0);
     }
-    protected override bool Gravity => !(OnLadder || OnBar || OnTopOfLadder);
     protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 20;
     protected override double HangingSpeed => 20;
@@ -41,10 +40,13 @@ public class Player : Entity
     {
         if (!Alive)
             return;
-        _action =  GetAction(GetDirection());
+        if (!Gravity && OnLadder)
+            StopMovingY();
+        _action = GetAction(GetDirection());
         if (Jump())
             SetNewVelocity(Direction.Up, 100);
         SetNewTexture(GetNewTexture());
+        CurrentInteractable = null;
     }
     private Direction GetDirection()
     {
@@ -73,7 +75,7 @@ public class Player : Entity
         {
             action = direction is Direction.Left ? PlayerAction.WalkLeft : PlayerAction.WalkRight;
         }
-        else if ((_action is PlayerAction.WalkLeft or PlayerAction.WalkRight && !Move) || (_action is PlayerAction.Climb or PlayerAction.Hang))
+        else if ((_action is PlayerAction.WalkLeft or PlayerAction.WalkRight && !Move) || (_action is PlayerAction.Hang))
         {
             action = (_action is PlayerAction.WalkLeft ? PlayerAction.StandLeft : PlayerAction.StandRight);
         }
@@ -110,5 +112,5 @@ public class Player : Entity
         _textureInfo.LastCoordinateChanged = coordinate;
         return true;
     }
-    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && (OnTopOfLadder || (IsFloorBeneath() && Gravity)));
+    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && (OnLadder || (IsFloorBeneath() && Gravity)));
 }

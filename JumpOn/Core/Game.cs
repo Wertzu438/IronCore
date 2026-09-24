@@ -41,14 +41,12 @@ public class Game
         double lastTime = sw.Elapsed.TotalSeconds;
         do
         {
-            p.SetInteractable(null);
             double currentTime = sw.Elapsed.TotalSeconds;
             double deltaTime = currentTime - lastTime;
             lastTime = currentTime;
             Interactable.Update(interactables);
-            p.Update();
             _scene.Update(deltaTime);
-            //Thread.Sleep(Math.Max(1, 10 - (int)sw.ElapsedMilliseconds));
+            p.Update();
         } while (true);
     }
 }
