@@ -36,6 +36,7 @@ public class Player : Entity
     protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 20;
     protected override double HangingSpeed => 20;
+    private bool OnTopOfLadder => OnLadder && Ladder.IsEntityOnTopOfLadder(this);
     public override void Update()
     {
         if (!Alive)
@@ -112,5 +113,5 @@ public class Player : Entity
         _textureInfo.LastCoordinateChanged = coordinate;
         return true;
     }
-    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && (OnLadder || (IsFloorBeneath() && Gravity)));
+    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && ((IsFloorBeneath() && Gravity) || OnTopOfLadder));
 }

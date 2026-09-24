@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using JumpOn.Entities;
 using JumpOn.Interactables;
+using JumpOn.Traps;
 using MCR_Engine;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
@@ -31,13 +32,18 @@ public class Game
     }
     public void Play()
     {
+        _sprites.Add(new Spike(30, 113, _textures));
+        _sprites.Add(new Laser(0, 0, 700, 700, _textures, _clock));
         Ladder l = _sprites.GetAllSpritesOfType<Ladder>()[0];
         //SolidObject b = _sprites.GetAllSpritesOfType<SolidObject>()[0];
         Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
         List<Interactable> interactables = Interactable.LoadInteractables(_sprites);
+        List<Trap> traps = Trap.LoadTraps(_sprites);
         //b.AddMoveToQueue(0.7, 0, 1000);
+        UIElement myUi = new UIElement(5, 3, 2, 1, true);
+        _ui.AddUIElement(myUi);
         _camera.FollowedSprite = p;
-        Stopwatch sw = Stopwatch.StartNew();
+        Stopwatch sw = Stopwatch.StartNew(), sw2 = Stopwatch.StartNew();
         double lastTime = sw.Elapsed.TotalSeconds;
         do
         {
@@ -45,8 +51,12 @@ public class Game
             double deltaTime = currentTime - lastTime;
             lastTime = currentTime;
             Interactable.Update(interactables);
+            Trap.UpdateTraps(traps);
             _scene.Update(deltaTime);
             p.Update();
+            myUi.UpdateContent([[$"{p.Health}"]]);
+            _clock.Update((int)sw2.ElapsedMilliseconds);
+            sw2.Restart();
         } while (true);
     }
 }

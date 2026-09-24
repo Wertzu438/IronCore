@@ -18,11 +18,11 @@ public abstract class Interactable : Sprite
         entity = sprite as Entity;
         return true;
     }
-    public static List<Interactable> LoadInteractables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Interactable>();
     public static void Update(List<Interactable> interactables)
     {
         foreach (Interactable interactable in interactables)
             if (interactable.IsEntityInteracting(out Entity? entity))
                 entity!.SetInteractable(interactable);
     }
+    public static List<Interactable> LoadInteractables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Interactable>();
 }

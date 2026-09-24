@@ -8,7 +8,7 @@ namespace JumpOn.Entities;
 public abstract class Entity : Sprite
 {
     protected Interactable? CurrentInteractable;
-    private const int DamageTickOffsetMs = 700;
+    private const int DamageTickOffsetMs = 1000;
     private readonly double _maxHealth;
     private readonly Clock _clock;
     private double _currentHealth;
@@ -22,6 +22,7 @@ public abstract class Entity : Sprite
         _clock = clock;
     }
     public bool Alive => _currentHealth > 0;
+    public double Health => Alive ?  _currentHealth : 0;
     protected abstract double WalkingSpeed { get; }
     protected abstract double ClimbingSpeed { get; }
     protected abstract double HangingSpeed { get; }
@@ -29,16 +30,16 @@ public abstract class Entity : Sprite
     protected bool OnLadder => CurrentInteractable is Ladder;
     protected bool OnBar => CurrentInteractable is Bar;
     public abstract void Update();
-    public void Damage (double damage, bool critical)
+    public void Damage(double damage, bool critical)
     {
         if (damage < 0)
             throw new ArgumentException("Damage cannot be negative");
-        if (_lastDamageTimeMs + DamageTickOffsetMs < _clock.PassedMilliSeconds && !critical)
+        if (_lastDamageTimeMs + DamageTickOffsetMs >= _clock.PassedMilliSeconds && !critical)
             return;
         _currentHealth -= damage;
         _lastDamageTimeMs = _clock.PassedMilliSeconds;
     }
-    public void Heal (double heal)
+    public void Heal(double heal)
     {
         if (heal < 0)
             throw new ArgumentException("Heal cannot be negative");
@@ -74,11 +75,9 @@ public abstract class Entity : Sprite
         if (direction is Direction.Down)
         {
             Y += 2;
-            CurrentInteractable = null;
             return false;
         }
         SetNewVelocity(direction, HangingSpeed);
-        //MoveOnX(direction, 400,HangingSpeed);
         return true;
     }
     private void MoveOnX(Direction direction, double acceleration, double maxSpeed)

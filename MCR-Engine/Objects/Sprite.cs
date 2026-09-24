@@ -4,9 +4,11 @@ namespace MCR_Engine.Objects;
 
 public abstract class Sprite
 {
-    private const double DefaultGravity = 370, DefaultDeceleration = 60;
-    private double _velocityX, _velocityY;
+    private const double DefaultGravity = 330, DefaultDeceleration = 60, MaxGravity = 200;
     private readonly bool _collision, _gravity;
+    private bool _visible;
+    private int _layer;
+    private double _velocityX, _velocityY;
     private double _x,  _y;
     private RGB?[,] _texture;
     protected Sprite(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
@@ -17,12 +19,12 @@ public abstract class Sprite
         _collision = collision;
         _gravity = gravity;
         _velocityX = _velocityY = 0;
-        Visible = true;
+        _visible = true;
     }
-    public RGB?[,] Texture => (RGB?[,])_texture.Clone();
     public int Width => _texture.GetLength(0);
     public int Height => _texture.GetLength(1);
     public bool Collision => _collision && Visible;
+    public bool Visible => _visible;
     public int X
     {
         get => (int)_x; set => _x = value; 
@@ -31,13 +33,9 @@ public abstract class Sprite
     {
         get => (int)_y; set => _y = value; 
     }
-    public bool Visible
-    {
-        get => field; set => field = value;
-    }
     public int Layer
     {
-        get => field; private set => field = (value >= 0 ? value : throw new ArgumentException("Value must be equal or greater than 0."));
+        get => _layer; private set => _layer = (value >= 0 ? value : throw new ArgumentException("Value must be equal or greater than 0."));
     }
     public SpriteManager Sprites
     {
@@ -69,10 +67,13 @@ public abstract class Sprite
         }
         ApplyDeceleration();
     }
-
+    public int GetDistanceToNextSprite(Direction direction, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) => Sprites.GetDistanceToNextSprite(this, direction, onlySpritesWithCollision, startAtTop, searchFor);
+    public bool IsCollided(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, out collidedSprite, searchFor);
+    public void ChangeVisibility() => _visible = !_visible;
     public void StopMovingX() => _velocityX = 0;
     public void StopMovingY() => _velocityY = 0;
     public RGB? GetColor(int x, int y) => _texture[x, y];
+    public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnSprite(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
     protected void AddVelocity(Direction direction, double acceleration, double maxVelocity)
     {
@@ -100,11 +101,6 @@ public abstract class Sprite
             default: throw new ArgumentException("Invalid direction.");
         }
     }
-    protected void SetNewTexture(RGB?[,] texture) => _texture = texture;
-    protected int GetDistanceToNextSprite(Direction direction, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) => 
-        Sprites.GetDistanceToNextSprite(this, direction, onlySpritesWithCollision, startAtTop, searchFor);
-    protected bool IsCollided(out Sprite? collidedSprite, Type[]? searchFor = null) => 
-        Sprites.Collision(this, out collidedSprite, searchFor);
     protected bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0;
     private void HandleGravity()
     {
@@ -116,7 +112,7 @@ public abstract class Sprite
                 StopMovingY();
             return;
         }
-        AddVelocity(Direction.Down, DefaultGravity, 150);
+        AddVelocity(Direction.Down, DefaultGravity, MaxGravity);
     }
     private void ApplyDeceleration()
     {
@@ -130,7 +126,7 @@ public abstract class Sprite
         else if (_velocityY < 0)
             _velocityY = Math.Min(_velocityY + DefaultDeceleration * Sprites.DeltaTime, 0);
     }
-    private double[] GetVelocitySteps(double velocity)
+    private static double[] GetVelocitySteps(double velocity)
     {
         double[] velocitySteps = new double[Math.Abs((int)velocity) + 1];
         double velocityPerStep = velocity / velocitySteps.Length;

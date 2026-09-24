@@ -18,7 +18,10 @@ public class Ladder : Interactable
             throw new ArgumentException("offset < 0");
         entity.X = X + offset;
     }
-    public bool IsEntityOnTopOfLadder(Entity entity) => entity.Y + entity.Height <= Y+1;
-    private static RGB?[,] CreateTexture(Textures textures, int amount) =>
-        Textures.CreateExpansion(textures.Get(TextureName), Direction.Down, amount);
+    public static bool IsEntityOnTopOfLadder(Entity entity)
+    {
+        int distance = entity.GetDistanceToNextSprite(Direction.Down, false, true, [typeof(Ladder)]);
+        return distance == entity.Height - 1 || distance == entity.Height - 2;
+    }
+    private static RGB?[,] CreateTexture(Textures textures, int amount) => Textures.CreateExpansion(textures.Get(TextureName), Direction.Down, amount);
 }
