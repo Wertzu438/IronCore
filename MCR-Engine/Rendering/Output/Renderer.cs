@@ -73,7 +73,7 @@ internal class Renderer
             PixelPair[,] snapshotPairs = (PixelPair[,])_pairs.Clone();
             _output.Clear();
             int startX = _camera.XOffset, startY = _camera.YOffset;
-            int maxX = _camera.RenderBorderX, maxY = _camera.RenderBorderY;
+            int maxX = _camera.GetRenderBorderX(startX), maxY = _camera.GetRenderBorderY(startY);
             for (int y = startY; y < maxY; y++)
             {
                 for (int x = startX; x < maxX; x++)

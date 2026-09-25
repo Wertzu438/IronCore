@@ -4,7 +4,7 @@ namespace MCR_Engine.Objects;
 
 public abstract class Sprite
 {
-    private const double DefaultGravity = 330, DefaultDeceleration = 60, MaxGravity = 200;
+    private const double DefaultGravity = 330, DefaultDeceleration = 60, MaxGravity = 100;
     private readonly bool _collision, _gravity;
     private bool _visible;
     private int _layer;
