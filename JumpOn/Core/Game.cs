@@ -33,13 +33,11 @@ public class Game
     public void Play()
     {
         _sprites.Add(new Spike(30, 113, _textures));
-        _sprites.Add(new Laser(0, 0, 700, 700, _textures, _clock));
+        //_sprites.Add(new Laser(50, 30, 700, 700, _textures, _clock));
         Ladder l = _sprites.GetAllSpritesOfType<Ladder>()[0];
-        //SolidObject b = _sprites.GetAllSpritesOfType<SolidObject>()[0];
         Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
         List<Interactable> interactables = Interactable.LoadInteractables(_sprites);
         List<Trap> traps = Trap.LoadTraps(_sprites);
-        //b.AddMoveToQueue(0.7, 0, 1000);
         UIElement myUi = new UIElement(5, 3, 2, 1, true);
         _ui.AddUIElement(myUi);
         _camera.FollowedSprite = p;

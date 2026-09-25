@@ -10,9 +10,9 @@ public class SolidObject : Sprite
         
     }
 }
-public class VisualObject : Sprite
+public class TrapChildObject : Sprite
 {
-    public VisualObject(int x, int y, RGB?[,] texture) : base(x, y, texture, 0, false, false)
+    public TrapChildObject(int x, int y, RGB?[,] texture) : base(x, y, texture, 0, false, false)
     {
         
     }

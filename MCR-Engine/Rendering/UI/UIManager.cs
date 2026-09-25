@@ -87,8 +87,8 @@ public class UIManager
         }
         private void ResetUIPairs()
         {
-            int xStart = _render.Camera.XOffset, xEnd = _render.Camera.RenderBorderX;
-            int yStart = _render.Camera.YOffset, yEnd = _render.Camera.RenderBorderY;
+            int xStart = _render.Camera.XOffset, xEnd = _render.Camera.GetRenderBorderX(xStart);
+            int yStart = _render.Camera.YOffset, yEnd = _render.Camera.GetRenderBorderY(yStart);
             for (int y = yStart; y < yEnd; y++)
                 for (int x = xStart; x < xEnd; x++)
                     _render.GetPixelPair(x, y).ResetUIPair();

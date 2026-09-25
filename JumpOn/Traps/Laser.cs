@@ -8,14 +8,14 @@ public class Laser : Trap
 {
     private const double EntityDamage = 2;
     private const string LaserDeviceTextureName = "laserDevice", RayTextureName = "laserPart";
-    private readonly VisualObject _laser;
+    private readonly TrapChildObject _laser;
     private readonly Clock _clock;
     private readonly RGB?[,] _rayPartTexture;
     private readonly int _onMs, _offMs;
     private int _lastMsChanged;
     public Laser(int x, int y, int onMs, int offMs, Textures textures, Clock clock) : base(x, y, textures.Get(LaserDeviceTextureName))
     {
-        _laser = new VisualObject(RayX, RayY, textures.Get(LaserDeviceTextureName));
+        _laser = new TrapChildObject(RayX, RayY, textures.Get(LaserDeviceTextureName));
         _clock = clock;
         _rayPartTexture = textures.Get(RayTextureName);
         _onMs = onMs;

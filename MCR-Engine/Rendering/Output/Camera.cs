@@ -17,8 +17,6 @@ public class Camera
     }
     public int XOffset => (int)_xOffset;
     public int YOffset => (int)_yOffset;
-    public int RenderBorderX => Math.Min(_render.PixelPairWidth, XOffset + Console.WindowWidth);
-    public int RenderBorderY => Math.Min(_render.PixelPairHeight, YOffset + Console.WindowHeight - 1);
     public Sprite FollowedSprite
     {
         set =>  _followedSprite = value;
@@ -53,6 +51,8 @@ public class Camera
         SetOffsetIntoMapBorder(ref newX, ref newY);
         _xOffset = newX; _yOffset = newY;
     }
+    public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth, xOffset + Console.WindowWidth);
+    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight, yOffset + Console.WindowHeight - 1);
     public bool InView(int x, int y) => x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
     private void SetOffsetIntoMapBorder(ref double xOffset, ref double yOffset)
     {

@@ -4,7 +4,7 @@ namespace MCR_Engine.Objects;
 
 public abstract class Sprite
 {
-    private const double DefaultGravity = 330, DefaultDeceleration = 60, MaxGravity = 200;
+    private const double DefaultGravity = 330, DefaultDeceleration = 60, MaxGravity = 100;
     private readonly bool _collision, _gravity;
     private bool _visible;
     private int _layer;
@@ -21,10 +21,6 @@ public abstract class Sprite
         _velocityX = _velocityY = 0;
         _visible = true;
     }
-    public int Width => _texture.GetLength(0);
-    public int Height => _texture.GetLength(1);
-    public bool Collision => _collision && Visible;
-    public bool Visible => _visible;
     public int X
     {
         get => (int)_x; set => _x = value; 
@@ -41,7 +37,11 @@ public abstract class Sprite
     {
         protected get => field ?? throw new InvalidOperationException("Sprite manager is not set."); set => field = value;
     }
-    protected bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
+    public int Width => _texture.GetLength(0);
+    public int Height => _texture.GetLength(1);
+    public bool Collision => _collision && Visible;
+    public bool Visible => _visible;
+    public bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
     protected virtual bool Gravity => _gravity;
     public void UpdatePosition()
     {
@@ -69,7 +69,7 @@ public abstract class Sprite
     }
     public int GetDistanceToNextSprite(Direction direction, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) => Sprites.GetDistanceToNextSprite(this, direction, onlySpritesWithCollision, startAtTop, searchFor);
     public bool IsCollided(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, out collidedSprite, searchFor);
-    public void ChangeVisibility() => _visible = !_visible;
+    public void ChangeVisibility(bool? value = null) => _visible = (value.HasValue ? value.Value : !_visible);
     public void StopMovingX() => _velocityX = 0;
     public void StopMovingY() => _velocityY = 0;
     public RGB? GetColor(int x, int y) => _texture[x, y];

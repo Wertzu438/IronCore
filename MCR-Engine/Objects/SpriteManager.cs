@@ -40,7 +40,7 @@ public class SpriteManager
                     continue;
                 if (!currentSprite.Collision)
                     continue;
-                if (/*!SpritesOverlap(currentSprite, searchingSprite)*/ !SpriteBordersTouching(currentSprite, searchingSprite))
+                if (!SpritesOverlap(currentSprite, searchingSprite) /*!SpriteBordersTouching(currentSprite, searchingSprite)*/)
                     continue;
                 collidedSprite = currentSprite;
                 return true;
