@@ -8,6 +8,7 @@ using MCR_Engine.InputSystem;
 using MCR_Engine.Objects;
 using MCR_Engine.Rendering.Output;
 using MCR_Engine.Rendering.UI;
+using Switch = JumpOn.Interactables.Switch;
 
 namespace JumpOn;
 
@@ -37,6 +38,7 @@ public class Game
         _sprites.Add(new ArrowMachine(100, 5, Direction.Left, 700, _textures, _clock));
         //_sprites.Add(new SolidObject(50, 3, _textures.Get("brickBlock")));
         Ladder l = _sprites.GetAllSpritesOfType<Ladder>()[0];
+        _sprites.Add(new Switch(80, 44, l, _input, _camera, _textures, _clock));
         //SolidObject b = _sprites.GetAllSpritesOfType<SolidObject>()[0];
         Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
         List<Interactable> interactables = Interactable.LoadInteractables(_sprites);

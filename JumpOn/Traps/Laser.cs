@@ -15,7 +15,8 @@ public class Laser : Trap
     private int _lastMsChanged;
     public Laser(int x, int y, int onMs, int offMs, Textures textures, Clock clock) : base(x, y, textures.Get(LaserDeviceTextureName))
     {
-        _laser = new TrapChildObject(RayX, RayY, textures.Get(LaserDeviceTextureName));
+        _laser = new TrapChildObject(RayX, RayY, textures.Get(RayTextureName));
+        _laser.ChangeVisibility();
         _clock = clock;
         _rayPartTexture = textures.Get(RayTextureName);
         _onMs = onMs;
