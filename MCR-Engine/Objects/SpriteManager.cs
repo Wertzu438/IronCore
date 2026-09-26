@@ -29,6 +29,7 @@ public class SpriteManager
             _sprites.Add(sprite);
             return  sprite;
         }
+        public bool SpriteOnScene(Sprite sprite) => _scene.ValidPixelCoordinates(sprite.X, sprite.Y);
         public Sprite? GetSpriteMapPixel(int x, int y) => _scene.ValidPixelCoordinates(x, y) ? _map[x, y] : throw new ArgumentException("The specified coordinates are invalid.");
         public bool Collision(Sprite searchingSprite, out Sprite? collidedSprite, Type[]? searchFor = null)
         {
@@ -40,7 +41,7 @@ public class SpriteManager
                     continue;
                 if (!currentSprite.Collision)
                     continue;
-                if (/*!SpritesOverlap(currentSprite, searchingSprite)*/ !SpriteBordersTouching(currentSprite, searchingSprite))
+                if (!SpritesOverlap(currentSprite, searchingSprite))
                     continue;
                 collidedSprite = currentSprite;
                 return true;
@@ -67,29 +68,6 @@ public class SpriteManager
             } while (true);
             return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
         }
-        /*public int GetDistanceToNextSprite(Sprite sprite, Direction direction, bool onlyWithCollision, bool startAtTop, Type[]? searchFor = null)
-        {
-            int xStart = sprite.X;
-            int yStart = sprite.Y;
-            int start = xStart, distance = sprite.Width;
-            int xAdd = 0, yAdd = 0;
-            do
-            {
-                switch (direction)
-                {
-                    case Direction.Up: yAdd--; break;
-                    case Direction.Down: yAdd++; break;
-                    case Direction.Left: xAdd--; break;
-                    case Direction.Right: xAdd++; break;
-                }
-                for (int i = start; i < distance; i++)
-                {
-                    int x = xStart + xAdd + i, y = yStart + yAdd;
-                    if (!_scene.ValidPixelCoordinates(x, y) || (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y].GetType())) && (!onlyWithCollision || _map[x, y].Collision)))
-                        break;
-                }
-            } while (true);
-        }*/
         public bool Contains(Sprite sprite) => _sprites.Contains(sprite);
         public List<T> GetAllSpritesOfType<T>() => _sprites.OfType<T>().ToList();
         private void MoveSprites()

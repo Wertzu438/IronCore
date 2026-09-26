@@ -59,8 +59,6 @@ internal class Renderer
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
     private void Loop()
     {
-        int frames = 0;
-        Stopwatch sw = Stopwatch.StartNew();
         while (_action is not ProcessAction.Stop)
         {
             while (_action is ProcessAction.Pause || _pairs is null)
@@ -81,12 +79,6 @@ internal class Renderer
                 _output.AppendLine();
             }
             RenderStringBuilder();
-            frames++;
-            if (sw.ElapsedMilliseconds < 1000) 
-                continue;
-            sw.Restart();
-            Console.Title = $"FPS: {frames}";
-            frames = 0;
         }
         _state = ProcessState.Stopped;
     }

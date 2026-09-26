@@ -33,7 +33,9 @@ public class Game
     public void Play()
     {
         _sprites.Add(new Spike(30, 113, _textures));
-        _sprites.Add(new Laser(0, 0, 700, 700, _textures, _clock));
+        _sprites.Add(new Laser(0, 0, 2000, 700, _textures, _clock));
+        _sprites.Add(new ArrowMachine(100, 5, Direction.Left, 700, _textures, _clock));
+        //_sprites.Add(new SolidObject(50, 3, _textures.Get("brickBlock")));
         Ladder l = _sprites.GetAllSpritesOfType<Ladder>()[0];
         //SolidObject b = _sprites.GetAllSpritesOfType<SolidObject>()[0];
         Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
