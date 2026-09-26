@@ -2,6 +2,7 @@
 using JumpOn.Entities;
 using JumpOn.Interactables;
 using JumpOn.Traps;
+using JumpOn.UI.InfoBoxes;
 using MCR_Engine;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
@@ -33,12 +34,14 @@ public class Game
     }
     public void Play()
     {
+        MobileInfoBox mB = new MobileInfoBox();
+        _ui.AddUIElement(mB);
         _sprites.Add(new Spike(30, 113, _textures));
         _sprites.Add(new Laser(0, 0, 2000, 700, _textures, _clock));
-        _sprites.Add(new ArrowMachine(100, 5, Direction.Left, 700, _textures, _clock));
+        _sprites.Add(new ArrowMachine(100, 5, Direction.Left, 1200, _textures, _clock));
         //_sprites.Add(new SolidObject(50, 3, _textures.Get("brickBlock")));
         Ladder l = _sprites.GetAllSpritesOfType<Ladder>()[0];
-        _sprites.Add(new Switch(80, 44, l, _input, _camera, _textures, _clock));
+        _sprites.Add(new Switch(80, 44, l, _input, _camera, mB, _textures, _clock));
         //SolidObject b = _sprites.GetAllSpritesOfType<SolidObject>()[0];
         Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
         List<Interactable> interactables = Interactable.LoadInteractables(_sprites);

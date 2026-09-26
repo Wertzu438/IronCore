@@ -11,4 +11,8 @@
       <ProjectReference Include="..\MCR-Engine\MCR-Engine.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UI\Menus\" />
+    </ItemGroup>
+
 </Project>
