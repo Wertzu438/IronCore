@@ -21,7 +21,7 @@ public abstract class Trap : Sprite
             return;
         entity!.Damage(Damage, false);
     }
-    public static void UpdateTraps(List<Trap> traps)
+    public static void Update(List<Trap> traps)
     {
         foreach (Trap trap in traps)
             trap.Update();

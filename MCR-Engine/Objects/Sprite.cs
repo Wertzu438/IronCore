@@ -107,8 +107,8 @@ public abstract class Sprite
     protected bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0;
     private void HandleGravity()
     {
-        if (!Gravity || !_collision)
-            throw new InvalidOperationException("Gravity is set to or sprite has no collision false.");
+        //if (!Gravity || !_collision)
+          //  throw new InvalidOperationException("Gravity is set to or sprite has no collision false.");
         if (IsFloorBeneath())
         {
             if (_velocityY > 0)

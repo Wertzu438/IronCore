@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using JumpOn.Collectables;
 using JumpOn.Entities;
 using JumpOn.Interactables;
 using JumpOn.Traps;
@@ -39,6 +40,7 @@ public class Game
         _sprites.Add(new Spike(30, 113, _textures));
         _sprites.Add(new Laser(0, 0, 2000, 700, _textures, _clock));
         _sprites.Add(new ArrowMachine(100, 5, Direction.Left, 1200, _textures, _clock));
+        _sprites.Add(new Medkit(200, 0, _textures, _input, mB));
         //_sprites.Add(new SolidObject(50, 3, _textures.Get("brickBlock")));
         Ladder l = _sprites.GetAllSpritesOfType<Ladder>()[0];
         _sprites.Add(new Switch(80, 44, l, _input, _camera, mB, _textures, _clock));
@@ -46,6 +48,7 @@ public class Game
         Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
         List<Interactable> interactables = Interactable.LoadInteractables(_sprites);
         List<Trap> traps = Trap.LoadTraps(_sprites);
+        List<Collectable> collectables = Collectable.LoadCollectables(_sprites);
         //b.AddMoveToQueue(0.7, 0, 1000);
         UIElement myUi = new UIElement(5, 3, 2, 1, true);
         _ui.AddUIElement(myUi);
@@ -58,7 +61,8 @@ public class Game
             double deltaTime = currentTime - lastTime;
             lastTime = currentTime;
             Interactable.Update(interactables);
-            Trap.UpdateTraps(traps);
+            Trap.Update(traps);
+            Collectable.Update(collectables);
             _scene.Update(deltaTime);
             p.Update();
             myUi.UpdateContent([[$"{p.Health}"]]);
