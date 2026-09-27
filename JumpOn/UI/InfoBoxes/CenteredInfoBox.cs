@@ -5,7 +5,7 @@ namespace JumpOn.UI.InfoBoxes;
 
 public class CenteredInfoBox : UIElement
 {
-    private const string ConfirmKeyName = "Enter";
+    public const string ConfirmKeyName = "Enter";
     private readonly Key _confirmKey;
     public CenteredInfoBox(Input input) : base(10, 4, 0, 0, false, false)
     {
@@ -19,6 +19,7 @@ public class CenteredInfoBox : UIElement
         UpdateContent(content);
         X = CenterX; Y = CenterY;
         if (!confirmKey) return;
+        Visible = true;
         WaitForConfirm();
         Visible = false;
     }

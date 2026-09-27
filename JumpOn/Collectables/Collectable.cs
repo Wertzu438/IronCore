@@ -12,9 +12,9 @@ public abstract class Collectable : Sprite
     {
         
     }
-    public bool IsCollected
+    public virtual bool IsCollected
     {
-        protected get => _isCollected;
+        get => _isCollected;
         set
         {
             _isCollected |= value;
@@ -36,6 +36,14 @@ public abstract class Collectable : Sprite
     {
         foreach (Collectable collectable in collectables)
             collectable.Update();
+    }
+
+    public static bool AreAllCollected<T>(List<T> collectables) where T : Collectable
+    {
+        foreach (Collectable collectable in collectables)
+            if (!collectable.IsCollected)
+                return false;
+        return true;
     }
     public static List<Collectable> LoadCollectables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Collectable>();
 }

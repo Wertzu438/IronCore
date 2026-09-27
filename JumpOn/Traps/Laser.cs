@@ -22,7 +22,6 @@ public class Laser : Trap
         _onMs = onMs;
         _offMs = offMs;
         _lastMsChanged = 0;
-        
     }
     protected override double Damage => EntityDamage;
     private int RayX => X + (Width / 2);
