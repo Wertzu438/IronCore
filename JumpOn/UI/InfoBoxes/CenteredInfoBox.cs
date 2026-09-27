@@ -9,7 +9,7 @@ public class CenteredInfoBox : UIElement
     private readonly Key _confirmKey;
     public CenteredInfoBox(Input input) : base(10, 4, 0, 0, false, false)
     {
-        _confirmKey = input.GetKey(ConfirmKeyName);
+        _confirmKey = input.Get(ConfirmKeyName);
     }
     private int CenterX => Console.WindowWidth / 2 - Width / 2;
     private int CenterY => Console.WindowHeight / 2 - Height / 2;

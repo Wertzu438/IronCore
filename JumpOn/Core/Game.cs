@@ -13,7 +13,7 @@ using MCR_Engine.Rendering.Output;
 using MCR_Engine.Rendering.UI;
 using Switch = JumpOn.Interactables.Switch;
 
-namespace JumpOn;
+namespace JumpOn.Core;
 
 public class Game
 {

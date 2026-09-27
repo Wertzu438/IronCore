@@ -39,7 +39,7 @@ public class Input
                 _keys.Add(keyName, new Key(keyCode));
             }
         }
-        public Key GetKey(string keyName)
+        public Key Get(string keyName)
         {
             lock (this)
             {

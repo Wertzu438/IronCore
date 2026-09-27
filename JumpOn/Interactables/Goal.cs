@@ -6,7 +6,7 @@ using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
 using MCR_Engine.Objects;
 
-namespace JumpOn.CheckPoints;
+namespace JumpOn.Interactables;
 
 public class Goal : Interactable
 {
@@ -20,7 +20,7 @@ public class Goal : Interactable
     {
         _keys = sprites.GetAllSpritesOfType<GameKey>();
         _openTexture = textures.Get(OpenTextureName);
-        _interactingKey = input.GetKey(KeyName);
+        _interactingKey = input.Get(KeyName);
         _infoBox = infoBox;
         _open = false;
     }

@@ -6,34 +6,30 @@ namespace MCR_Engine.Menus;
 public class MenuManager
     {
         private const int MenuWidthPercent = 50;
-        //private readonly Engine engine;
-        private readonly UIElement infoBox;
-        private readonly List<Menu> menus;
-        internal MenuManager()//Engine engine)
+        private readonly UIElement _infoBox;
+        private readonly List<Menu> _menus;
+        internal MenuManager()
         {
-            infoBox = new UIElement(MenuWidth, MenuHeight, InfoBoxX, InfoBoxY, false, true);
-            //this.engine = engine;
-            menus = [];
+            _infoBox = new UIElement(MenuWidth, MenuHeight, InfoBoxX, InfoBoxY, false, true);
+            _menus = [];
         }
-        public UIElement InfoBox => infoBox;
+        public UIElement InfoBox => _infoBox;
         public static int InfoBoxX => (Console.WindowWidth - 2) / 2 - MenuWidth / 2;
         public static int InfoBoxY => 2;
         public static int MenuWidth => Console.WindowWidth * MenuWidthPercent / 100;
-        public static int MenuHeight => 15;
-        public void AddMenu(Menu menu) => menus.Add(menu);
-        public ProgramState Launch()
+        public static int MenuHeight => 17;
+        public void Add(Menu menu) => _menus.Add(menu);
+        public ProgramState Launch(UIManager ui)
         {
-            //engine.UI.Clear();
-            //engine.UI.AddUIElement(infoBox);
+            ui.Clear(); ui.AddUIElement(_infoBox);
             ProgramState newState = ProgramState.Menu;
-            //engine.Scene.Update(false, true);
-            infoBox.Visible = true;
-            int? index = 0;
+            _infoBox.Visible = true;
+            Type? screenType = null;
             do
             {
                 switch (newState)
                 {
-                    case ProgramState.Menu: newState = menus[index.Value].Launch(out index); break;
+                    case ProgramState.Menu: newState = GetMenu(screenType).Launch(_infoBox, out screenType); break;
                     case ProgramState.Editor: InfoBox.Visible = false; return ProgramState.Editor;
                     case ProgramState.Game: InfoBox.Visible = false; return ProgramState.Game;
                     case ProgramState.Quit: InfoBox.Visible = false; return ProgramState.Quit;
@@ -41,16 +37,15 @@ public class MenuManager
                 }
             } while (true);
         }
-        public static string[] GetGameHeading()
+        private Menu GetMenu(Type? screenType)
         {
-            return 
-            [
-                "!     ██╗██╗   ██╗███╗   ███╗██████╗    ██████╗ ███╗   ██╗",
-                "!     ██║██║   ██║████╗ ████║██╔══██╗  ██╔═══██╗████╗  ██║",
-                "!     ██║██║   ██║██╔████╔██║██████╔╝  ██║   ██║██╔██╗ ██║",
-                "!██   ██║██║   ██║██║╚██╔╝██║██╔═══╝   ██║   ██║██║╚██╗██║",
-                "!╚█████╔╝╚██████╔╝██║ ╚═╝ ██║██║       ╚██████╔╝██║ ╚████║",
-                "! ╚════╝  ╚═════╝ ╚═╝     ╚═╝╚═╝        ╚═════╝ ╚═╝  ╚═══╝"
-            ];
+            if (screenType == null)
+                return _menus[0];
+            foreach (Menu menu in _menus)
+            {
+                if (menu.GetType() == screenType)
+                    return menu;
+            }
+            throw new KeyNotFoundException("Screen not found");
         }
     }

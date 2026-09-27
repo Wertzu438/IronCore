@@ -15,7 +15,7 @@ public class Medkit : Collectable
 
     public Medkit(int x, int y, Textures textures, Input input, MobileInfoBox infoBox) : base(x, y, textures.Get(TextureName))
     {
-        _interactingKey = input.GetKey(KeyName);
+        _interactingKey = input.Get(KeyName);
         _infoBox = infoBox;
     }
     public override void Update()

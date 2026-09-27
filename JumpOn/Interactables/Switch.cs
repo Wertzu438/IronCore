@@ -23,7 +23,7 @@ public class Switch : Interactable
     {
         _infoBox = infoBox;
         _textures = [textures.Get(TextureName), Textures.MirrorLeftRight(textures.Get(TextureName))];
-        _interactingKey = input.GetKey(KeyName);
+        _interactingKey = input.Get(KeyName);
         _connectedSprite = connectedSprite;
         _camera = camera;
         _clock = clock;
