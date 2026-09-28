@@ -7,7 +7,7 @@ public class CenteredInfoBox : UIElement
 {
     public const string ConfirmKeyName = "Enter";
     private readonly Key _confirmKey;
-    public CenteredInfoBox(Input input) : base(10, 4, 0, 0, false, false)
+    public CenteredInfoBox(Input input) : base(10, 4, 0, 0, true, false)
     {
         _confirmKey = input.Get(ConfirmKeyName);
     }

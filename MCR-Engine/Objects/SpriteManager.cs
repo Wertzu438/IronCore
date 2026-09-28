@@ -53,6 +53,8 @@ public class SpriteManager
         {
             int xStart = sprite.X + (direction is Direction.Right && !startAtTop ? sprite.Width - 1 : 0), yStart = sprite.Y+ (direction is Direction.Down && !startAtTop ? sprite.Height - 1 : 0);
             int xAdd = 0, yAdd = 0;
+            bool quit = false, upDown =  direction is Direction.Up or Direction.Down;
+            int distance = upDown ? sprite.Width : sprite.Height;
             do
             {
                 switch (direction)
@@ -62,10 +64,13 @@ public class SpriteManager
                     case Direction.Left: xAdd--; break;
                     case Direction.Right: xAdd++; break;
                 }
-                int x = xStart + xAdd, y = yStart + yAdd;
-                if (!_scene.ValidPixelCoordinates(x, y) || (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y].GetType())) && (!onlyWithCollision || _map[x, y].Collision)))
-                    break;
-            } while (true);
+                for (int i = 0; i < distance; i++)
+                {
+                    int x = xStart + xAdd + (upDown ? i : 0), y = yStart + yAdd+ (!upDown ? i : 0);
+                    if (!_scene.ValidPixelCoordinates(x, y) || (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y].GetType())) && (!onlyWithCollision || _map[x, y].Collision)))
+                        quit = true;
+                }
+            } while (!quit);
             return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
         }
         public bool Contains(Sprite sprite) => _sprites.Contains(sprite);
