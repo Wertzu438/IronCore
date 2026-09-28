@@ -6,38 +6,41 @@ namespace JumpOn.Traps;
 
 public class ArrowMachine : Trap
 {
-    private const double ArrowSpeed = 1.5;
-    private const string ArrowDeviceTextureName = "arrowDevice", ArrowTextureName = "arrowTexture";
-    private readonly TrapChildObject[] _arrows;
+    private const double EntityDamage = 1.0, ArrowSpeed = 30;
+    private const string ArrowDeviceTextureName = "arrowDevice", ArrowTextureName = "arrow";
+    private readonly RGB?[,] _arrowTexture; 
     private readonly Clock _clock;
+    private readonly List<TrapChildObject> _arrows;
     private readonly Direction _direction;
-    private readonly int _msShootOffset;
+    private readonly double _arrowOffset;
     private int _lastMsShot;
-    
-    public ArrowMachine(int x, int y, int msShootOffset, Direction direction, Textures textures, Clock clock) : base(x, y, textures.Get(ArrowDeviceTextureName))
+    public ArrowMachine(int x, int y, Direction direction, double arrowOffset, Textures textures, Clock clock) : base(x, y, GetDeviceTexture(textures, direction))
     {
-        if (!(direction is Direction.Left or Direction.Right))
-            throw new ArgumentException("Direction must be a left or right direction.", nameof(direction));
-        _arrows = new TrapChildObject[4];
-        _clock = clock;
+        _arrows = [];
         _direction = direction;
-        _msShootOffset = msShootOffset;
+        _arrowOffset = arrowOffset;
+        _clock = clock;
         _lastMsShot = 0;
+        _arrowTexture = ShootRight ? textures.Get(ArrowTextureName) : Textures.MirrorLeftRight(textures.Get(ArrowTextureName));
     }
-    protected override double Damage => 0.8;
+    protected override double Damage => EntityDamage;
     private int ArrowStartX => (ShootRight ? X + Width : X - Width);
-    private double MovingSpeed => (ShootRight ? ArrowSpeed : -ArrowSpeed);
-    private bool ShootRight => _direction == Direction.Right;
+    private int ArrowStartY => Y;
+    private bool ShootRight => _direction is Direction.Right;
     protected override void Update()
     {
-        foreach (var arrow in _arrows)
+        foreach (TrapChildObject arrow in _arrows)
         {
-            if (arrow.Move)
+            if (arrow.Visible && arrow.Move && arrow.OnScene())
+            {
+                arrow.SetNewVelocity(_direction, ArrowSpeed);
                 continue;
-            arrow.ChangeVisibility();
-            arrow.X = ArrowStartX;
+            }
+            arrow.StopMovingX(); arrow.StopMovingY();
+            arrow.ChangeVisibility(false);
+            arrow.X = ArrowStartX; arrow.Y = ArrowStartY;
         }
-        if (_lastMsShot < _clock.PassedMilliSeconds - _msShootOffset)
+        if (_lastMsShot < _clock.PassedMilliSeconds - _arrowOffset)
         {
             _lastMsShot = _clock.PassedMilliSeconds;
             ShootArrow();
@@ -46,30 +49,32 @@ public class ArrowMachine : Trap
     }
     protected override bool IsSomeoneInTrap(out Entity? entity)
     {
-        entity = null;
         foreach (TrapChildObject arrow in _arrows)
         {
-            if (!arrow.Visible)
+            if (!arrow.Visible || !arrow.IsCollided(out Sprite? sprite))
                 continue;
-            if (arrow.IsCollided(out Sprite? sprite, [typeof(Player)]))
-            {
-                entity = sprite as Entity;
-                return true;
-            }
+            arrow.ChangeVisibility(false);
+            entity = sprite as Entity;
+            return true;
         }
+        entity = null;
         return false;
     }
     private void ShootArrow()
     {
-        foreach (var arrow in _arrows)
+        for (int i = 0; i < _arrows.Count; i++)
         {
-            if (arrow.Move)
-            {
-                SetNewVelocity(_direction, MovingSpeed);
-                if (!arrow.IsCollided(out _))
-                    continue;
-            }
-            arrow.ChangeVisibility(true);
+            if (_arrows[i].Move)
+                continue;
+            _arrows[i].ChangeVisibility(true);
+            _arrows[i].SetNewVelocity(_direction, ArrowSpeed);
+            return;
         }
+        TrapChildObject arrow = new TrapChildObject(ArrowStartX, ArrowStartY, _arrowTexture);
+        arrow.ChangeVisibility(true);
+        arrow.SetNewVelocity(_direction, ArrowSpeed);
+        Sprites.Add(arrow);
+        _arrows.Add(arrow);
     }
+    private static RGB?[,] GetDeviceTexture(Textures textures, Direction direction) => direction is Direction.Right ? textures.Get(ArrowDeviceTextureName) : Textures.MirrorLeftRight(textures.Get(ArrowDeviceTextureName));
 }

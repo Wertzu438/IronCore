@@ -44,6 +44,8 @@ public class Engine
                 _ => throw new NotImplementedException($"Unknown ProgramState: {state}")
             };
         } while (state is not ProgramState.Quit);
+        UpdateInputAction(ProcessAction.Stop);
+        UpdateRenderAction(ProcessAction.Stop);
     }
     public void SetScene(Scene scene)
     {

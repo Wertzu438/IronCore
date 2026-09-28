@@ -8,37 +8,34 @@ public abstract class Menu
 {
     protected readonly Key[] Keys;
     protected readonly Input Input;
-    private readonly UIElement _infoBox;
-    protected Menu(Input input, UIElement infoBox, Key[] keys)
+    protected Menu(Input input, Key[] keys)
     {
-        _infoBox = infoBox;
-        _infoBox.UpdateContent([]);
         Keys = keys;
         Input = input;
     }
-    public ProgramState Launch(out int? nextScreen)
+    public ProgramState Launch(UIElement infoBox, out Type? nextScreen)
     {
-        _infoBox.UpdateContent(UpdateContent());
-        return OpenNewWindow(GetKey(), out nextScreen);
+        infoBox.UpdateContent(UpdateContent());
+        return OpenNewWindow(GetKey(infoBox), out nextScreen);
     }
     protected abstract string[][] UpdateContent();
-    protected abstract ProgramState OpenNewWindow(Key key, out int? nextScreen);
-    private Key GetKey()
+    protected abstract ProgramState OpenNewWindow(Key key, out Type? nextScreen);
+    private Key GetKey(UIElement infoBox)
     {
         while (true)
         {
-            SetInfoBoxStats();
+            SetInfoBoxStats(infoBox);
             foreach (var key in Keys)
             {
                 if (key.Pressed)
                     return key;
             }
-            Thread.Sleep(10);
+            Thread.Sleep(30);
         }
     }
-    private void SetInfoBoxStats()
+    private static void SetInfoBoxStats(UIElement infoBox)
     {
-        _infoBox.X = MenuManager.InfoBoxX; _infoBox.Y = MenuManager.InfoBoxY;
-        _infoBox.UpdateSize(MenuManager.MenuWidth, MenuManager.MenuHeight);
+        infoBox.X = MenuManager.InfoBoxX; infoBox.Y = MenuManager.InfoBoxY;
+        infoBox.UpdateSize(MenuManager.MenuWidth, MenuManager.MenuHeight);
     }
 }

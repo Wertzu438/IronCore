@@ -13,7 +13,7 @@ public abstract class Interactable : Sprite
     protected virtual bool IsEntityInteracting(out Entity? entity)
     {
         entity = null;
-        if (!IsCollided(out Sprite? sprite, [typeof(Player)]))
+        if (!Visible || !IsCollided(out Sprite? sprite, [typeof(Player)]))
             return false;
         entity = sprite as Entity;
         return true;

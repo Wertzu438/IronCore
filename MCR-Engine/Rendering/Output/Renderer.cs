@@ -59,8 +59,6 @@ internal class Renderer
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
     private void Loop()
     {
-        int frames = 0;
-        Stopwatch sw = Stopwatch.StartNew();
         while (_action is not ProcessAction.Stop)
         {
             while (_action is ProcessAction.Pause || _pairs is null)
@@ -73,7 +71,7 @@ internal class Renderer
             PixelPair[,] snapshotPairs = (PixelPair[,])_pairs.Clone();
             _output.Clear();
             int startX = _camera.XOffset, startY = _camera.YOffset;
-            int maxX = startX + Console.WindowWidth, maxY = startY + Console.WindowHeight - 1;
+            int maxX = _camera.GetRenderBorderX(startX), maxY = _camera.GetRenderBorderY(startY);
             for (int y = startY; y < maxY; y++)
             {
                 for (int x = startX; x < maxX; x++)
@@ -81,12 +79,6 @@ internal class Renderer
                 _output.AppendLine();
             }
             RenderStringBuilder();
-            frames++;
-            if (sw.ElapsedMilliseconds < 1000) 
-                continue;
-            sw.Restart();
-            Console.Title = $"FPS: {frames}";
-            frames = 0;
         }
         _state = ProcessState.Stopped;
     }

@@ -52,7 +52,7 @@ public abstract class Entity : Sprite
     {
         if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             return false;
-        MoveOnX(direction, 180,WalkingSpeed);
+        MoveOnX(direction, 220,WalkingSpeed);
         return true;
     }
     protected bool Climb(Direction direction)
@@ -84,6 +84,7 @@ public abstract class Entity : Sprite
     {
         if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             throw new ArgumentException("Invalid direction");
+        //SetNewVelocity(direction, maxSpeed);
         AddVelocity(direction, acceleration, maxSpeed);
     }
     private void MoveOnY(Direction direction, double speed)

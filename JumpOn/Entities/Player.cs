@@ -20,7 +20,7 @@ public class Player : Entity
     private PlayerAction _action;
     public Player(int x, int y, Textures textures, Input input, Clock clock) : base(x, y, Textures.DebuggingTexture(1, 1), 5, clock)
     {
-        _movementKeys = [input.GetKey("A"), input.GetKey("D"), input.GetKey("Space"), input.GetKey("W"), input.GetKey("S")];
+        _movementKeys = [input.Get("A"), input.Get("D"), input.Get("Space"), input.Get("W"), input.Get("S")];
         _standingTextures = [Textures.MirrorLeftRight(textures.Get("playerStand")), textures.Get("playerStand")];
         _walkingTextures =
         [
