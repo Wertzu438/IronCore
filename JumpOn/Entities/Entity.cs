@@ -98,5 +98,11 @@ public abstract class Entity : Sprite
         fallDamage = 0;
         return false;
     }
+    public static void Update(List<Entity> entities)
+    {
+        foreach (Entity collectable in entities)
+            collectable.Update();
+    }
+    public static List<Entity> LoadEntities(SpriteManager sprites) => sprites.GetAllSpritesOfType<Entity>();
     private static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);
 }

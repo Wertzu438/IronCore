@@ -37,7 +37,6 @@ public abstract class Collectable : Sprite
         foreach (Collectable collectable in collectables)
             collectable.Update();
     }
-
     public static bool AreAllCollected<T>(List<T> collectables) where T : Collectable
     {
         foreach (Collectable collectable in collectables)

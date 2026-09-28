@@ -7,8 +7,10 @@ namespace JumpOn.Interactables;
 public class Ladder : Interactable
 {
     private const string TextureName = "ladderPart";
-    public Ladder(int x, int y, Textures textures, int partsCount) : base(x, y, Textures.DebuggingTexture(1, 1))
+    public Ladder(int x, int y, Textures textures, int partsCount) : base(x, y, textures.Get(TextureName))
     {
+        if (partsCount <= 0)
+            throw new ArgumentException("partsCount <= 0");
         SetNewTexture(CreateTexture(textures, partsCount));
     }
     public void CenterEntity(Entity entity)

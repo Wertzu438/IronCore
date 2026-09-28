@@ -1,4 +1,5 @@
-﻿using MCR_Engine.Core;
+﻿using System.Diagnostics;
+using MCR_Engine.Core;
 
 namespace MCR_Engine.Objects;
 
@@ -43,6 +44,8 @@ public abstract class Sprite
         protected get => field ?? throw new InvalidOperationException("Sprite manager is not set."); set => field = value;
     }
     protected virtual bool Gravity => _gravity;
+    protected bool IsMovingOnX => _velocityX != 0;
+    protected bool IsMovingOnY => _velocityY != 0;
     public void UpdatePosition()
     {
         if (!Visible)
@@ -54,17 +57,10 @@ public abstract class Sprite
         double[] velocityStepsY = GetVelocitySteps(_velocityY * Sprites.DeltaTime);
         for (int i = 0; i < Math.Max(velocityStepsX.Length, velocityStepsY.Length); i++)
         {
-            double xOld = _x, yOld = _y;
-            if (i < velocityStepsX.Length)
-                _x += velocityStepsX[i];
             if (i < velocityStepsY.Length)
-                _y += velocityStepsY[i];
-            if (!IsCollided(out _))
-                continue;
-            _x = xOld; 
-            _y = yOld;
-            StopMovingX();
-            StopMovingY();
+                TryMoveY(velocityStepsY[i]);
+            if (i < velocityStepsX.Length)
+                TryMoveX(velocityStepsX[i]);
             break;
         }
         ApplyDeceleration();
@@ -105,10 +101,28 @@ public abstract class Sprite
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnSprite(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
     protected bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0;
+    private void TryMoveX(double xAdd)
+    {
+        double xOld = _x;
+        _x += xAdd;
+        if (!Collision || !IsCollided(out _))
+            return;
+        StopMovingX();
+        _x = xOld;
+    }
+    private void TryMoveY(double yAdd)
+    {
+        double yOld = _y;
+        _y += yAdd;
+        if (!Collision || !IsCollided(out _))
+            return;
+        StopMovingY();
+        _y = yOld;
+    }
     private void HandleGravity()
     {
-        //if (!Gravity || !_collision)
-          //  throw new InvalidOperationException("Gravity is set to or sprite has no collision false.");
+        if (!Gravity)
+            throw new InvalidOperationException("Gravity is set to or sprite has no collision false.");
         if (IsFloorBeneath())
         {
             if (_velocityY > 0)

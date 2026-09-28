@@ -23,43 +23,39 @@ public class Game
     private readonly SpriteManager _sprites;
     private readonly Textures _textures;
     private readonly Input _input;
+    private readonly PauseChecker _pause;
     private readonly Clock _clock;
+    private readonly UIElement[] sideBar;
+    private readonly MobileInfoBox _mobileInfoBox;
+    private readonly CenteredInfoBox _centeredInfoBox;
     public Game(Engine engine)
     {
+        _input = engine.Input;
+        _ui = engine.UI;
+        _clock = new Clock();
+        _ui.AddUIElement(_mobileInfoBox= new MobileInfoBox());
+        _ui.AddUIElement(_centeredInfoBox = new CenteredInfoBox(_input)); 
+        sideBar = 
+        [
+            _ui.AddUIElement(new UIElement(19, 8, 2, 1, true)), 
+            _ui.AddUIElement(new UIElement(19, 6, 2, 10, true)), 
+            _ui.AddUIElement(new UIElement(19, 6, 2, 17, true))
+        ];
+        engine.SetScene(LevelLoader.Read("test.txt", engine, _mobileInfoBox, _clock));
         _camera = engine.Camera;
         _scene = engine.Scene;
-        _ui = engine.UI;
         _sprites = engine.Sprites;
         _textures = engine.Textures;
-        _input = engine.Input;
-        _clock = new Clock();
+        _pause = new PauseChecker(_input, _centeredInfoBox);
     }
     public void Play()
     {
-        MobileInfoBox mB = new MobileInfoBox();
-        CenteredInfoBox cB = new CenteredInfoBox(_input);
-        _ui.AddUIElement(mB);
-        _ui.AddUIElement(cB);
-        _sprites.Add(new Spike(30, 113, _textures));
-        _sprites.Add(new Laser(0, 0, 2000, 700, _textures, _clock));
-        _sprites.Add(new ArrowMachine(100, 5, Direction.Left, 1200, _textures, _clock));
-        _sprites.Add(new Medkit(200, 0, _textures, _input, mB));
-        _sprites.Add(new CheckPoint(150, 0, _textures));
-        _sprites.Add(new GameKey(350, 0, _textures));
-        _sprites.Add(new GameKey(360, 0, _textures));
-        _sprites.Add(new Goal(260, 104, _textures, _sprites, _input, mB));
-        //_sprites.Add(new SolidObject(50, 3, _textures.Get("brickBlock")));
-        Ladder l = _sprites.GetAllSpritesOfType<Ladder>()[0];
-        _sprites.Add(new Switch(80, 44, l, _input, _camera, mB, _textures, _clock));
-        //SolidObject b = _sprites.GetAllSpritesOfType<SolidObject>()[0];
         Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
+        List<Entity> entities = Entity.LoadEntities(_sprites);
         List<Interactable> interactables = Interactable.LoadInteractables(_sprites);
         List<Trap> traps = Trap.LoadTraps(_sprites);
         List<Collectable> collectables = Collectable.LoadCollectables(_sprites);
-        CheckPointManager checkPointManager = new CheckPointManager(_sprites, cB);
-        //b.AddMoveToQueue(0.7, 0, 1000);
-        UIElement myUi = new UIElement(5, 3, 2, 1, true);
-        _ui.AddUIElement(myUi);
+        CheckPointManager checkPointManager = new CheckPointManager(_sprites, _centeredInfoBox);
         _camera.FollowedSprite = p;
         Stopwatch sw = Stopwatch.StartNew(), sw2 = Stopwatch.StartNew();
         double lastTime = sw.Elapsed.TotalSeconds;
@@ -71,13 +67,19 @@ public class Game
             Interactable.Update(interactables);
             Trap.Update(traps);
             Collectable.Update(collectables);
+            Entity.Update(entities);
             _scene.Update(deltaTime);
-            p.Update();
             if (!p.Alive)
                 checkPointManager.ResetPlayerToChekPoint(p);
-            myUi.UpdateContent([[$"{p.Health}"]]);
             _clock.Update((int)sw2.ElapsedMilliseconds);
             sw2.Restart();
+            _pause.Check();
         } while (true);
+    }
+    private void UpdateSideBar(Player player)
+    {
+        sideBar[0].UpdateContent([["!SPIELINFO"], [$"Name: {account.Name}", $"Level: {account.CurrentLevel+1}"], [$"Schlüssel: {goal.CollectedKeys}/{goal.KeysAmount}"]]);
+        sideBar[1].UpdateContent([["!SPIELER"], [$"Leben: {player.Health}/{Player.MaxHealth}"]]);
+        sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{PauseButtonKeyName}] - Pause", $"[{LeaveButtonKeyName}] - Verlassen"]]);
     }
 }

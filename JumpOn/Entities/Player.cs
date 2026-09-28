@@ -10,7 +10,7 @@ public class Player : Entity
     {
         StandRight, StandLeft, Hang, Climb, WalkLeft, WalkRight
     }
-    private const double MaxHealth = 5;
+    public const double MaxHealth = 5;
     private readonly Key[] _movementKeys;
     private readonly RGB?[][,] _standingTextures;
     private readonly RGB?[][,] _walkingTextures;
@@ -113,5 +113,5 @@ public class Player : Entity
         _textureInfo.LastCoordinateChanged = coordinate;
         return true;
     }
-    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && ((IsFloorBeneath() && Gravity) || OnTopOfLadder));
+    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && ((IsFloorBeneath() && Gravity) || OnTopOfLadder)) && !IsMovingOnY;
 }

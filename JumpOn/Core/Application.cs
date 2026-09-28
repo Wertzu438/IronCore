@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using JumpOn.UI.InfoBoxes;
 using JumpOn.UI.Menus;
 using MCR_Engine.Core;
 using MCR_Engine.Menus;
@@ -25,14 +26,13 @@ public class Application : IGameProject
     public ProgramState PlayGame()
     {
         _engine.UI.Clear();
-        _engine.SetScene(LevelLoader.Read("test.txt", _engine));
         Game game = new Game(_engine);
         game.Play();
         return ProgramState.Game;
     }
     public ProgramState OpenMenu()
     {
-        _engine.SetScene(LevelLoader.Read("test.txt", _engine));
+        _engine.SetScene(LevelLoader.Read("test.txt", _engine, new MobileInfoBox(), new Clock()));
         return _menus.Launch(_engine.UI);
     }
     public static void Main(string[] args)

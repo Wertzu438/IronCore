@@ -31,14 +31,13 @@ public class ArrowMachine : Trap
     {
         foreach (TrapChildObject arrow in _arrows)
         {
-            if (arrow.Visible && arrow.Move && arrow.OnScene())
+            if (arrow.Visible && arrow.OnScene() && arrow.GetDistanceToNextSprite(_direction, true, false, [typeof(SolidObject)]) != 0)
             {
                 arrow.SetNewVelocity(_direction, ArrowSpeed);
                 continue;
             }
             arrow.StopMovingX(); arrow.StopMovingY();
             arrow.ChangeVisibility(false);
-            arrow.X = ArrowStartX; arrow.Y = ArrowStartY;
         }
         if (_lastMsShot < _clock.PassedMilliSeconds - _arrowOffset)
         {
@@ -51,7 +50,7 @@ public class ArrowMachine : Trap
     {
         foreach (TrapChildObject arrow in _arrows)
         {
-            if (!arrow.Visible || !arrow.IsCollided(out Sprite? sprite))
+            if (!arrow.Visible || !arrow.IsCollided(out Sprite? sprite, [typeof(Player)]))
                 continue;
             arrow.ChangeVisibility(false);
             entity = sprite as Entity;
@@ -66,6 +65,7 @@ public class ArrowMachine : Trap
         {
             if (_arrows[i].Move)
                 continue;
+            _arrows[i].X = ArrowStartX; _arrows[i].Y = ArrowStartY;
             _arrows[i].ChangeVisibility(true);
             _arrows[i].SetNewVelocity(_direction, ArrowSpeed);
             return;

@@ -4,7 +4,7 @@ namespace MCR_Engine.Objects;
 
 public class SpriteManager
     {
-        private readonly HashSet<Sprite> _sprites;
+        private readonly List<Sprite> _sprites;
         private readonly Scene _scene;
         private readonly Sprite?[,] _map;
         private double _deltaTime;
@@ -28,6 +28,12 @@ public class SpriteManager
             sprite.Sprites = this;
             _sprites.Add(sprite);
             return  sprite;
+        }
+        public Sprite Get(int index)
+        {
+            if (index < 0 || index >= _sprites.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+            return _sprites[index];
         }
         public bool SpriteOnScene(Sprite sprite) => _scene.ValidPixelCoordinates(sprite.X, sprite.Y);
         public Sprite? GetSpriteMapPixel(int x, int y) => _scene.ValidPixelCoordinates(x, y) ? _map[x, y] : throw new ArgumentException("The specified coordinates are invalid.");
@@ -67,7 +73,7 @@ public class SpriteManager
                 for (int i = 0; i < distance; i++)
                 {
                     int x = xStart + xAdd + (upDown ? i : 0), y = yStart + yAdd+ (!upDown ? i : 0);
-                    if (!_scene.ValidPixelCoordinates(x, y) || (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y].GetType())) && (!onlyWithCollision || _map[x, y].Collision)))
+                    if (!_scene.ValidPixelCoordinates(x, y) || (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y]!.GetType())) && (!onlyWithCollision || _map[x, y]!.Collision)))
                         quit = true;
                 }
             } while (!quit);
