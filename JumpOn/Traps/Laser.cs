@@ -42,7 +42,7 @@ public class Laser : Trap
     protected override bool IsSomeoneInTrap(out Entity? entity)
     {
         entity = null;
-        if (_laser.IsCollided(out Sprite? sprite, [typeof(Player)]))
+        if (_laser.IsExactCollision(out Sprite? sprite, [typeof(Player)]))
             entity = sprite as Entity;
         else return false;
         return true;

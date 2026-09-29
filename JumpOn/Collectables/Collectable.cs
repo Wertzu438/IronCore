@@ -24,7 +24,7 @@ public abstract class Collectable : Sprite
     public abstract void Update();
     protected bool IsPlayerTouching(out Player? player)
     {
-        if (IsCollided(out Sprite? sprite, [typeof(Player)]))
+        if (IsBordersCollision(out Sprite? sprite, [typeof(Player)]))
         {
             player = sprite as Player;
             return true;

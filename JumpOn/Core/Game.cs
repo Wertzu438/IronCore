@@ -50,13 +50,14 @@ public class Game
     }
     public void Play()
     {
-        Player p = (Player)_sprites.Add(new Player(10, 0, _textures, _input, _clock));
-        List<Entity> entities = Entity.LoadEntities(_sprites);
         List<Interactable> interactables = Interactable.LoadInteractables(_sprites);
         List<Trap> traps = Trap.LoadTraps(_sprites);
         List<Collectable> collectables = Collectable.LoadCollectables(_sprites);
         CheckPointManager checkPointManager = new CheckPointManager(_sprites, _centeredInfoBox);
+        (int x, int y) = checkPointManager.GetPlayerSpawnPosition();
+        Player p = (Player)_sprites.Add(new Player(x, y, _textures, _input, _clock));
         _camera.FollowedSprite = p;
+        List<Entity> entities = Entity.LoadEntities(_sprites);
         Stopwatch sw = Stopwatch.StartNew(), sw2 = Stopwatch.StartNew();
         double lastTime = sw.Elapsed.TotalSeconds;
         do
@@ -67,19 +68,13 @@ public class Game
             Interactable.Update(interactables);
             Trap.Update(traps);
             Collectable.Update(collectables);
-            Entity.Update(entities);
             _scene.Update(deltaTime);
+            Entity.Update(entities);
             if (!p.Alive)
                 checkPointManager.ResetPlayerToChekPoint(p);
             _clock.Update((int)sw2.ElapsedMilliseconds);
             sw2.Restart();
             _pause.Check();
         } while (true);
-    }
-    private void UpdateSideBar(Player player)
-    {
-        sideBar[0].UpdateContent([["!SPIELINFO"], [$"Name: {account.Name}", $"Level: {account.CurrentLevel+1}"], [$"Schlüssel: {goal.CollectedKeys}/{goal.KeysAmount}"]]);
-        sideBar[1].UpdateContent([["!SPIELER"], [$"Leben: {player.Health}/{Player.MaxHealth}"]]);
-        sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{PauseButtonKeyName}] - Pause", $"[{LeaveButtonKeyName}] - Verlassen"]]);
     }
 }

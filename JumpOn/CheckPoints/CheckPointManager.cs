@@ -15,17 +15,16 @@ public class CheckPointManager
     }
     public (int x, int y) GetPlayerSpawnPosition()
     {
-        foreach (var checkPoint in _checkPoints)
-        {
-            if (checkPoint.IsCollected)
-                return (checkPoint.X, checkPoint.Y);
-        }
-        throw new ArgumentException("No player spawn point found");
+        if (_checkPoints.Count < 0)
+            throw new ArgumentException("No player spawn point found");
+        _checkPoints[0].IsCollected = true;
+        return (_checkPoints[0].X, _checkPoints[0].Y);
     }
     public void ResetPlayerToChekPoint(Player player)
     {
         ShowInfoBox();
         CheckPoint nearestCheckPoint = GetNearestUnlockedCheckPoint(player.X, player.Y);
+        player.StopMovingX(); player.StopMovingY();
         player.X = nearestCheckPoint.X;
         player.Y = nearestCheckPoint.Y;
         player.Heal(double.MaxValue);

@@ -15,7 +15,7 @@ public class Spike : Trap
     protected override bool IsSomeoneInTrap(out Entity? entity)
     {
         entity = null;
-        if (IsCollided(out Sprite? sprite, [typeof(Player)]))
+        if (IsExactCollision(out Sprite? sprite, [typeof(Player)]))
             entity = sprite as Entity;
         else return false;
         return true;

@@ -93,7 +93,8 @@ public abstract class Sprite
     }
     public bool OnScene() => Sprites.SpriteOnScene(this);
     public int GetDistanceToNextSprite(Direction direction, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) => Sprites.GetDistanceToNextSprite(this, direction, onlySpritesWithCollision, startAtTop, searchFor);
-    public bool IsCollided(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, out collidedSprite, searchFor);
+    public bool IsBordersCollision(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, false, out collidedSprite, searchFor);
+    public bool IsExactCollision(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, true, out collidedSprite, searchFor);
     public void ChangeVisibility(bool? value = null) => _visible = value.HasValue ? value.Value : !_visible;
     public void StopMovingX() => _velocityX = 0;
     public void StopMovingY() => _velocityY = 0;
@@ -105,7 +106,7 @@ public abstract class Sprite
     {
         double xOld = _x;
         _x += xAdd;
-        if (!Collision || !IsCollided(out _))
+        if (!Collision || !IsBordersCollision(out _))
             return;
         StopMovingX();
         _x = xOld;
@@ -114,7 +115,7 @@ public abstract class Sprite
     {
         double yOld = _y;
         _y += yAdd;
-        if (!Collision || !IsCollided(out _))
+        if (!Collision || !IsBordersCollision(out _))
             return;
         StopMovingY();
         _y = yOld;

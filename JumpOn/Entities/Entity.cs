@@ -100,8 +100,8 @@ public abstract class Entity : Sprite
     }
     public static void Update(List<Entity> entities)
     {
-        foreach (Entity collectable in entities)
-            collectable.Update();
+        foreach (Entity entity in entities)
+            entity.Update();
     }
     public static List<Entity> LoadEntities(SpriteManager sprites) => sprites.GetAllSpritesOfType<Entity>();
     private static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);

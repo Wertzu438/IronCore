@@ -37,8 +37,9 @@ public class SpriteManager
         }
         public bool SpriteOnScene(Sprite sprite) => _scene.ValidPixelCoordinates(sprite.X, sprite.Y);
         public Sprite? GetSpriteMapPixel(int x, int y) => _scene.ValidPixelCoordinates(x, y) ? _map[x, y] : throw new ArgumentException("The specified coordinates are invalid.");
-        public bool Collision(Sprite searchingSprite, out Sprite? collidedSprite, Type[]? searchFor = null)
+        public bool Collision(Sprite searchingSprite, bool searchExact, out Sprite? collidedSprite, Type[]? searchFor = null)
         {
+            collidedSprite = null;
             foreach (var currentSprite in _sprites)
             {
                 if (searchFor is not null && !searchFor.Contains(currentSprite.GetType()))
@@ -47,12 +48,12 @@ public class SpriteManager
                     continue;
                 if (!currentSprite.Collision)
                     continue;
-                if (!SpritesOverlap(currentSprite, searchingSprite))
+                if (!SpriteBordersTouching(currentSprite, searchingSprite))
                     continue;
                 collidedSprite = currentSprite;
-                return true;
+                if (!searchExact || SpritesOverlap(currentSprite, searchingSprite))
+                    return true;
             }
-            collidedSprite = null;
             return false;
         }
         public int GetDistanceToNextSprite(Sprite sprite, Direction direction, bool onlyWithCollision, bool startAtTop,  Type[]? searchFor = null)

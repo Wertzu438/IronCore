@@ -50,7 +50,7 @@ public class ArrowMachine : Trap
     {
         foreach (TrapChildObject arrow in _arrows)
         {
-            if (!arrow.Visible || !arrow.IsCollided(out Sprite? sprite, [typeof(Player)]))
+            if (!arrow.Visible || !arrow.IsExactCollision(out Sprite? sprite, [typeof(Player)]))
                 continue;
             arrow.ChangeVisibility(false);
             entity = sprite as Entity;
