@@ -30,13 +30,7 @@ public class Account
         LevelStats? levelStats = _stats[level];
         if (levelStats.HasValue)
         {
-            if (levelStats.Value.LevelFinished)
-            {
-                if (time is null)
-                    return;
-                _stats[level] = new LevelStats(levelStats.Value.Tries, time);
-            }
-            else _stats[level] = new LevelStats(levelStats.Value.Tries + 1, time);
+            _stats[level] = new LevelStats(levelStats.Value.Tries + 1, time);
         }
         else _stats[level] = new LevelStats(1, time);
     }

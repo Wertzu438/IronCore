@@ -13,12 +13,13 @@ public class CheckPointManager
         _checkPoints = sprites.GetAllSpritesOfType<CheckPoint>();
         _infoBox = infoBox;
     }
-    public (int x, int y) GetPlayerSpawnPosition()
+    public void GetPlayerSpawnPosition(out int x, out int y)
     {
         if (_checkPoints.Count < 0)
             throw new ArgumentException("No player spawn point found");
         _checkPoints[0].IsCollected = true;
-        return (_checkPoints[0].X, _checkPoints[0].Y);
+        x = _checkPoints[0].X;
+        y = _checkPoints[0].Y;
     }
     public void ResetPlayerToChekPoint(Player player)
     {

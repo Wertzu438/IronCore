@@ -103,6 +103,11 @@ public abstract class Entity : Sprite
         foreach (Entity entity in entities)
             entity.Update();
     }
+    public static void ResetInteractable(List<Entity> entities)
+    {
+        foreach (Entity entity in entities)
+            entity.CurrentInteractable =  null;
+    }
     public static List<Entity> LoadEntities(SpriteManager sprites) => sprites.GetAllSpritesOfType<Entity>();
     private static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);
 }

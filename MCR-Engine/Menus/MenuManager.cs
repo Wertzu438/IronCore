@@ -21,7 +21,7 @@ public class MenuManager
         public void Add(Menu menu) => _menus.Add(menu);
         public ProgramState Launch(UIManager ui)
         {
-            ui.Clear(); ui.AddUIElement(_infoBox);
+            ui.Clear(); ui.Add(_infoBox);
             ProgramState newState = ProgramState.Menu;
             _infoBox.Visible = true;
             Type? screenType = null;

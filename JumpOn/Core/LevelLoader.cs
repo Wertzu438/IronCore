@@ -40,7 +40,7 @@ public static class LevelLoader
                     "ArrowMachine" => new ArrowMachine(x, y, Enum.Parse<Direction>(line[3]), int.Parse(line[4]), engine.Textures, clock),
                     "Spike" => new Spike(x, y, engine.Textures),
                     //COLLECTABLES
-                    "Goal" => new Goal(x, y, engine.Textures, scene.Sprites, engine.Input, mobileInfoBox),
+                    "Goal" => new Goal(x, y, engine.Textures, engine.Input, mobileInfoBox),
                     "Key" => new GameKey(x, y, engine.Textures),
                     "Medkit" => new Medkit(x, y, engine.Textures, engine.Input, mobileInfoBox),
                     "CheckPoint" => new CheckPoint(x, y, engine.Textures),

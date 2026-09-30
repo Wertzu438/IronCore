@@ -70,7 +70,7 @@ public class Input
                         key.Pressed = false;
                     }
                 }
-                Thread.Sleep(20);
+                Thread.Sleep(5);
             }
             _state = ProcessState.Stopped;
         }

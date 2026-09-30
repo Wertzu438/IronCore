@@ -47,7 +47,6 @@ public class Player : Entity
         if (Jump())
             SetNewVelocity(Direction.Up, 100);
         SetNewTexture(GetNewTexture());
-        CurrentInteractable = null;
     }
     private Direction GetDirection()
     {

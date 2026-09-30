@@ -5,76 +5,86 @@ using JumpOn.Entities;
 using JumpOn.Interactables;
 using JumpOn.Traps;
 using JumpOn.UI.InfoBoxes;
-using MCR_Engine;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
 using MCR_Engine.Objects;
 using MCR_Engine.Rendering.Output;
 using MCR_Engine.Rendering.UI;
-using Switch = JumpOn.Interactables.Switch;
 
 namespace JumpOn.Core;
 
 public class Game
 {
-    private readonly UIManager _ui;
-    private readonly Scene _scene;
-    private readonly Camera _camera;
-    private readonly SpriteManager _sprites;
-    private readonly Textures _textures;
-    private readonly Input _input;
-    private readonly PauseChecker _pause;
+    private readonly Engine _engine;
+    private readonly Account _account;
     private readonly Clock _clock;
-    private readonly UIElement[] sideBar;
-    private readonly MobileInfoBox _mobileInfoBox;
-    private readonly CenteredInfoBox _centeredInfoBox;
-    public Game(Engine engine)
+    private readonly List<Interactable> _interactables;
+    private readonly List<Trap> _traps;
+    private readonly List<Collectable> _collectables;
+    private readonly List<Entity> _entities;
+    private readonly CheckPointManager _checkPoints;
+    private readonly PauseChecker _pause;
+    private readonly UIElement[] _sideBar;
+    private readonly Player _player;
+    private readonly Goal _goal;
+    public Game(Engine engine, Account account)
     {
-        _input = engine.Input;
-        _ui = engine.UI;
-        _clock = new Clock();
-        _ui.AddUIElement(_mobileInfoBox= new MobileInfoBox());
-        _ui.AddUIElement(_centeredInfoBox = new CenteredInfoBox(_input)); 
-        sideBar = 
-        [
-            _ui.AddUIElement(new UIElement(19, 8, 2, 1, true)), 
-            _ui.AddUIElement(new UIElement(19, 6, 2, 10, true)), 
-            _ui.AddUIElement(new UIElement(19, 6, 2, 17, true))
-        ];
-        engine.SetScene(LevelLoader.Read("test.txt", engine, _mobileInfoBox, _clock));
-        _camera = engine.Camera;
-        _scene = engine.Scene;
-        _sprites = engine.Sprites;
-        _textures = engine.Textures;
-        _pause = new PauseChecker(_input, _centeredInfoBox);
+        _engine = engine;
+        _account = account;
+        CenteredInfoBox centeredInfoBox = (CenteredInfoBox)UI.Add(new CenteredInfoBox(Input));
+        MobileInfoBox mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
+        _clock = new Clock(); _pause = new PauseChecker(Input, centeredInfoBox);
+        _engine.SetScene(LevelLoader.Read("Scenes/test.txt", _engine, mobileInfoBox, _clock));
+        _interactables = Sprites.GetAllSpritesOfType<Interactable>();
+        _traps = Sprites.GetAllSpritesOfType<Trap>();
+        _collectables = Sprites.GetAllSpritesOfType<Collectable>();
+        _checkPoints = new CheckPointManager(Sprites, centeredInfoBox);
+        _checkPoints.GetPlayerSpawnPosition(out int playerX, out int playerY);
+        _player = (Player)Sprites.Add(new Player(playerX, playerY, Textures, Input, _clock));
+        _sideBar = [UI.Add(new UIElement(19, 6, 2, 1, true)), UI.Add(new UIElement(19, 6, 2, 8, true)), UI.Add(new UIElement(19, 6, 2, 15, true))];
+        _entities = Sprites.GetAllSpritesOfType<Entity>();
+        _goal = GetGoal();
+        Camera.FollowedSprite = _player;
     }
-    public void Play()
+    private Scene Scene => _engine.Scene;
+    private SpriteManager Sprites => _engine.Sprites;
+    private Input Input => _engine.Input;
+    private UIManager UI => _engine.UI;
+    private Textures Textures => _engine.Textures;
+    private Camera Camera => _engine.Camera;
+    public int Play()
     {
-        List<Interactable> interactables = Interactable.LoadInteractables(_sprites);
-        List<Trap> traps = Trap.LoadTraps(_sprites);
-        List<Collectable> collectables = Collectable.LoadCollectables(_sprites);
-        CheckPointManager checkPointManager = new CheckPointManager(_sprites, _centeredInfoBox);
-        (int x, int y) = checkPointManager.GetPlayerSpawnPosition();
-        Player p = (Player)_sprites.Add(new Player(x, y, _textures, _input, _clock));
-        _camera.FollowedSprite = p;
-        List<Entity> entities = Entity.LoadEntities(_sprites);
-        Stopwatch sw = Stopwatch.StartNew(), sw2 = Stopwatch.StartNew();
-        double lastTime = sw.Elapsed.TotalSeconds;
+        Stopwatch stopwatch = Stopwatch.StartNew();
         do
         {
-            double currentTime = sw.Elapsed.TotalSeconds;
-            double deltaTime = currentTime - lastTime;
-            lastTime = currentTime;
-            Interactable.Update(interactables);
-            Trap.Update(traps);
-            Collectable.Update(collectables);
-            _scene.Update(deltaTime);
-            Entity.Update(entities);
-            if (!p.Alive)
-                checkPointManager.ResetPlayerToChekPoint(p);
-            _clock.Update((int)sw2.ElapsedMilliseconds);
-            sw2.Restart();
+            double deltaTime = stopwatch.Elapsed.TotalSeconds;
+            _clock.Update((int)(deltaTime * 1000));
+            stopwatch.Restart();
+            Trap.Update(_traps);
+            Interactable.Update(_interactables);
+            Collectable.Update(_collectables);
+            Entity.Update(_entities);
+            Scene.Update(deltaTime);
+            Entity.ResetInteractable(_entities);
+            UpdateSideBar();
+            if (!_player.Alive || Input.Get("L").Pressed)
+                _checkPoints.ResetPlayerToChekPoint(_player);
             _pause.Check();
-        } while (true);
+        } while (!_goal.EndGame);
+        return _clock.PassedSeconds;
+    }
+    private Goal GetGoal()
+    {
+        List<Goal> goal = Sprites.GetAllSpritesOfType<Goal>();
+        if (goal.Count != 1)
+            throw new ArgumentException("Invalid amount of goals");
+        goal[0].Keys = Sprites.GetAllSpritesOfType<GameKey>();
+        return goal[0];
+    }
+    private void UpdateSideBar()
+    {
+        _sideBar[0].UpdateContent([["!SPIELINFO"], [$"Level: {_account.CurrentLevel+1}", $"Schlüssel: {_goal.CollectedKeysAmount}/{_goal.KeysAmount}"]]);
+        _sideBar[1].UpdateContent([["!SPIELER"], [$"Name: {_account.Name}", $"Leben: {_player.Health}/{Player.MaxHealth}"]]);
+        _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{'P'}] - Pause", $"[{'L'}] - Verlassen"]]);
     }
 }

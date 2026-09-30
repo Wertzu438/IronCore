@@ -34,7 +34,7 @@ public class UIManager
                 }
             }
         }
-        public UIElement AddUIElement(UIElement uiElement)
+        public UIElement Add(UIElement uiElement)
         {
             lock (_elements)
             {

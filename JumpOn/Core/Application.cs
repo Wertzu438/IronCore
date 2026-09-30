@@ -10,12 +10,13 @@ public class Application : IGameProject
 {
     private readonly Engine _engine;
     private readonly MenuManager _menus;
+    private readonly Account _account;
     public Application(Engine engine)
     {
-        Account accountpp = new Account("Wertzu", 6);
+        _account = new Account("Wertzu", 6);
         _engine = engine;
-        engine.Menus.Add(new MainMenu(accountpp, engine.Input));
-        engine.Menus.Add(new LevelMenu(accountpp, engine.Input));
+        engine.Menus.Add(new MainMenu(_account, engine.Input));
+        engine.Menus.Add(new LevelMenu(_account, engine.Input));
         engine.Menus.Add(new InfoMenu(engine.Input));
         _menus = engine.Menus;
     }
@@ -26,13 +27,15 @@ public class Application : IGameProject
     public ProgramState PlayGame()
     {
         _engine.UI.Clear();
-        Game game = new Game(_engine);
-        game.Play();
-        return ProgramState.Game;
+        Game game = new Game(_engine, _account);
+        _account.UpdateLevelStats(_account.CurrentLevel++, game.Play());
+        return ProgramState.Menu;
     }
     public ProgramState OpenMenu()
     {
-        _engine.SetScene(LevelLoader.Read("test.txt", _engine, new MobileInfoBox(), new Clock()));
+        Thread.Sleep(100);
+        _engine.UI.Clear();
+        _engine.SetScene(LevelLoader.Read("Scenes/test.txt", _engine, new MobileInfoBox(), new Clock()));
         return _menus.Launch(_engine.UI);
     }
     public static void Main(string[] args)
