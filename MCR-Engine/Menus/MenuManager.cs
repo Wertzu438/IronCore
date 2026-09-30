@@ -10,10 +10,9 @@ public class MenuManager
         private readonly List<Menu> _menus;
         internal MenuManager()
         {
-            _infoBox = new UIElement(MenuWidth, MenuHeight, InfoBoxX, InfoBoxY, false, true);
+            _infoBox = new UIElement(MenuWidth, MenuHeight, InfoBoxX, InfoBoxY, true, true);
             _menus = [];
         }
-        public UIElement InfoBox => _infoBox;
         public static int InfoBoxX => (Console.WindowWidth - 2) / 2 - MenuWidth / 2;
         public static int InfoBoxY => 2;
         public static int MenuWidth => Console.WindowWidth * MenuWidthPercent / 100;
@@ -23,16 +22,16 @@ public class MenuManager
         {
             ui.Clear(); ui.Add(_infoBox);
             ProgramState newState = ProgramState.Menu;
-            _infoBox.Visible = true;
             Type? screenType = null;
             do
             {
                 switch (newState)
                 {
-                    case ProgramState.Menu: newState = GetMenu(screenType).Launch(_infoBox, out screenType); break;
-                    case ProgramState.Editor: InfoBox.Visible = false; return ProgramState.Editor;
-                    case ProgramState.Game: InfoBox.Visible = false; return ProgramState.Game;
-                    case ProgramState.Quit: InfoBox.Visible = false; return ProgramState.Quit;
+                    case ProgramState.Menu: 
+                        _infoBox.Visible = true; newState = GetMenu(screenType).Launch(_infoBox, out screenType); break;
+                    case ProgramState.Editor: _infoBox.Visible = false; return ProgramState.Editor;
+                    case ProgramState.Game: _infoBox.Visible = false; return ProgramState.Game;
+                    case ProgramState.Quit: _infoBox.Visible = false; return ProgramState.Quit;
                     default: throw new NotImplementedException();
                 }
             } while (true);

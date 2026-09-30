@@ -45,13 +45,14 @@ public class Goal : Interactable
         }
     }
     public bool EndGame => _endGame;
+    private bool CollectedAllKeys => Collectable.AreAllCollected(_keys);
     protected override bool IsEntityInteracting(out Entity? entity)
     {
         if (_keys is null)
             throw new NullReferenceException("Keys cannot be null.");
         bool playerInteracting = base.IsEntityInteracting(out entity) && entity as Player is not null;
         UpdateInfoBox(playerInteracting);
-        if (!(playerInteracting && _interactingKey.Pressed && Collectable.AreAllCollected(_keys)))
+        if (!(playerInteracting && _interactingKey.Pressed && CollectedAllKeys))
             return false;
         if (_open)
         {
@@ -71,7 +72,12 @@ public class Goal : Interactable
             {
                 _infoBox.Show(this, X + 7, Y / 2, 16, 1, [[$"!{KeyName} - Durchgehen"]]);
             }
-            else _infoBox.Show(this, X + 7, Y / 2, 14, 1, [[$"!{KeyName} - Öffnen"]]);
+            else if(CollectedAllKeys)
+            {
+                _infoBox.Show(this, X + 7, Y / 2, 14, 1, [[$"!{KeyName} - Öffnen"]]);
+            }
+            else _infoBox.Show(this, X + 7, Y / 2, 13, 1, [[$"-Keys: {CollectedKeysAmount}/{KeysAmount}"]]);
+
         }
         else if (_infoBox.UsedBy == this)
         {

@@ -33,8 +33,6 @@ public class Application : IGameProject
     }
     public ProgramState OpenMenu()
     {
-        Thread.Sleep(100);
-        _engine.UI.Clear();
         _engine.SetScene(LevelLoader.Read("Scenes/test.txt", _engine, new MobileInfoBox(), new Clock()));
         return _menus.Launch(_engine.UI);
     }

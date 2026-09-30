@@ -43,6 +43,7 @@ public class Engine
                 ProgramState.Editor => game.OpenEditor(),
                 _ => throw new NotImplementedException($"Unknown ProgramState: {state}")
             };
+            Thread.Sleep(100);
         } while (state is not ProgramState.Quit);
         UpdateInputAction(ProcessAction.Stop);
         UpdateRenderAction(ProcessAction.Stop);
