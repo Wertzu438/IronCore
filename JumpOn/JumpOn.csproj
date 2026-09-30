@@ -10,5 +10,14 @@
     <ItemGroup>
       <ProjectReference Include="..\MCR-Engine\MCR-Engine.csproj" />
     </ItemGroup>
+    <Target Name="CopyApplicationData" AfterTargets="Build">
+        <Copy SourceFiles="@(AppDataFiles)"
+              DestinationFiles="@(AppDataFiles->'$(OutDir)%(RecursiveDir)%(Filename)%(Extension)')" />
+    </Target>
+
+    <ItemGroup>
+        <AppDataFiles Include="ApplicationData\**\*" />
+    </ItemGroup>
+
 
 </Project>

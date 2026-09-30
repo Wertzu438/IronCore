@@ -1,4 +1,0 @@
-500,250,clouds
-SolidObj,0,116,brickBlock,Right,90
-Ladder,0,0,4
-Bar,0,27,19

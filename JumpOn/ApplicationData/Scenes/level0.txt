@@ -16,8 +16,8 @@ SolidObj,170,73,1,metalWall,Down,9
 Switch,169,54
 SolidObj,176,33,2,brickBlock,Down,5
 SolidObj,142,33,2,brickBlock,Right,5
-Spike,23,36
-Spike,42,36
+Spike,23,36,1
+Spike,42,36,1
 Key,193,90
 Medkit,48,34
 SolidObj,208,90,2,brickBlock,Down,1

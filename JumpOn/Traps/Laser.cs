@@ -1,4 +1,5 @@
 ﻿using JumpOn.Entities;
+using JumpOn.Interactables;
 using MCR_Engine.Core;
 using MCR_Engine.Objects;
 
@@ -26,7 +27,7 @@ public class Laser : Trap
     protected override double Damage => EntityDamage;
     private int RayX => X + (Width / 2);
     private int RayY => Y + Height;
-    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextSprite(Direction.Down, true, true, [typeof(SolidObject)]) + 1);
+    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextSprite(Direction.Down, false, true, [typeof(SolidObject), typeof(Ladder)]) + 1);
     protected override void Update()
     {
         if (_lastMsChanged is 0)

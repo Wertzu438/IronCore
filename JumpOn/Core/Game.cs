@@ -27,14 +27,14 @@ public class Game
     private readonly UIElement[] _sideBar;
     private readonly Player _player;
     private readonly Goal _goal;
-    public Game(Engine engine, Account account)
+    public Game(Engine engine, Account account, int level)
     {
         _engine = engine;
         _account = account;
         CenteredInfoBox centeredInfoBox = (CenteredInfoBox)UI.Add(new CenteredInfoBox(Input));
         MobileInfoBox mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
         _clock = new Clock(); _pause = new PauseChecker(Input, centeredInfoBox);
-        _engine.SetScene(LevelLoader.Read("Scenes/test.txt", _engine, mobileInfoBox, _clock));
+        _engine.SetScene(LevelLoader.Read($"Scenes/level{level}.txt", _engine, mobileInfoBox, _clock));
         _interactables = Sprites.GetAllSpritesOfType<Interactable>();
         _traps = Sprites.GetAllSpritesOfType<Trap>();
         _collectables = Sprites.GetAllSpritesOfType<Collectable>();

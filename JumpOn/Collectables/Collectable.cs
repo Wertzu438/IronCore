@@ -8,7 +8,7 @@ namespace JumpOn.Collectables;
 public abstract class Collectable : Sprite
 {
     private bool _isCollected;
-    protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, texture, 0, false, true)
+    protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, texture, 1, false, true)
     {
         
     }

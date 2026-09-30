@@ -27,13 +27,14 @@ public class Application : IGameProject
     public ProgramState PlayGame()
     {
         _engine.UI.Clear();
-        Game game = new Game(_engine, _account);
-        _account.UpdateLevelStats(_account.CurrentLevel++, game.Play());
+        Game game = new Game(_engine, _account, _account.CurrentLevel);
+        _account.UpdateLevelStats(_account.CurrentLevel, game.Play());
+        _account.CurrentLevel++;
         return ProgramState.Menu;
     }
     public ProgramState OpenMenu()
     {
-        _engine.SetScene(LevelLoader.Read("Scenes/test.txt", _engine, new MobileInfoBox(), new Clock()));
+        _engine.SetScene(LevelLoader.Read("Scenes/level0.txt", _engine, new MobileInfoBox(), new Clock()));
         return _menus.Launch(_engine.UI);
     }
     public static void Main(string[] args)
