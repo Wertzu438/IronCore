@@ -38,7 +38,7 @@ public static class LevelLoader
                     //TRAPS
                     "Laser" => new Laser(x, y, int.Parse(line[3]), int.Parse(line[4]), engine.Textures, clock),
                     "ArrowMachine" => new ArrowMachine(x, y, Enum.Parse<Direction>(line[3]), int.Parse(line[4]), engine.Textures, clock),
-                    "Spike" => new Spike(x, y, engine.Textures),
+                    "Spike" => new Spike(x, y, engine.Textures, int.Parse(line[3])),
                     //COLLECTABLES
                     "Goal" => new Goal(x, y, engine.Textures, engine.Input, mobileInfoBox),
                     "Key" => new GameKey(x, y, engine.Textures),

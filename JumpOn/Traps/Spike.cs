@@ -8,7 +8,7 @@ public class Spike : Trap
 {
     private const double EntityDamage = 1.2;
     private const string TextureName = "spike";
-    public Spike(int x, int y, Textures textures) : base(x, y, textures.Get(TextureName))
+    public Spike(int x, int y, Textures textures, int textureExpansionAmount = 1) : base(x, y, GetTexture(textures.Get(TextureName), textureExpansionAmount))
     {
     }
     protected override double Damage => EntityDamage;
@@ -19,5 +19,9 @@ public class Spike : Trap
             entity = sprite as Entity;
         else return false;
         return true;
+    }
+    private static RGB?[,] GetTexture(RGB?[,] baseTexture, int amount)
+    {
+        return Textures.CreateExpansion(baseTexture, Direction.Right, amount);
     }
 }
