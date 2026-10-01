@@ -5,7 +5,7 @@ namespace MCR_Engine.Objects;
 
 public abstract class Sprite
 {
-    private const double DefaultGravity = 330, DefaultDeceleration = 60, MaxGravity = 100;
+    private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
     private readonly bool _collision, _gravity;
     private bool _visible;
     private int _layer;
@@ -24,6 +24,8 @@ public abstract class Sprite
     }
     public int Width => _texture.GetLength(0);
     public int Height => _texture.GetLength(1);
+    public double VelocityX => _velocityX;
+    public double VelocityY => _velocityY;
     public bool Collision => _collision && Visible;
     public bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
     public bool Visible => _visible;
@@ -44,8 +46,6 @@ public abstract class Sprite
         protected get => field ?? throw new InvalidOperationException("Sprite manager is not set."); set => field = value;
     }
     protected virtual bool Gravity => _gravity;
-    protected bool IsMovingOnX => _velocityX != 0;
-    protected bool IsMovingOnY => _velocityY != 0;
     public void UpdatePosition()
     {
         if (!Visible)
@@ -101,7 +101,7 @@ public abstract class Sprite
     public RGB? GetColor(int x, int y) => _texture[x, y];
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnSprite(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
-    protected bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0;
+    protected virtual bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0;
     private void TryMoveX(double xAdd)
     {
         double xOld = _x;
@@ -134,15 +134,17 @@ public abstract class Sprite
     }
     private void ApplyDeceleration()
     {
-        if (_velocityX > 0)
-            _velocityX = Math.Max(_velocityX - DefaultDeceleration * Sprites.DeltaTime, 0);
-        else if (_velocityX < 0)
-            _velocityX = Math.Min(_velocityX + DefaultDeceleration * Sprites.DeltaTime, 0);
-        
         if (_velocityY > 0)
             _velocityY = Math.Max(_velocityY - DefaultDeceleration * Sprites.DeltaTime, 0);
         else if (_velocityY < 0)
             _velocityY = Math.Min(_velocityY + DefaultDeceleration * Sprites.DeltaTime, 0);
+
+        bool inAir = !IsFloorBeneath();
+        
+        if (_velocityX > 0)
+            _velocityX = Math.Max(_velocityX - (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Sprites.DeltaTime, 0);
+        else if (_velocityX < 0)
+            _velocityX = Math.Min(_velocityX + (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Sprites.DeltaTime, 0);
     }
     private static double[] GetVelocitySteps(double velocity)
     {

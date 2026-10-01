@@ -15,10 +15,11 @@ public class PauseChecker
         _pauseKey = input.Get("P");
     }
 
-    public void Check()
+    public bool Check()
     {
         if (!_pauseKey.Pressed)
-            return;
+            return false;
         _infoBox.Show(24, 5, [["!PAUSIERT"], [$"-Fortfahren mit {CenteredInfoBox.ConfirmKeyName}"]], true);
+        return true;
     }
 }

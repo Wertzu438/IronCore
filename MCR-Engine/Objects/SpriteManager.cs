@@ -74,8 +74,13 @@ public class SpriteManager
                 for (int i = 0; i < distance; i++)
                 {
                     int x = xStart + xAdd + (upDown ? i : 0), y = yStart + yAdd+ (!upDown ? i : 0);
-                    if (!_scene.ValidPixelCoordinates(x, y) || (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y]!.GetType())) && (!onlyWithCollision || _map[x, y]!.Collision)))
+                    if (!_scene.ValidPixelCoordinates(x, y) || 
+                    (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y]!.GetType())) &&
+                    (!onlyWithCollision || _map[x, y]!.Collision)))
+                    {
                         quit = true;
+                        break;
+                    }
                 }
             } while (!quit);
             return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;

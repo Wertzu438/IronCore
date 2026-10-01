@@ -23,7 +23,7 @@ public class Ladder : Interactable
     public static bool IsEntityOnTopOfLadder(Entity entity)
     {
         int distance = entity.GetDistanceToNextSprite(Direction.Down, false, true, [typeof(Ladder)]);
-        return distance == entity.Height - 1 || distance == entity.Height - 2;
+        return distance == entity.Height - 2;
     }
     private static RGB?[,] CreateTexture(Textures textures, int amount) => Textures.CreateExpansion(textures.Get(TextureName), Direction.Down, amount);
 }

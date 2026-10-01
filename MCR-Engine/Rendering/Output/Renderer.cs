@@ -59,6 +59,7 @@ internal class Renderer
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
     private void Loop()
     {
+        Stopwatch stopwatch = Stopwatch.StartNew();
         while (_action is not ProcessAction.Stop)
         {
             while (_action is ProcessAction.Pause || _pairs is null)
@@ -67,6 +68,9 @@ internal class Renderer
                 Thread.Sleep(1000);
             }
             _state = ProcessState.Running;
+            double deltaTime = stopwatch.Elapsed.TotalSeconds;
+            stopwatch.Restart();
+            _camera.RecalculateOffset(deltaTime);
             _ui.UpdateMap();
             PixelPair[,] snapshotPairs = (PixelPair[,])_pairs.Clone();
             _output.Clear();

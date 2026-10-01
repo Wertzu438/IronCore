@@ -36,13 +36,10 @@ public class Player : Entity
     protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 20;
     protected override double HangingSpeed => 20;
-    private bool OnTopOfLadder => OnLadder && Ladder.IsEntityOnTopOfLadder(this);
     public override void Update()
     {
         if (!Alive)
             return;
-        if (!Gravity && OnLadder)
-            StopMovingY();
         _action = GetAction(GetDirection());
         if (Jump())
             SetNewVelocity(Direction.Up, 100);
@@ -98,7 +95,6 @@ public class Player : Entity
             return _hangingTextures[SetTextureIndex(_hangingTextures.Length, X)];
         throw new NotImplementedException();
     }
-
     private int SetTextureIndex(int textureCount, int coordinate)
     {
         if (!ChangeTexture(coordinate))
@@ -112,5 +108,5 @@ public class Player : Entity
         _textureInfo.LastCoordinateChanged = coordinate;
         return true;
     }
-    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && ((IsFloorBeneath() && Gravity) || OnTopOfLadder)) && !IsMovingOnY;
+    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && IsFloorBeneath()) && _action is not (PlayerAction.Climb or PlayerAction.Hang);
 }

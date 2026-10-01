@@ -58,7 +58,8 @@ public class Game
         do
         {
             double deltaTime = stopwatch.Elapsed.TotalSeconds;
-            _clock.Update((int)(deltaTime * 1000));
+            if (!_pause.Check() && deltaTime < 1)
+                _clock.Update((int)(deltaTime * 1000));
             stopwatch.Restart();
             Trap.Update(_traps);
             Interactable.Update(_interactables);
@@ -69,7 +70,6 @@ public class Game
             UpdateSideBar();
             if (!_player.Alive || Input.Get("L").Pressed)
                 _checkPoints.ResetPlayerToChekPoint(_player);
-            _pause.Check();
         } while (!_goal.EndGame);
         return _clock.PassedSeconds;
     }

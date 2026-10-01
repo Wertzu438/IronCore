@@ -27,8 +27,9 @@ public abstract class Entity : Sprite
     protected abstract double ClimbingSpeed { get; }
     protected abstract double HangingSpeed { get; }
     protected override bool Gravity => !(OnLadder || OnBar);
-    protected bool OnLadder => CurrentInteractable is Ladder;
-    protected bool OnBar => CurrentInteractable is Bar;
+    private bool OnLadder => CurrentInteractable is Ladder;
+    private bool OnBar => CurrentInteractable is Bar;
+    private bool OnTopOfLadder => Ladder.IsEntityOnTopOfLadder(this);
     public abstract void Update();
     public void Damage(double damage, bool critical)
     {
@@ -48,17 +49,24 @@ public abstract class Entity : Sprite
             _currentHealth = _maxHealth;
     }
     public void SetInteractable(Interactable? interactable) => CurrentInteractable = interactable;
+    protected override bool IsFloorBeneath() => base.IsFloorBeneath() || OnTopOfLadder;
     protected bool Walk(Direction direction)
     {
         if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             return false;
-        MoveOnX(direction, 220,WalkingSpeed);
+        MoveOnX(direction, 229, WalkingSpeed);
         return true;
     }
     protected bool Climb(Direction direction)
     {
+        if (!Gravity && OnLadder)
+            StopMovingY();
         if (!OnLadder || Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
+        {
+            if (OnTopOfLadder)
+                StopMovingY();
             return false;
+        }
         StopMovingX();
         ((Ladder)CurrentInteractable!).CenterEntity(this);
         MoveOnY(direction, ClimbingSpeed);
@@ -77,14 +85,13 @@ public abstract class Entity : Sprite
             Y += 2;
             return false;
         }
-        SetNewVelocity(direction, HangingSpeed);
+        MoveOnX(direction, 260, HangingSpeed);
         return true;
     }
     private void MoveOnX(Direction direction, double acceleration, double maxSpeed)
     {
         if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             throw new ArgumentException("Invalid direction");
-        //SetNewVelocity(direction, maxSpeed);
         AddVelocity(direction, acceleration, maxSpeed);
     }
     private void MoveOnY(Direction direction, double speed)
