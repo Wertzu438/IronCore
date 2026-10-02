@@ -37,14 +37,14 @@ public class Camera
                 return;
         }
         if (directions.Contains(Direction.Left))
-            _velocityX -= 100 * deltaTime;
+            _velocityX -= 70 * deltaTime;
         else if (directions.Contains(Direction.Right))
-            _velocityX += 100 * deltaTime;
+            _velocityX += 70 * deltaTime;
         if (directions.Contains(Direction.Up))
             _velocityY -= 100 * deltaTime;
         else if (directions.Contains(Direction.Down))
             _velocityY += 100 * deltaTime;
-        if (Math.Abs(_velocityX) > 50)
+        if (Math.Abs(_velocityX) > Math.Abs(_followedSprite.VelocityX))
         {
             _velocityX = Math.Clamp(_velocityX, -50, 50);
             directions.Remove(Direction.Left);
