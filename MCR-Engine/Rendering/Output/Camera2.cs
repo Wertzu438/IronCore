@@ -19,16 +19,16 @@ public class Camera
         _velocityX = 0; _velocityY = 0;
         _followedSprite = null;
     }
-    public int XOffset => (int)_xOffset;
-    public int YOffset => (int)_yOffset;
+    public int XOffset => (int)Math.Round(_xOffset);
+    public int YOffset => (int)Math.Round(_yOffset);
     public Sprite FollowedSprite
     {
         set =>  _followedSprite = value;
     }
     private int SpriteX => _followedSprite is null ? 0 : _followedSprite.X + _followedSprite.Width / 2;
     private int SpriteY => _followedSprite is null ? 0 : (_followedSprite.Y + _followedSprite.Height / 2) / 2;
-    private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityX) * 1.2;
-    private double SpriteVelocityY => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityY) * 1.2;
+    private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityX) * 1.1;
+    private double SpriteVelocityY => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityY) * 1.1;
     public void RecalculateOffset(double deltaTime)
     {
         if (_followedSprite is null)
@@ -39,7 +39,6 @@ public class Camera
         ReduceCameraSpeed(deltaTime);
         if (InDeadZone(directions))
         {
-            Debug.WriteLine("Camera is dead");
             return;
         }
         if (directions.Contains(Direction.Left))
