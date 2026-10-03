@@ -30,7 +30,6 @@ public class Scene
     public void Update(double deltaTime, bool renderAll = false)
     {
         Sprites.Update(deltaTime);
-        //_camera.RecalculateOffset(deltaTime);
         (int xStart, int xEnd, int yStart, int yEnd) = GetVisibleArea(renderAll);
         int backgroundWidth = BackgroundWidth, backgroundHeight = BackgroundHeight;
         for (int y = yStart; y < yEnd; y++)

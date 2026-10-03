@@ -36,6 +36,7 @@ public class Engine
         UpdateInputAction(ProcessAction.Start);
         do
         {
+            Thread.Sleep(1000);
             state = (state) switch 
             {
                 ProgramState.Menu => game.OpenMenu(),
@@ -43,7 +44,6 @@ public class Engine
                 ProgramState.Editor => game.OpenEditor(),
                 _ => throw new NotImplementedException($"Unknown ProgramState: {state}")
             };
-            Thread.Sleep(100);
         } while (state is not ProgramState.Quit);
         UpdateInputAction(ProcessAction.Stop);
         UpdateRenderAction(ProcessAction.Stop);

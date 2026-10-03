@@ -31,11 +31,11 @@ public abstract class Sprite
     public bool Visible => _visible;
     public int X
     {
-        get => (int)_x; set => _x = value; 
+        get => (int)Math.Round(_x); set => _x = value; 
     }
     public int Y
     {
-        get => (int)_y; set => _y = value; 
+        get => (int)Math.Round(_y); set => _y = value; 
     }
     public int Layer
     {

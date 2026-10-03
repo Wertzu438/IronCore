@@ -16,6 +16,7 @@ internal class Renderer
     private RGB _currentBackgroundColor;
     private ProcessAction? _action;
     private ProcessState _state;
+    private Scene _scene;
     public Renderer()
     {
         _output = new StringBuilder();
@@ -32,9 +33,14 @@ internal class Renderer
     public Camera Camera => _camera;
     public int PixelPairWidth => (_pairs is null ? Console.WindowWidth : _pairs.GetLength(0));
     public int PixelPairHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1));
+
     public Scene SetScene
     {
-        set => _pairs = CreatePairs(value);
+        set
+        {
+            _pairs = CreatePairs(value);
+            _scene = value;
+        }
     }
     public void ChangeAction(ProcessAction newAction)
     {
@@ -71,8 +77,8 @@ internal class Renderer
             double deltaTime = stopwatch.Elapsed.TotalSeconds;
             stopwatch.Restart();
             _camera.RecalculateOffset(deltaTime);
-            _ui.UpdateMap();
             PixelPair[,] snapshotPairs = (PixelPair[,])_pairs.Clone();
+            _ui.UpdateMap();
             _output.Clear();
             int startX = _camera.XOffset, startY = _camera.YOffset;
             int maxX = _camera.GetRenderBorderX(startX), maxY = _camera.GetRenderBorderY(startY);
