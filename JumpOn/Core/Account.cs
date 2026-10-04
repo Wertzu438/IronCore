@@ -18,7 +18,7 @@ public class Account
         this._currentLevel = 0;
     }
     public string Name => _name;
-    public int MaxLevel => 5;//GetMaxLevel();
+    public int MaxLevel => GetMaxLevel();
     public int CurrentLevel
     {
         get => _currentLevel;
