@@ -28,7 +28,19 @@ public class Application : IGameProject
     {
         _engine.UI.Clear();
         Game game = new Game(_engine, _account, _account.CurrentLevel);
-        _account.UpdateLevelStats(_account.CurrentLevel, game.Play());
+        try
+        {
+            _account.UpdateLevelStats(_account.CurrentLevel, game.Play());
+
+        }
+        catch (Exception e)
+        {
+            _engine.UpdateRenderAction(ProcessAction.Pause);
+            _engine.UpdateInputAction(ProcessAction.Pause);
+            Thread.Sleep(500);
+            Console.WriteLine(e);
+            Console.ReadKey(true);
+        }
         _account.CurrentLevel++;
         return ProgramState.Menu;
     }

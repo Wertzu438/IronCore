@@ -44,7 +44,7 @@ public class Game
         _sideBar = [UI.Add(new UIElement(19, 6, 2, 1, true)), UI.Add(new UIElement(19, 6, 2, 8, true)), UI.Add(new UIElement(19, 6, 2, 15, true))];
         _entities = Sprites.GetAllSpritesOfType<Entity>();
         _goal = GetGoal();
-        Camera.FollowedSprite = _player;
+        Camera.SetFollowedSprite(_player, 10, 10);
     }
     private Scene Scene => _engine.Scene;
     private SpriteManager Sprites => _engine.Sprites;

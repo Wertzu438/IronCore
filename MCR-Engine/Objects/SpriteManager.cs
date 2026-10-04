@@ -14,7 +14,7 @@ public class SpriteManager
             _scene = scene;
             _map = new Sprite?[_scene.Width, _scene.Height];
         }
-        public double DeltaTime => _deltaTime is not 0 ? _deltaTime : throw new InvalidOperationException("The delta time shouldn't be zero.");
+        public double DeltaTime => _deltaTime is not 0 ? _deltaTime : 0.1;
         public int Count => _sprites.Count;
         public void Update(double deltaTime)
         {
