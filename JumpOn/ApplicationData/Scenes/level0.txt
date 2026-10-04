@@ -19,7 +19,7 @@ SolidObj,142,33,2,brickBlock,Right,5
 Spike,23,36,1
 Spike,42,36,1
 Key,193,90
-Medkit,48,34
+Medkit,48,30
 SolidObj,208,90,2,brickBlock,Down,1
 CheckPoint,1,26
 Goal,8,86

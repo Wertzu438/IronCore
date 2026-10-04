@@ -36,7 +36,7 @@ public class Switch : Interactable
         UpdateInfoBox(playerInteracting);
         if (!playerInteracting || !_interactingKey.Pressed || _lastMsPulled + WaitingIntervalMs > _clock.PassedMilliSeconds)
             return false;
-        _connectedSprite.ChangeVisibility();
+        _camera.SetFollowedSpriteForTime(_connectedSprite, true);
         _lastMsPulled = _clock.PassedMilliSeconds;
         _pulled = !_pulled;
         SetNewTexture(GetCurrentTexture());

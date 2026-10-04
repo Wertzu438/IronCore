@@ -45,7 +45,7 @@ public class Goal : Interactable
         }
     }
     public bool EndGame => _endGame;
-    private bool CollectedAllKeys => Collectable.AreAllCollected(_keys);
+    private bool CollectedAllKeys => Collectable.AreAllCollected(_keys) || true;
     protected override bool IsEntityInteracting(out Entity? entity)
     {
         if (_keys is null)

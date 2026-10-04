@@ -36,7 +36,7 @@ public class Engine
         UpdateInputAction(ProcessAction.Start);
         do
         {
-            Thread.Sleep(1000);
+            Thread.Sleep(200);
             state = (state) switch 
             {
                 ProgramState.Menu => game.OpenMenu(),

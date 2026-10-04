@@ -35,6 +35,7 @@ public class Game
         MobileInfoBox mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
         _clock = new Clock(); _pause = new PauseChecker(Input, centeredInfoBox);
         _engine.SetScene(LevelLoader.Read($"Scenes/level{level}.txt", _engine, mobileInfoBox, _clock));
+        _engine.Scene.Update(1, true);
         _interactables = Sprites.GetAllSpritesOfType<Interactable>();
         _traps = Sprites.GetAllSpritesOfType<Trap>();
         _collectables = Sprites.GetAllSpritesOfType<Collectable>();

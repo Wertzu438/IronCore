@@ -1,4 +1,0 @@
-1000,200,clouds
-SolidObj,0,39,2,brickBlock,Right,700
-CheckPoint,1,27
-Goal,8,86

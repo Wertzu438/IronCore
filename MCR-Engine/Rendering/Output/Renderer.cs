@@ -16,7 +16,6 @@ internal class Renderer
     private RGB _currentBackgroundColor;
     private ProcessAction? _action;
     private ProcessState _state;
-    private Scene _scene;
     public Renderer()
     {
         _output = new StringBuilder();
@@ -33,14 +32,9 @@ internal class Renderer
     public Camera Camera => _camera;
     public int PixelPairWidth => (_pairs is null ? Console.WindowWidth : _pairs.GetLength(0));
     public int PixelPairHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1));
-
     public Scene SetScene
     {
-        set
-        {
-            _pairs = CreatePairs(value);
-            _scene = value;
-        }
+        set => _pairs = CreatePairs(value);
     }
     public void ChangeAction(ProcessAction newAction)
     {
