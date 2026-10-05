@@ -39,6 +39,7 @@ public abstract class Entity : Sprite
             throw new ArgumentException("Damage cannot be negative");
         if (_lastDamageTimeMs + DamageTickOffsetMs >= _clock.PassedMilliSeconds && !critical)
             return;
+        Flash(20);
         _currentHealth -= damage;
         _lastDamageTimeMs = _clock.PassedMilliSeconds;
     }
@@ -87,7 +88,7 @@ public abstract class Entity : Sprite
             Y += 2;
             return false;
         }
-        MoveOnX(direction, 260, HangingSpeed);
+        MoveOnX(direction, 100, HangingSpeed);
         return true;
     }
     protected bool GetFallDamage(out double fallDamage)
@@ -95,7 +96,6 @@ public abstract class Entity : Sprite
         if (VelocityY > 120 && IsFloorBeneath())
         {
             fallDamage = VelocityY / 100;
-            Flash(8, 40);
             return true;
         }
         fallDamage = 0;

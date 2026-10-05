@@ -48,11 +48,10 @@ public abstract class Sprite
     protected virtual bool Gravity => _gravity;
     public void UpdatePosition()
     {
-        if (!Visible)
-            return;
         if (Gravity) 
             HandleGravity();
-        if (!Move) return;
+        if (!Move) 
+            return;
         double[] velocityStepsX = GetVelocitySteps(_velocityX * Sprites.DeltaTime);
         double[] velocityStepsY = GetVelocitySteps(_velocityY * Sprites.DeltaTime);
         for (int i = 0; i < Math.Max(velocityStepsX.Length, velocityStepsY.Length); i++)
