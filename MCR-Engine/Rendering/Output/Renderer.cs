@@ -27,6 +27,7 @@ internal class Renderer
         _state = ProcessState.Ready;
         _pairs = null;
         _action = null;
+        _thread.Priority = ThreadPriority.AboveNormal;
     }
     public UIManager UI => _ui;
     public Camera Camera => _camera;
@@ -34,7 +35,11 @@ internal class Renderer
     public int PixelPairHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1));
     public Scene SetScene
     {
-        set => _pairs = CreatePairs(value);
+        set
+        {
+            _camera.ResetOffset();
+            _pairs = CreatePairs(value);
+        }
     }
     public void ChangeAction(ProcessAction newAction)
     {

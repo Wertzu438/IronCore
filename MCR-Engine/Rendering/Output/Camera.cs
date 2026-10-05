@@ -54,6 +54,12 @@ public class Camera
         if (Math.Abs(_velocityY) > _currentMaxVelocityY)
             _velocityY = (_velocityY < 0 ? -SpriteVelocityY : SpriteVelocityY);
     }
+
+    public void ResetOffset()
+    {
+        _xOffset = _yOffset = _velocityX = _velocityY = 0;
+        _followedSprite = null;
+    }
     public bool InView(int x, int y) => x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
     public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth, xOffset + Console.WindowWidth);
     public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight, yOffset + Console.WindowHeight - 1);

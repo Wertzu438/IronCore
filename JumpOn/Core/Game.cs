@@ -39,7 +39,7 @@ public class Game
         _interactables = Sprites.GetAllSpritesOfType<Interactable>();
         _traps = Sprites.GetAllSpritesOfType<Trap>();
         _collectables = Sprites.GetAllSpritesOfType<Collectable>();
-        _checkPoints = new CheckPointManager(Sprites, centeredInfoBox);
+        _checkPoints = new CheckPointManager(Sprites, centeredInfoBox, Camera);
         _checkPoints.GetPlayerSpawnPosition(out int playerX, out int playerY);
         _player = (Player)Sprites.Add(new Player(playerX, playerY, Textures, Input, _clock));
         _sideBar = [UI.Add(new UIElement(19, 6, 2, 1, true)), UI.Add(new UIElement(19, 6, 2, 8, true)), UI.Add(new UIElement(19, 6, 2, 15, true))];

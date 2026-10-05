@@ -13,6 +13,7 @@ public abstract class Entity : Sprite
     private readonly Clock _clock;
     private double _currentHealth;
     private int _lastDamageTimeMs;
+    private int _fallHeight;
     protected Entity(int x, int y, RGB?[,] texture, int maxHealth, Clock clock) : base(x, y, texture, 1, true, true)
     {
         _maxHealth = maxHealth;
@@ -20,6 +21,7 @@ public abstract class Entity : Sprite
         _lastDamageTimeMs = 0;
         CurrentInteractable = null;
         _clock = clock;
+        _fallHeight = 0;
     }
     public bool Alive => _currentHealth > 0;
     public double Health => Alive ?  _currentHealth : 0;
@@ -88,6 +90,17 @@ public abstract class Entity : Sprite
         MoveOnX(direction, 260, HangingSpeed);
         return true;
     }
+    protected bool GetFallDamage(out double fallDamage)
+    {
+        if (VelocityY > 120 && IsFloorBeneath())
+        {
+            fallDamage = VelocityY / 100;
+            Flash(8, 40);
+            return true;
+        }
+        fallDamage = 0;
+        return false;
+    }
     private void MoveOnX(Direction direction, double acceleration, double maxSpeed)
     {
         if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
@@ -99,11 +112,6 @@ public abstract class Entity : Sprite
         if (Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
             throw new ArgumentException("Invalid direction");
         SetNewVelocity(direction, speed);
-    }
-    private bool GetFallDamage(out double fallDamage)
-    {
-        fallDamage = 0;
-        return false;
     }
     public static void Update(List<Entity> entities)
     {

@@ -31,7 +31,6 @@ public class Application : IGameProject
         try
         {
             _account.UpdateLevelStats(_account.CurrentLevel, game.Play());
-
         }
         catch (Exception e)
         {
@@ -47,6 +46,7 @@ public class Application : IGameProject
     public ProgramState OpenMenu()
     {
         _engine.SetScene(LevelLoader.Read("Scenes/level0.txt", _engine, new MobileInfoBox(), new Clock()));
+        _engine.Scene.Update(0, true);
         return _menus.Launch(_engine.UI);
     }
     public static void Main(string[] args)

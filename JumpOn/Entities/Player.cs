@@ -40,6 +40,8 @@ public class Player : Entity
     {
         if (!Alive)
             return;
+        if (GetFallDamage(out double fallDamage))
+            Damage(fallDamage, true);
         _action = GetAction(GetDirection());
         if (Jump())
             SetNewVelocity(Direction.Up, 100);

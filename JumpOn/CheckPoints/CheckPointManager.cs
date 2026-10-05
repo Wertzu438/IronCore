@@ -1,6 +1,7 @@
 ﻿using JumpOn.Entities;
 using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Objects;
+using MCR_Engine.Rendering.Output;
 
 namespace JumpOn.CheckPoints;
 
@@ -8,10 +9,12 @@ public class CheckPointManager
 {
     private readonly List<CheckPoint> _checkPoints;
     private readonly CenteredInfoBox _infoBox;
-    public CheckPointManager(SpriteManager sprites, CenteredInfoBox infoBox)
+    private readonly Camera _camera;
+    public CheckPointManager(SpriteManager sprites, CenteredInfoBox infoBox, Camera camera)
     {
         _checkPoints = sprites.GetAllSpritesOfType<CheckPoint>();
         _infoBox = infoBox;
+        _camera = camera;
     }
     public void GetPlayerSpawnPosition(out int x, out int y)
     {
@@ -29,6 +32,7 @@ public class CheckPointManager
         player.X = nearestCheckPoint.X;
         player.Y = nearestCheckPoint.Y;
         player.Heal(double.MaxValue);
+        _camera.SetFollowedSprite(player, 0, 0);
     }
     private CheckPoint GetNearestUnlockedCheckPoint(int x, int y)
     {
