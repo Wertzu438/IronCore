@@ -1,16 +1,19 @@
-﻿using MCR_Engine.Objects;
+﻿using System.Diagnostics;
+using MCR_Engine.Objects;
 using MCR_Engine.Rendering.Output;
 using MCR_Engine.Core;
 
 namespace MCR_Engine.Core;
-
 public class Scene
 {
+    public static object Frame = new object();
     private readonly int _width, _height;
     private readonly Pixel[,] _pixels;
     private readonly RGB[,] _backgroundTexture;
     private readonly SpriteManager _sprites;
     private readonly Camera _camera;
+    private int frames = 0;
+    private readonly Stopwatch fpsTimer = Stopwatch.StartNew();
     public Scene(Camera camera, int width, int height, RGB[,] backgroundTexture)
     {
         if (height % 2 != 0)
@@ -29,8 +32,13 @@ public class Scene
     private int BackgroundHeight => _backgroundTexture.GetLength(1);
     public void Update(double deltaTime, bool renderAll = false)
     {
+        int xStart, yStart, xEnd, yEnd;
+        lock (_camera)
+        {
+            _camera.RecalculateOffset(deltaTime);
+            (xStart, xEnd, yStart, yEnd) = GetVisibleArea(renderAll);
+        }
         Sprites.Update(deltaTime);
-        (int xStart, int xEnd, int yStart, int yEnd) = GetVisibleArea(renderAll);
         int backgroundWidth = BackgroundWidth, backgroundHeight = BackgroundHeight;
         for (int y = yStart; y < yEnd; y++)
         {

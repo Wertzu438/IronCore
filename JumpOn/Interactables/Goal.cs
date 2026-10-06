@@ -28,15 +28,16 @@ public class Goal : Interactable
         get
         {
             int sum = 0;
-            foreach (var key in _keys)
+            foreach (var key in Keys)
                 if (key.IsCollected)
                     sum++;
             return sum;
         }
     }
-    public int KeysAmount => _keys.Count;
+    public int KeysAmount => Keys.Count;
     public List<GameKey> Keys
     {
+        get => _keys ?? throw new NullReferenceException("Keys cannot be null.");
         set
         {
             if (_keys is not null)
@@ -45,11 +46,9 @@ public class Goal : Interactable
         }
     }
     public bool EndGame => _endGame;
-    private bool CollectedAllKeys => Collectable.AreAllCollected(_keys) || true;
+    private bool CollectedAllKeys => Collectable.AreAllCollected(Keys);
     protected override bool IsEntityInteracting(out Entity? entity)
     {
-        if (_keys is null)
-            throw new NullReferenceException("Keys cannot be null.");
         bool playerInteracting = base.IsEntityInteracting(out entity) && entity as Player is not null;
         UpdateInfoBox(playerInteracting);
         if (!(playerInteracting && _interactingKey.Pressed && CollectedAllKeys))
@@ -77,7 +76,6 @@ public class Goal : Interactable
                 _infoBox.Show(this, X + 7, Y / 2, 14, 1, [[$"!{KeyName} - Öffnen"]]);
             }
             else _infoBox.Show(this, X + 7, Y / 2, 13, 1, [[$"-Keys: {CollectedKeysAmount}/{KeysAmount}"]]);
-
         }
         else if (_infoBox.UsedBy == this)
         {

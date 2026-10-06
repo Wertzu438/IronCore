@@ -36,7 +36,7 @@ public class Switch : Interactable
         UpdateInfoBox(playerInteracting);
         if (!playerInteracting || !_interactingKey.Pressed || _lastMsPulled + WaitingIntervalMs > _clock.PassedMilliSeconds)
             return false;
-        _camera.SetFollowedSpriteForTime(_connectedSprite, true);
+        SwipeCameraOnConnectedSprite();
         _lastMsPulled = _clock.PassedMilliSeconds;
         _pulled = !_pulled;
         SetNewTexture(GetCurrentTexture());
@@ -54,4 +54,13 @@ public class Switch : Interactable
         }
     }
     private RGB?[,] GetCurrentTexture() => _pulled ? _textures[1] : _textures[0];
+    private async Task SwipeCameraOnConnectedSprite()
+    {
+        Sprite lastSprite = _camera.FollowedSprite;
+        await _camera.SetFollowedSprite(_connectedSprite, 0, 0);
+        await Task.Delay(300); 
+        _connectedSprite.ChangeVisibility(); 
+        await Task.Delay(300);
+        await _camera.SetFollowedSprite(lastSprite, 0, 0);
+    }
 }

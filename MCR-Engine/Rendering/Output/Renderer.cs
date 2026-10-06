@@ -20,8 +20,8 @@ internal class Renderer
     {
         _output = new StringBuilder();
         _thread = new Thread(Loop);
-        //_camera = new Camera(this);
-        //_ui = new UIManager(this);
+        _camera = new Camera(this);
+        _ui = new UIManager(this);
         _currentBackgroundColor = default;
         _currentForegroundColor = default;
         _state = ProcessState.Ready;
@@ -64,23 +64,24 @@ internal class Renderer
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
     private void Loop()
     {
-        Stopwatch stopwatch = Stopwatch.StartNew();
+        int frames = 0;
+        Stopwatch fpsTimer = Stopwatch.StartNew();
         while (_action is not ProcessAction.Stop)
         {
             while (_action is ProcessAction.Pause || _pairs is null)
             {
                 _state = ProcessState.Paused;
                 Thread.Sleep(1000);
-                stopwatch.Restart();
             }
-            double deltaTime = stopwatch.Elapsed.TotalSeconds;
-            stopwatch.Restart();
             _state = ProcessState.Running;
-            _camera.RecalculateOffset(deltaTime);
-            _ui.UpdateMap();
             _output.Clear();
-            int startX = _camera.XOffset, startY = _camera.YOffset;
-            int maxX = _camera.GetRenderBorderX(startX), maxY = _camera.GetRenderBorderY(startY);
+            int startX, startY, maxX, maxY;
+            lock (_camera)
+            {
+                _ui.UpdateMap();
+                startX = _camera.XOffset; startY = _camera.YOffset;
+                maxX = _camera.GetRenderBorderX(startX); maxY = _camera.GetRenderBorderY(startY);
+            }
             for (int y = startY; y < maxY; y++)
             {
                 for (int x = startX; x < maxX; x++)
@@ -88,6 +89,13 @@ internal class Renderer
                 _output.AppendLine();
             }
             RenderStringBuilder();
+            frames++;
+            if (fpsTimer.ElapsedMilliseconds >= 1000)
+            {
+                Console.Title = $"FPS: {frames}";
+                frames = 0;
+                fpsTimer.Restart();
+            }
         }
         _state = ProcessState.Stopped;
     }

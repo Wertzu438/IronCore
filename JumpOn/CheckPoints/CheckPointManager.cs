@@ -9,16 +9,14 @@ public class CheckPointManager
 {
     private readonly List<CheckPoint> _checkPoints;
     private readonly CenteredInfoBox _infoBox;
-    private readonly Camera _camera;
-    public CheckPointManager(SpriteManager sprites, CenteredInfoBox infoBox, Camera camera)
+    public CheckPointManager(SpriteManager sprites, CenteredInfoBox infoBox)
     {
         _checkPoints = sprites.GetAllSpritesOfType<CheckPoint>();
         _infoBox = infoBox;
-        _camera = camera;
     }
     public void GetPlayerSpawnPosition(out int x, out int y)
     {
-        if (_checkPoints.Count < 0)
+        if (_checkPoints.Count < 1)
             throw new ArgumentException("No player spawn point found");
         _checkPoints[0].IsCollected = true;
         x = _checkPoints[0].X;
@@ -32,7 +30,6 @@ public class CheckPointManager
         player.X = nearestCheckPoint.X;
         player.Y = nearestCheckPoint.Y;
         player.Heal(double.MaxValue);
-        _camera.SetFollowedSprite(player, 0, 0);
     }
     private CheckPoint GetNearestUnlockedCheckPoint(int x, int y)
     {

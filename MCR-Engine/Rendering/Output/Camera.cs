@@ -22,9 +22,10 @@ public class Camera
         _followedSprite = null;
         _cinematicCamera = false;
     }
+    public Sprite FollowedSprite => _followedSprite ?? throw new InvalidOperationException("Followed sprite is not set");
     public int XOffset => (int)Math.Round(_xOffset);
     public int YOffset => (int)Math.Round(_yOffset);
-    private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityX);
+    private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityX) * 1.05;
     private double SpriteVelocityY => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityY) / 2;
     public void RecalculateOffset(double deltaTime)
     {
@@ -47,7 +48,11 @@ public class Camera
         _velocityY += GetVelocityYAdd(directions, deltaTime);
 
         if (!InView(GetSpriteX(_followedSprite), GetSpriteY(_followedSprite)))
+        {
+            if (!_cinematicCamera)
+                SetFollowedSprite(_followedSprite, _currentMaxVelocityX, _currentMaxVelocityY);
             return;
+        }
         
         if (Math.Abs(_velocityX) > _currentMaxVelocityX)
             _velocityX = (_velocityX < 0 ? -SpriteVelocityX : SpriteVelocityX);
@@ -147,18 +152,8 @@ public class Camera
         _currentMaxVelocityX = _currentMaxVelocityY = double.PositiveInfinity; 
         while (!InDeadZone(_followedSprite))
             await Task.Delay(50);
-        _velocityX = _velocityY = 0;
         _currentMaxVelocityX = maxVelocityX; _currentMaxVelocityY = maxVelocityY;
+        _velocityX = _velocityY = 0;
         _cinematicCamera = false;
-    }
-    public async Task SetFollowedSpriteForTime(Sprite sprite, bool changeVisibility)
-    {
-        Sprite lastSprite = _followedSprite!;
-        await SetFollowedSprite(sprite, 0, 0);
-        await Task.Delay(300); 
-        if (changeVisibility)
-            sprite.ChangeVisibility(); 
-        await Task.Delay(300);
-        await SetFollowedSprite(lastSprite, 0, 0);
     }
 }
