@@ -66,8 +66,8 @@ public class Camera
         _followedSprite = null;
     }
     public bool InView(int x, int y) => x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
-    public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth, xOffset + Console.WindowWidth);
-    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight, yOffset + Console.WindowHeight - 1);
+    public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth - 1, xOffset + Console.WindowWidth);
+    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight - 2, yOffset + Console.WindowHeight - 1);
     private List<Direction> GetCameraDirection(Sprite sprite)
     {
         List<Direction> directions = [];
