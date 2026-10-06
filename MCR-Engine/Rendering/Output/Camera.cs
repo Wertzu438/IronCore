@@ -7,7 +7,7 @@ namespace MCR_Engine.Rendering.Output;
 public class Camera
 {
     private const double DefaultAccelerationX = 220, DefaultAccelerationY = 300;
-    private const double DefaultDecelerationX = 20, DefaultDecelerationY = 150;
+    private const double DefaultDecelerationX = 40, DefaultDecelerationY = 150;
     private readonly Renderer _render;
     private Sprite? _followedSprite;
     private double _xOffset, _yOffset;
@@ -24,7 +24,7 @@ public class Camera
     }
     public int XOffset => (int)Math.Round(_xOffset);
     public int YOffset => (int)Math.Round(_yOffset);
-    private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityX) * 1.1;
+    private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityX);
     private double SpriteVelocityY => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityY) / 2;
     public void RecalculateOffset(double deltaTime)
     {

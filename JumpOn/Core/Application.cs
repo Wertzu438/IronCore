@@ -22,7 +22,8 @@ public class Application : IGameProject
     }
     public ProgramState OpenEditor()
     {
-        throw new NotImplementedException();
+        new MapEditor(_engine).Run();
+        return ProgramState.Menu;
     }
     public ProgramState PlayGame()
     {

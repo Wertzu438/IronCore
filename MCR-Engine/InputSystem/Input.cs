@@ -32,7 +32,7 @@ public class Input
         }
         public void AddKey(string keyName, int keyCode)
         {
-            lock (this)
+            lock (_keys)
             {
                 if (_keys.ContainsKey(keyName))
                     throw new ArgumentException("Key already exists");
@@ -41,7 +41,7 @@ public class Input
         }
         public Key Get(string keyName)
         {
-            lock (this)
+            lock (_keys)
             {
                 if (_keys.TryGetValue(keyName, out Key key))
                     return key;
@@ -58,7 +58,7 @@ public class Input
                     Thread.Sleep(1000);
                 }
                 _state = ProcessState.Running;
-                lock (this)
+                lock (_keys)
                 {
                     foreach (Key key in _keys.Values)
                     {

@@ -1,4 +1,5 @@
-﻿using MCR_Engine.Core;
+﻿using System.Diagnostics;
+using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
 using MCR_Engine.Objects;
 using MCR_Engine.Rendering.Output;
@@ -15,14 +16,26 @@ public class MapEditor
     private int _selectedSpriteIndex;
     public MapEditor(Engine engine)
     {
+        _selectedSpriteIndex = 3;
         _sprites = engine.Sprites;
         _movementKeys = [engine.Input.Get("A"), engine.Input.Get("D"), engine.Input.Get("W"), engine.Input.Get("S")];
+        _selectedSprite = GetSelectedSprite(_selectedSpriteIndex);
+        _camera = engine.Camera;
+        _scene = engine.Scene;
     }
     public void Run()
     {
-        Direction direction = GetMovingDirection();
-        if (direction is not Direction.None)
-            _selectedSprite.SetNewVelocity(direction, 40);
+        _camera.SetFollowedSprite(_selectedSprite, 0, 0);
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        do
+        {
+            double deltaTime = stopwatch.Elapsed.TotalSeconds;
+            stopwatch.Restart();
+            Direction direction = GetMovingDirection();
+            if (direction is not Direction.None)
+                _selectedSprite.AddVelocity(direction, 200, 80);
+            _scene.Update(deltaTime, true);
+        } while (true);
     }
     private Direction GetMovingDirection()
     {

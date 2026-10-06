@@ -60,7 +60,6 @@ public abstract class Sprite
                 TryMoveY(velocityStepsY[i]);
             if (i < velocityStepsX.Length)
                 TryMoveX(velocityStepsX[i]);
-            break;
         }
         ApplyDeceleration();
     }
@@ -105,7 +104,7 @@ public abstract class Sprite
     {
         double xOld = _x;
         _x += xAdd;
-        if (!Collision || !IsBordersCollision(out _))
+        if (!_collision || !IsBordersCollision(out _))
             return;
         StopMovingX();
         _x = xOld;
@@ -114,7 +113,7 @@ public abstract class Sprite
     {
         double yOld = _y;
         _y += yAdd;
-        if (!Collision || !IsBordersCollision(out _))
+        if ((!_collision && !Gravity) || !IsBordersCollision(out _))
             return;
         StopMovingY();
         _y = yOld;

@@ -66,7 +66,7 @@ public class Game
             Interactable.Update(_interactables);
             Collectable.Update(_collectables);
             Entity.Update(_entities);
-            Scene.Update(deltaTime);
+            Scene.Update(deltaTime, true);
             Entity.ResetInteractable(_entities);
             UpdateSideBar();
             if (!_player.Alive || Input.Get("L").Pressed)

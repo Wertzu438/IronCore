@@ -20,8 +20,8 @@ internal class Renderer
     {
         _output = new StringBuilder();
         _thread = new Thread(Loop);
-        _camera = new Camera(this);
-        _ui = new UIManager(this);
+        //_camera = new Camera(this);
+        //_ui = new UIManager(this);
         _currentBackgroundColor = default;
         _currentForegroundColor = default;
         _state = ProcessState.Ready;
@@ -71,12 +71,12 @@ internal class Renderer
             {
                 _state = ProcessState.Paused;
                 Thread.Sleep(1000);
+                stopwatch.Restart();
             }
-            _state = ProcessState.Running;
             double deltaTime = stopwatch.Elapsed.TotalSeconds;
             stopwatch.Restart();
+            _state = ProcessState.Running;
             _camera.RecalculateOffset(deltaTime);
-            PixelPair[,] snapshotPairs = (PixelPair[,])_pairs.Clone();
             _ui.UpdateMap();
             _output.Clear();
             int startX = _camera.XOffset, startY = _camera.YOffset;
@@ -84,7 +84,7 @@ internal class Renderer
             for (int y = startY; y < maxY; y++)
             {
                 for (int x = startX; x < maxX; x++)
-                    AppendPair(snapshotPairs[x, y]);
+                    AppendPair(_pairs[x, y]);
                 _output.AppendLine();
             }
             RenderStringBuilder();

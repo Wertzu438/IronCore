@@ -139,7 +139,7 @@ public class SpriteManager
             {
                 for (int x = 0; x < s1.Width; x++)
                 {
-                    if (s2.CoordinatesOnSprite(s1.X + x, s1.Y + y) && s2.GetColor(s1.X - s2.X + x, s1.Y - s2.Y + y) != null)
+                    if (s1.GetColor(x, y) != null && s2.CoordinatesOnSprite(s1.X + x, s1.Y + y) && s2.GetColor(s1.X - s2.X + x, s1.Y - s2.Y + y) != null)
                         return true;
                 }
             }
