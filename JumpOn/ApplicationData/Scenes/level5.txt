@@ -1,4 +1,4 @@
-350,200,clouds
+350,200,clouds2
 SolidObj,0,38,2,metalPlatform,Right,6
 SolidObj,0,42,2,brickBlock,Down,11
 SolidObj,8,42,2,brickBlock,Right,5

@@ -25,6 +25,17 @@ public class Scene
         _sprites = new SpriteManager(this);
         _pixels = Create();
     }
+    public Scene(Scene scene)
+    {
+        _width = scene.Width; 
+        _height = scene.Height;
+        _camera = scene._camera;
+        _pixels = Create();
+        foreach (Sprite sprite in Sprites)
+        {
+            _sprites.Add(sprite);
+        }
+    }
     public SpriteManager Sprites => _sprites;
     public int Width => _width;
     public int Height => _height;

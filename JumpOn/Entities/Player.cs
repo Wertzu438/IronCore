@@ -26,7 +26,7 @@ public class Player : Entity
         [
             textures.Get("playerWalk_1"), textures.Get("playerWalk_2"),
             Textures.MirrorLeftRight(textures.Get("playerWalk_1")),
-            Textures.MirrorLeftRight(textures.Get("playerWalk_2"))
+            Textures.MirrorLeftRight(textures.Get("playerWalk_2")),
         ];
         _climbingTextures = [textures.Get("playerLadder_1"), textures.Get("playerLadder_2")];
         _hangingTextures = [textures.Get("playerBar_1"), textures.Get("playerBar_2")];
@@ -88,7 +88,7 @@ public class Player : Entity
         if (_action is PlayerAction.StandRight)
             return _standingTextures[0];
         if (_action is PlayerAction.WalkRight)
-            return _walkingTextures[2 + SetTextureIndex(_walkingTextures.Length / 2, X)];
+            return _walkingTextures[(_walkingTextures.Length / 2) + SetTextureIndex(_walkingTextures.Length / 2, X)];
         if (_action is PlayerAction.WalkLeft)
             return _walkingTextures[SetTextureIndex(_walkingTextures.Length / 2, X)];
         if (_action is PlayerAction.Climb)

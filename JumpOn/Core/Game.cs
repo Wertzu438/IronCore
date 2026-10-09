@@ -71,6 +71,7 @@ public class Game
             UpdateSideBar();
             if (!_player.Alive || Input.Get("L").Pressed)
                 _checkPoints.ResetPlayerToChekPoint(_player);
+            Debug.WriteLine("SCENE");
         } while (!_goal.EndGame && !Input.Get("Up").Pressed);
         return _clock.PassedSeconds;
     }

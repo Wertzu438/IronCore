@@ -1,4 +1,4 @@
-450,200,clouds
+450,200,clouds2
 SolidObj,0,120,2,brickBlock,Right,13
 SolidObj,104,120,2,dirtBlock,Right,14
 SolidObj,96,128,2,brickBlock,Right,16

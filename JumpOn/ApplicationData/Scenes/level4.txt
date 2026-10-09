@@ -1,4 +1,4 @@
-350,200,clouds
+350,200,clouds2
 SolidObj,-1,40,2,dirtBlock,Right,13
 Decoration,14,33,1,flowers,Right,5
 Decoration,84,26,4,tree1,Down,1

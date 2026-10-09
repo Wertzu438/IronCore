@@ -64,8 +64,6 @@ internal class Renderer
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
     private void Loop()
     {
-        int frames = 0;
-        Stopwatch fpsTimer = Stopwatch.StartNew();
         while (_action is not ProcessAction.Stop)
         {
             while (_action is ProcessAction.Pause || _pairs is null)
@@ -89,13 +87,7 @@ internal class Renderer
                 _output.AppendLine();
             }
             RenderStringBuilder();
-            frames++;
-            if (fpsTimer.ElapsedMilliseconds >= 1000)
-            {
-                Console.Title = $"FPS: {frames}";
-                frames = 0;
-                fpsTimer.Restart();
-            }
+            Debug.WriteLine("RENDER");
         }
         _state = ProcessState.Stopped;
     }
@@ -107,13 +99,13 @@ internal class Renderer
     private void AppendPair(PixelPair pair)
     {
         RGB rgb = pair.UpperRGB;
-        if (!RGB.SameValue(rgb, _currentForegroundColor))
+        if (!rgb.Equals(_currentForegroundColor))
         {
             _output.Append($"\e[38;2;{rgb.Red};{rgb.Green};{rgb.Blue}m");
             _currentForegroundColor = rgb;
         }
         rgb = pair.LowerRGB;
-        if (!RGB.SameValue(rgb, _currentBackgroundColor))
+        if (!rgb.Equals(_currentBackgroundColor))
         {
             _output.Append($"\e[48;2;{rgb.Red};{rgb.Green};{rgb.Blue}m");
             _currentBackgroundColor = rgb;

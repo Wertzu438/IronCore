@@ -6,6 +6,7 @@ namespace MCR_Engine.Rendering.Output;
 
 public class Camera
 {
+    private const double MinMaxVelocityX = 30, MinMaxVelocityY = 30;
     private const double DefaultAccelerationX = 220, DefaultAccelerationY = 300;
     private const double DefaultDecelerationX = 40, DefaultDecelerationY = 150;
     private readonly Renderer _render;
@@ -31,7 +32,6 @@ public class Camera
     {
         if (_followedSprite is null)
             return;
-        
         double newXOffset = _xOffset + _velocityX * deltaTime;
         double newYOffset = _yOffset + _velocityY * deltaTime;
         SetOffsetIntoMapBorder(ref newXOffset, ref newYOffset);
@@ -121,8 +121,18 @@ public class Camera
             _velocityY = 0;
         }
     }
-    private double GetMaxVelocityX(double deltaTime) => _currentMaxVelocityX + (SpriteVelocityX - _currentMaxVelocityX) * 3 * deltaTime;
-    private double GetMaxVelocityY(double deltaTime) => _currentMaxVelocityY + (SpriteVelocityY - _currentMaxVelocityY) * 3 * deltaTime;
+    private double GetMaxVelocityX(double deltaTime)
+    {
+        if (_currentMaxVelocityX < MinMaxVelocityX)
+            return MinMaxVelocityX;
+        return _currentMaxVelocityX + (SpriteVelocityX - _currentMaxVelocityX) * 3 * deltaTime;
+    }
+    private double GetMaxVelocityY(double deltaTime)
+    {
+        if (_currentMaxVelocityY < MinMaxVelocityY)
+            return MinMaxVelocityY;
+        return _currentMaxVelocityY + (SpriteVelocityY - _currentMaxVelocityY) * 3 * deltaTime;
+    }
     private bool InDeadZone(Sprite sprite) => GetCameraDirection(sprite).Count is 0;
     private static double GetVelocityXAdd(List<Direction> directions, double deltaTime)
     {

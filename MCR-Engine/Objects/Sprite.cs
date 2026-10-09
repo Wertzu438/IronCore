@@ -99,6 +99,7 @@ public abstract class Sprite
     public RGB? GetColor(int x, int y) => _texture[x, y];
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnSprite(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
+    //public abstract Sprite Clone();
     protected virtual bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0 && OnScene();
     private void TryMoveX(double xAdd)
     {

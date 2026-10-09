@@ -28,7 +28,7 @@ public class CheckPointManager
         CheckPoint nearestCheckPoint = GetNearestUnlockedCheckPoint(player.X, player.Y);
         player.StopMovingX(); player.StopMovingY();
         player.X = nearestCheckPoint.X;
-        player.Y = nearestCheckPoint.Y;
+        player.Y = nearestCheckPoint.Y - 7;
         player.Heal(double.MaxValue);
     }
     private CheckPoint GetNearestUnlockedCheckPoint(int x, int y)

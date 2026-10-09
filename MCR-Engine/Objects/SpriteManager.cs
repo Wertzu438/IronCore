@@ -1,8 +1,9 @@
-﻿using MCR_Engine.Core;
+﻿using System.Collections;
+using MCR_Engine.Core;
 
 namespace MCR_Engine.Objects;
 
-public class SpriteManager
+public class SpriteManager : IEnumerable<Sprite>
     {
         private readonly List<Sprite> _sprites;
         private readonly Scene _scene;
@@ -145,4 +146,6 @@ public class SpriteManager
             }
             return false;
         }
+        public IEnumerator<Sprite> GetEnumerator() => new SpriteManagerIEnumerator(_sprites);
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

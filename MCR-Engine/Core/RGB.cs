@@ -1,6 +1,6 @@
 ﻿namespace MCR_Engine.Core;
 
-public struct RGB
+public struct RGB : IEquatable<RGB>
 {
     public byte Red;
     public byte Green;
@@ -13,5 +13,9 @@ public struct RGB
         Blue = blue;
     }
     public override int GetHashCode() => HashCode.Combine(Red, Green, Blue);
-    public static bool SameValue(RGB? rgb1, RGB? rgb2) => rgb1.GetHashCode() == rgb2.GetHashCode();
+    public bool Equals(RGB other) => GetHashCode() == other.GetHashCode();
+    public override bool Equals(object? obj)
+    {
+        return obj is RGB other && Equals(other);
+    }
 }
