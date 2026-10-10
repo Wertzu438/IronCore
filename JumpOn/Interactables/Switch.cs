@@ -30,6 +30,7 @@ public class Switch : Interactable
         _lastMsPulled = 0;
         _pulled = false;
     }
+    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new Switch(X, Y, sprites.Get(sprites.Count - 1), engine.Input, engine.Camera, _infoBox, engine.Textures, _clock);
     protected override bool IsEntityInteracting(out Entity? entity)
     {
         bool playerInteracting = base.IsEntityInteracting(out entity) && entity as Player is not null;

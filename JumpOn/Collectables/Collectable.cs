@@ -7,18 +7,17 @@ namespace JumpOn.Collectables;
 
 public abstract class Collectable : Sprite
 {
-    private bool _isCollected;
-    protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, texture, 1, false, true)
+    protected bool Collected;
+    protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, texture, 3, false, true)
     {
-        
     }
     public virtual bool IsCollected
     {
-        get => _isCollected;
+        get => Collected;
         set
         {
-            _isCollected |= value;
-            ChangeVisibility(!_isCollected);
+            Collected |= value;
+            ChangeVisibility(!Collected);
         }
     }
     public abstract void Update();
@@ -40,7 +39,7 @@ public abstract class Collectable : Sprite
     public static bool AreAllCollected<T>(List<T> collectables) where T : Collectable
     {
         foreach (Collectable collectable in collectables)
-            if (!collectable.IsCollected)
+            if (!collectable.Collected)
                 return false;
         return true;
     }

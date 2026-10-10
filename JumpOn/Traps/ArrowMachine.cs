@@ -27,6 +27,7 @@ public class ArrowMachine : Trap
     private int ArrowStartX => (ShootRight ? X + Width : X - Width);
     private int ArrowStartY => Y;
     private bool ShootRight => _direction is Direction.Right;
+    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new ArrowMachine(X, Y, _direction, _arrowOffset, engine.Textures, _clock);
     protected override void Update()
     {
         foreach (TrapChildObject arrow in _arrows)

@@ -3,7 +3,7 @@ using MCR_Engine.Core;
 
 namespace MCR_Engine.Objects;
 
-public abstract class Sprite
+public abstract class Sprite : IComparable<Sprite>
 {
     private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
     private readonly bool _collision, _gravity;
@@ -99,7 +99,7 @@ public abstract class Sprite
     public RGB? GetColor(int x, int y) => _texture[x, y];
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnSprite(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
-    //public abstract Sprite Clone();
+    public abstract Sprite? Clone(Engine engine, SpriteManager sprites);
     protected virtual bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0 && OnScene();
     private void TryMoveX(double xAdd)
     {
@@ -164,5 +164,16 @@ public abstract class Sprite
             ChangeVisibility();
             await Task.Delay(msBetweenChange);
         }
+    }
+    public int CompareTo(Sprite? other)
+    {
+        if (ReferenceEquals(this, other)) 
+            return 0;
+        if (other is null)
+            return -1;
+        int layerCompare = Layer.CompareTo(other.Layer);
+        if (layerCompare != 0)
+            return layerCompare;
+        return (Width * Height).CompareTo(other.Width * other.Height);
     }
 }

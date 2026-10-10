@@ -1,5 +1,6 @@
 ﻿using JumpOn.Entities;
 using JumpOn.UI.InfoBoxes;
+using MCR_Engine.Core;
 using MCR_Engine.Objects;
 using MCR_Engine.Rendering.Output;
 
@@ -9,11 +10,20 @@ public class CheckPointManager
 {
     private readonly List<CheckPoint> _checkPoints;
     private readonly CenteredInfoBox _infoBox;
-    public CheckPointManager(SpriteManager sprites, CenteredInfoBox infoBox)
+    private readonly Engine _engine;
+    private readonly Scene _scene;
+    private SpriteManager _checkPointSnapShot;
+    public CheckPointManager(Engine engine, Scene scene, CenteredInfoBox infoBox)
     {
-        _checkPoints = sprites.GetAllSpritesOfType<CheckPoint>();
+        _engine = engine;
+        _scene = scene;
+        _checkPoints = _scene.Sprites.GetAllSpritesOfType<CheckPoint>();
+        foreach (CheckPoint checkPoint in _checkPoints)
+            checkPoint.CheckPoints = this;
+        _checkPointSnapShot = _scene.Sprites.Clone(_engine);
         _infoBox = infoBox;
     }
+    public SpriteManager SnapShot => _checkPointSnapShot;
     public void GetPlayerSpawnPosition(out int x, out int y)
     {
         if (_checkPoints.Count < 1)
@@ -22,7 +32,7 @@ public class CheckPointManager
         x = _checkPoints[0].X;
         y = _checkPoints[0].Y;
     }
-    public void ResetPlayerToChekPoint(Player player)
+    public void ResetPlayerToCheckPoint(Player player)
     {
         ShowInfoBox();
         CheckPoint nearestCheckPoint = GetNearestUnlockedCheckPoint(player.X, player.Y);
@@ -32,6 +42,7 @@ public class CheckPointManager
         player.Heal(double.MaxValue);
         player.Respawns++;
     }
+    public void MakeSnapshot() => _checkPointSnapShot = _scene.Sprites.Clone(_engine);
     private CheckPoint GetNearestUnlockedCheckPoint(int x, int y)
     {
         CheckPoint? nearestCheckPoint = null;

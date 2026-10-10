@@ -55,6 +55,7 @@ public class Player : Entity
             SetNewVelocity(Direction.Up, 100);
         SetNewTexture(GetNewTexture());
     }
+    public override Sprite? Clone(Engine engine, SpriteManager sprites) => null;
     private Direction GetDirection()
     {
         if (_movementKeys[0].Pressed)

@@ -40,13 +40,14 @@ public class Goal : Interactable
         get => _keys ?? throw new NullReferenceException("Keys cannot be null.");
         set
         {
-            if (_keys is not null)
-                throw new ArgumentException("Keys cannot be set twice.");
+            //if (_keys is not null)
+            //    throw new ArgumentException("Keys cannot be set twice.");
             _keys = value ?? throw new NullReferenceException("Value cannot be null.");
         }
     }
     public bool EndGame => _endGame;
     private bool CollectedAllKeys => Collectable.AreAllCollected(Keys);
+    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new Goal(X, Y, engine.Textures, engine.Input, _infoBox);
     protected override bool IsEntityInteracting(out Entity? entity)
     {
         bool playerInteracting = base.IsEntityInteracting(out entity) && entity as Player is not null;

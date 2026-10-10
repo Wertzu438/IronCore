@@ -12,7 +12,6 @@ public class Engine
     private readonly Input _input;
     private readonly Textures _textures;
     private readonly MenuManager _menus;
-    private Scene? _scene;
     public Engine()
     {
         _renderer = new Renderer();
@@ -25,9 +24,7 @@ public class Engine
     public Input Input => _input;
     public Textures Textures => _textures;
     public MenuManager Menus => _menus;
-    public Scene Scene => _scene ?? throw new InvalidOperationException("Scene is not initialized");
     public UIManager UI => _renderer.UI;
-    public SpriteManager Sprites => Scene.Sprites;
     public Camera Camera => _renderer.Camera;
     public void Run(IGameProject game)
     {   
@@ -48,15 +45,12 @@ public class Engine
         UpdateInputAction(ProcessAction.Stop);
         UpdateRenderAction(ProcessAction.Stop);
     }
-    public void SetScene(Scene scene)
+    public void SetRenderScene(Scene scene)
     {
-        _scene = scene;
-        _renderer.SetScene = _scene;
+        scene.Update(0, true);
+        _renderer.SetScene = scene;
     }
     public void UpdateRenderAction(ProcessAction newAction) => _renderer.ChangeAction(newAction);
     public void UpdateInputAction(ProcessAction newAction) => _input.ChangeAction(newAction);
-    static void Main(string[] args)
-    {
-        throw new ArgumentException("Should never be called => Start with game project");
-    }
+    static void Main() => throw new ArgumentException("Should never be called => Start with game project");
 }

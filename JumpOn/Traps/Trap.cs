@@ -6,7 +6,7 @@ namespace JumpOn.Traps;
 
 public abstract class Trap : Sprite
 {
-    protected Trap(int x, int y, RGB?[,] texture) : base(x, y, texture, 0, false, false)
+    protected Trap(int x, int y, RGB?[,] texture) : base(x, y, texture, 2, false, false)
     {
     }
     protected abstract double Damage { get; }

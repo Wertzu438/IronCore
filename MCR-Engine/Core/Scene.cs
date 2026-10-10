@@ -6,35 +6,21 @@ using MCR_Engine.Core;
 namespace MCR_Engine.Core;
 public class Scene
 {
-    public static object Frame = new object();
     private readonly int _width, _height;
     private readonly Pixel[,] _pixels;
     private readonly RGB[,] _backgroundTexture;
-    private readonly SpriteManager _sprites;
     private readonly Camera _camera;
-    private int frames = 0;
-    private readonly Stopwatch fpsTimer = Stopwatch.StartNew();
+    private SpriteManager _sprites;
     public Scene(Camera camera, int width, int height, RGB[,] backgroundTexture)
     {
         if (height % 2 != 0)
             throw new ArgumentException("Hight must be dividable by 2.");
         _camera = camera;
-        this._width = width;
-        this._height = height;
-        this._backgroundTexture = backgroundTexture;
+        _width = width;
+        _height = height;
+        _backgroundTexture = backgroundTexture;
         _sprites = new SpriteManager(this);
         _pixels = Create();
-    }
-    public Scene(Scene scene)
-    {
-        _width = scene.Width; 
-        _height = scene.Height;
-        _camera = scene._camera;
-        _pixels = Create();
-        foreach (Sprite sprite in Sprites)
-        {
-            _sprites.Add(sprite);
-        }
     }
     public SpriteManager Sprites => _sprites;
     public int Width => _width;
@@ -66,13 +52,19 @@ public class Scene
             }
         }
     }
+    public void SetSpriteSnapshot(SpriteManager sprites)
+    {
+        if (ReferenceEquals(sprites, _sprites))
+            throw new ArgumentException("Sprites cannot be the same.");
+        _sprites = sprites;
+    }
+    public bool ValidPixelCoordinates(int x, int y) => x >= 0 && y >= 0 && x < _width && y < _height;
     internal Pixel GetPixel(int x, int y)
     {
         if (!ValidPixelCoordinates(x, y))
             throw new InvalidDataException("X or Y invalide");
         return _pixels[x, y];
     }
-    public bool ValidPixelCoordinates(int x, int y) => x >= 0 && y >= 0 && x < _width && y < _height;
     private Pixel[,] Create()
     {
         Pixel[,] newMap = new Pixel[_width, _height];
