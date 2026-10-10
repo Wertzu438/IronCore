@@ -29,25 +29,17 @@ public class Application : IGameProject
     {
         _engine.UI.Clear();
         Game game = new Game(_engine, _account, _account.CurrentLevel);
-        try
+        if (game.Play(out int? passedSeconds, out int? respawns))
         {
-            _account.UpdateLevelStats(_account.CurrentLevel, game.Play());
+            _account.UpdateLevelStats(_account.CurrentLevel, passedSeconds, respawns);
+            _account.CurrentLevel++;
         }
-        catch (Exception e)
-        {
-            _engine.UpdateRenderAction(ProcessAction.Pause);
-            _engine.UpdateInputAction(ProcessAction.Pause);
-            Thread.Sleep(500);
-            Console.WriteLine(e);
-            Console.ReadKey(true);
-        }
-        _account.CurrentLevel++;
+        else _account.UpdateLevelStats(_account.CurrentLevel, passedSeconds, respawns);
         return ProgramState.Menu;
     }
     public ProgramState OpenMenu()
     {
-        _engine.SetScene(LevelLoader.Read("Scenes/level0.txt", _engine, new MobileInfoBox(), new Clock()));
-        _engine.Scene.Update(0, true);
+        _engine.SetRenderScene(LevelLoader.Read("Scenes/level0.txt", _engine, new MobileInfoBox(), new Clock()));
         return _menus.Launch(_engine.UI);
     }
     public static void Main(string[] args)

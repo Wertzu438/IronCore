@@ -7,10 +7,10 @@ namespace JumpOn.Entities;
 
 public abstract class Entity : Sprite
 {
-    protected Interactable? CurrentInteractable;
+    protected readonly Clock Clock;
+    private Interactable? _currentInteractable;
     private const int DamageTickOffsetMs = 1000;
     private readonly double _maxHealth;
-    private readonly Clock _clock;
     private double _currentHealth;
     private int _lastDamageTimeMs;
     private int _fallHeight;
@@ -19,8 +19,8 @@ public abstract class Entity : Sprite
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;
         _lastDamageTimeMs = 0;
-        CurrentInteractable = null;
-        _clock = clock;
+        _currentInteractable = null;
+        Clock = clock;
         _fallHeight = 0;
     }
     public bool Alive => _currentHealth > 0;
@@ -29,19 +29,19 @@ public abstract class Entity : Sprite
     protected abstract double ClimbingSpeed { get; }
     protected abstract double HangingSpeed { get; }
     protected override bool Gravity => !(OnLadder || OnBar);
-    private bool OnLadder => CurrentInteractable is Ladder;
-    private bool OnBar => CurrentInteractable is Bar;
+    private bool OnLadder => _currentInteractable is Ladder;
+    private bool OnBar => _currentInteractable is Bar;
     private bool OnTopOfLadder => Ladder.IsEntityOnTopOfLadder(this);
     public abstract void Update();
     public void Damage(double damage, bool critical)
     {
         if (damage < 0)
             throw new ArgumentException("Damage cannot be negative");
-        if (_lastDamageTimeMs + DamageTickOffsetMs >= _clock.PassedMilliSeconds && !critical)
+        if (_lastDamageTimeMs + DamageTickOffsetMs >= Clock.PassedMilliSeconds && !critical)
             return;
         Flash(20);
         _currentHealth -= damage;
-        _lastDamageTimeMs = _clock.PassedMilliSeconds;
+        _lastDamageTimeMs = Clock.PassedMilliSeconds;
     }
     public void Heal(double heal)
     {
@@ -51,7 +51,7 @@ public abstract class Entity : Sprite
         if (_currentHealth > _maxHealth)
             _currentHealth = _maxHealth;
     }
-    public void SetInteractable(Interactable? interactable) => CurrentInteractable = interactable;
+    public void SetInteractable(Interactable? interactable) => _currentInteractable = interactable;
     protected override bool IsFloorBeneath() => base.IsFloorBeneath() || OnTopOfLadder;
     protected bool Walk(Direction direction)
     {
@@ -71,7 +71,7 @@ public abstract class Entity : Sprite
             return false;
         }
         StopMovingX();
-        ((Ladder)CurrentInteractable!).CenterEntity(this);
+        ((Ladder)_currentInteractable!).CenterEntity(this);
         MoveOnY(direction, ClimbingSpeed);
         return true;
     }
@@ -80,7 +80,7 @@ public abstract class Entity : Sprite
         if (!OnBar)
             return false;
         StopMovingY();
-        Y = ((Bar)CurrentInteractable!).HangOnIt();
+        Y = ((Bar)_currentInteractable!).HangOnIt();
         if (Contains(direction, [Direction.None, Direction.Up]))
             return true;
         if (direction is Direction.Down)
@@ -121,7 +121,7 @@ public abstract class Entity : Sprite
     public static void ResetInteractable(List<Entity> entities)
     {
         foreach (Entity entity in entities)
-            entity.CurrentInteractable =  null;
+            entity._currentInteractable =  null;
     }
     public static List<Entity> LoadEntities(SpriteManager sprites) => sprites.GetAllSpritesOfType<Entity>();
     private static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);

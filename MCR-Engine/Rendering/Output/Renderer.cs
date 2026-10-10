@@ -87,7 +87,6 @@ internal class Renderer
                 _output.AppendLine();
             }
             RenderStringBuilder();
-            Debug.WriteLine("RENDER");
         }
         _state = ProcessState.Stopped;
     }

@@ -30,6 +30,7 @@ public class CheckPointManager
         player.X = nearestCheckPoint.X;
         player.Y = nearestCheckPoint.Y - 7;
         player.Heal(double.MaxValue);
+        player.Respawns++;
     }
     private CheckPoint GetNearestUnlockedCheckPoint(int x, int y)
     {

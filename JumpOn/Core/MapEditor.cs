@@ -17,11 +17,11 @@ public class MapEditor
     public MapEditor(Engine engine)
     {
         _selectedSpriteIndex = 3;
-        _sprites = engine.Sprites;
+        //_sprites = engine.Sprites;
         _movementKeys = [engine.Input.Get("A"), engine.Input.Get("D"), engine.Input.Get("W"), engine.Input.Get("S")];
         _selectedSprite = GetSelectedSprite(_selectedSpriteIndex);
         _camera = engine.Camera;
-        _scene = engine.Scene;
+        //_scene = engine.Scene;
     }
     public void Run()
     {

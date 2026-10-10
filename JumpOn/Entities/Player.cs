@@ -1,6 +1,7 @@
 ﻿using JumpOn.Interactables;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
+using MCR_Engine.Objects;
 
 namespace JumpOn.Entities;
 
@@ -17,6 +18,7 @@ public class Player : Entity
     private readonly RGB?[][,] _climbingTextures;
     private readonly RGB?[][,] _hangingTextures;
     private (int LastCoordinateChanged, int Index) _textureInfo;
+    private int _respawns;
     private PlayerAction _action;
     public Player(int x, int y, Textures textures, Input input, Clock clock) : base(x, y, Textures.DebuggingTexture(1, 1), 5, clock)
     {
@@ -32,6 +34,12 @@ public class Player : Entity
         _hangingTextures = [textures.Get("playerBar_1"), textures.Get("playerBar_2")];
         _action = PlayerAction.StandRight;
         _textureInfo = (0, 0);
+        _respawns = 0;
+    }
+    public int Respawns
+    {
+        get => _respawns;
+        set => _respawns = (value > _respawns ? value : throw new ArgumentException("Value must be greater than respawns."));
     }
     protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 20;

@@ -42,18 +42,18 @@ public class LevelMenu : Menu
     }
     protected override string[][] UpdateContent()
     {
-        LevelStats? stats = _account.GetStats(_account.CurrentLevel);
+        LevelStats stats = _account.GetStats(_account.CurrentLevel);
         string[] menuHeading = ["!LEVELAUSWAHL"];
         string[] levelInfo = [$"-Aktuelles Level: {Level}          Höchstes Level: {_account.MaxLevel+1}"];
         string[] buttonInfo = [$"-[Up]/[Down] Level wechseln     [G] Level starten     [ENTER] Hauptmenü"];
-        if (!stats.HasValue)
+        if (!stats.LevelStarted)
         {
-            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Beste Zeit: -", $"Anzahl Versuche: 0"], buttonInfo];
+            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: -", $"Versuche: 0"], buttonInfo];
         }
-        if (!stats.Value.LevelFinished)
+        if (!stats.LevelFinished)
         {
-            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Beste Zeit: - (Level nicht geschafft)", $"Anzahl Versuche: {stats.Value.Tries}"], buttonInfo];
+            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: - (Level nicht geschafft)", $"Versuche: {stats.Tries}"], buttonInfo];
         }
-        return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Beste Zeit: {stats.Value.Time} Sekunden", $"Anzahl Versuche: {stats.Value.Tries}"], buttonInfo];
+        return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: {stats.Time} Sekunden mit {stats.Respawns} Respawns", $"Versuche: {stats.Tries}"], buttonInfo];
     }
 }
