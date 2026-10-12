@@ -12,6 +12,7 @@ public class Laser : Trap
     private readonly TrapChildObject _laser;
     private readonly Clock _clock;
     private readonly RGB?[,] _rayPartTexture;
+    private readonly RGB?[,] _deviceTexture;
     private readonly int _onMs, _offMs;
     private int _lastMsChanged;
     public Laser(int x, int y, int onMs, int offMs, Textures textures, Clock clock) : base(x, y, textures.Get(LaserDeviceTextureName))
@@ -20,15 +21,27 @@ public class Laser : Trap
         _laser.ChangeVisibility();
         _clock = clock;
         _rayPartTexture = textures.Get(RayTextureName);
+        _deviceTexture = textures.Get(LaserDeviceTextureName);
         _onMs = onMs;
         _offMs = offMs;
+        _lastMsChanged = 0;
+    }
+    private Laser(int x, int y, int onMs, int offMs, RGB?[,] deviceTexture, RGB?[,] rayPartTexture, Clock clock) : base(x, y, deviceTexture)
+    {
+        _clock = clock;
+        _onMs = onMs;
+        _offMs = offMs;
+        _deviceTexture = deviceTexture;
+        _rayPartTexture = rayPartTexture;
+        _laser = new TrapChildObject(RayX, RayY, _rayPartTexture);
+        _laser.ChangeVisibility();
         _lastMsChanged = 0;
     }
     protected override double Damage => EntityDamage;
     private int RayX => X + (Width / 2);
     private int RayY => Y + Height;
     private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextSprite(Direction.Down, false, true, [typeof(SolidObject), typeof(Ladder)]) + 1);
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new Laser(X, Y, _onMs, _offMs, engine.Textures, _clock);
+    public override Sprite? Clone(SpriteManager sprites) => new Laser(X, Y, _onMs, _offMs, _deviceTexture, _rayPartTexture, _clock);
     protected override void Update()
     {
         if (!Sprites.Contains(_laser))

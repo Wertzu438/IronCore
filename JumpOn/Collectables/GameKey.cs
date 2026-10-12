@@ -6,11 +6,14 @@ namespace JumpOn.Collectables;
 public class GameKey : Collectable
 {
     private const string TextureName = "key";
+    private readonly RGB?[,] _texture;
     public GameKey(int x, int y, Textures textures) : base(x, y, textures.Get(TextureName))
     {
+        _texture = textures.Get(TextureName);
     }
-    private GameKey(int x, int y, Textures textures, bool collected) : base(x, y, textures.Get(TextureName))
+    private GameKey(int x, int y, RGB?[,] texture, bool collected) : base(x, y, texture)
     {
+        _texture = texture;
         Collected = collected;
         ChangeVisibility(!Collected);
     }
@@ -21,5 +24,5 @@ public class GameKey : Collectable
             IsCollected = true;
         }
     }
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new GameKey(X, Y, engine.Textures, Collected);
+    public override Sprite? Clone(SpriteManager sprites) => new GameKey(X, Y, _texture, Collected);
 }

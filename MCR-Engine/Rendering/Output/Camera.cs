@@ -6,7 +6,7 @@ namespace MCR_Engine.Rendering.Output;
 
 public class Camera
 {
-    private const double MinMaxVelocityX = 30, MinMaxVelocityY = 30;
+    private const double MinMaxVelocityX = 15, MinMaxVelocityY = 10;
     private const double DefaultAccelerationX = 220, DefaultAccelerationY = 300;
     private const double DefaultDecelerationX = 40, DefaultDecelerationY = 150;
     private readonly Renderer _render;

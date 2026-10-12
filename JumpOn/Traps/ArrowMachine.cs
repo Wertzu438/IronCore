@@ -9,6 +9,7 @@ public class ArrowMachine : Trap
     private const double EntityDamage = 1.0, ArrowSpeed = 30;
     private const string ArrowDeviceTextureName = "arrowDevice", ArrowTextureName = "arrow";
     private readonly RGB?[,] _arrowTexture; 
+    private readonly RGB?[,] _deviceTexture;
     private readonly Clock _clock;
     private readonly List<TrapChildObject> _arrows;
     private readonly Direction _direction;
@@ -22,12 +23,23 @@ public class ArrowMachine : Trap
         _clock = clock;
         _lastMsShot = 0;
         _arrowTexture = ShootRight ? textures.Get(ArrowTextureName) : Textures.MirrorLeftRight(textures.Get(ArrowTextureName));
+        _deviceTexture = GetDeviceTexture(textures, direction);
+    }
+    private ArrowMachine(int x, int y, Direction direction, double arrowOffset, RGB?[,] deviceTexture, RGB?[,] arrowTexture, Clock clock) : base(x, y, deviceTexture)
+    {
+        _direction = direction;
+        _arrowOffset = arrowOffset;
+        _deviceTexture = deviceTexture;
+        _arrowTexture = arrowTexture;
+        _clock = clock;
+        _lastMsShot = 0;
+        _arrows = [];
     }
     protected override double Damage => EntityDamage;
     private int ArrowStartX => (ShootRight ? X + Width : X - Width);
     private int ArrowStartY => Y;
     private bool ShootRight => _direction is Direction.Right;
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new ArrowMachine(X, Y, _direction, _arrowOffset, engine.Textures, _clock);
+    public override Sprite? Clone(SpriteManager sprites) => new ArrowMachine(X, Y, _direction, _arrowOffset, _deviceTexture, _arrowTexture, _clock);
     protected override void Update()
     {
         foreach (TrapChildObject arrow in _arrows)

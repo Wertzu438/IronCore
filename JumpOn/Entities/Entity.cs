@@ -13,7 +13,6 @@ public abstract class Entity : Sprite
     private readonly double _maxHealth;
     private double _currentHealth;
     private int _lastDamageTimeMs;
-    private int _fallHeight;
     protected Entity(int x, int y, RGB?[,] texture, int maxHealth, Clock clock) : base(x, y, texture, 1, true, true)
     {
         _maxHealth = maxHealth;
@@ -21,7 +20,6 @@ public abstract class Entity : Sprite
         _lastDamageTimeMs = 0;
         _currentInteractable = null;
         Clock = clock;
-        _fallHeight = 0;
     }
     public bool Alive => _currentHealth > 0;
     public double Health => Alive ?  _currentHealth : 0;
@@ -37,9 +35,11 @@ public abstract class Entity : Sprite
     {
         if (damage < 0)
             throw new ArgumentException("Damage cannot be negative");
-        if (_lastDamageTimeMs + DamageTickOffsetMs >= Clock.PassedMilliSeconds && !critical)
+        bool getDamage = _lastDamageTimeMs + DamageTickOffsetMs < Clock.PassedMilliSeconds;
+        if (!getDamage && !critical)
             return;
-        Flash(20);
+        if (getDamage)
+            Flash(20);
         _currentHealth -= damage;
         _lastDamageTimeMs = Clock.PassedMilliSeconds;
     }

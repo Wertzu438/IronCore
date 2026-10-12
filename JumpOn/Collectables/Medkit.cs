@@ -10,19 +10,22 @@ public class Medkit : Collectable
 {
     private const string KeyName = "E", TextureName = "medkit";
     private const double HealAmount = 2;
+    private readonly RGB?[,] _texture;
     private readonly Key _interactingKey;
     private readonly MobileInfoBox _infoBox;
     public Medkit(int x, int y, Textures textures, Input input, MobileInfoBox infoBox) : base(x, y, textures.Get(TextureName))
     {
+        _texture = textures.Get(TextureName);
         _interactingKey = input.Get(KeyName);
         _infoBox = infoBox;
     }
-    private Medkit(int x, int y, Textures textures, Input input, MobileInfoBox infoBox, bool collected) : base(x, y, textures.Get(TextureName))
+    private Medkit(int x, int y, RGB?[,] texture, Key interactingKey, MobileInfoBox infoBox, bool collected) : base(x, y, texture)
     {
+        _texture = texture;
+        _infoBox = infoBox;
+        _interactingKey = interactingKey;
         Collected = collected;
         ChangeVisibility(!Collected);
-        _interactingKey = input.Get(KeyName);
-        _infoBox = infoBox;
     }
     public override void Update()
     {
@@ -33,7 +36,7 @@ public class Medkit : Collectable
         player!.Heal(HealAmount);
         IsCollected = true;
     }
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new Medkit(X, Y, engine.Textures, engine.Input, _infoBox, Collected);
+    public override Sprite? Clone(SpriteManager sprites) => new Medkit(X, Y, _texture, _interactingKey, _infoBox, Collected);
     private void UpdateInfoBox(bool interacting)
     {
         if (interacting)

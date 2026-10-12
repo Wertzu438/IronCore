@@ -1,48 +1,55 @@
-﻿using JumpOn.Entities;
+﻿using JumpOn.Collectables;
+using JumpOn.Entities;
 using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Core;
 using MCR_Engine.Objects;
 using MCR_Engine.Rendering.Output;
+using MCR_Engine.Rendering.UI;
 
 namespace JumpOn.CheckPoints;
 
 public class CheckPointManager
 {
+    private const int SavingOffsetSeconds = 3;
     private readonly List<CheckPoint> _checkPoints;
-    private readonly CenteredInfoBox _infoBox;
+    private readonly CenteredInfoBox _centeredInfoBox;
+    private readonly UIElement _infoBox;
     private readonly Engine _engine;
     private readonly Scene _scene;
+    private readonly Clock _clock;
+    private int _lastSecondSaved;
     private SpriteManager _checkPointSnapShot;
-    public CheckPointManager(Engine engine, Scene scene, CenteredInfoBox infoBox)
+    public CheckPointManager(Engine engine, Scene scene, UIManager ui, Clock clock, CenteredInfoBox centeredInfoBox)
     {
         _engine = engine;
         _scene = scene;
+        _infoBox = ui.Add(new UIElement(25, 3, 2, 0, true, false));
         _checkPoints = _scene.Sprites.GetAllSpritesOfType<CheckPoint>();
         foreach (CheckPoint checkPoint in _checkPoints)
             checkPoint.CheckPoints = this;
         _checkPointSnapShot = _scene.Sprites.Clone(_engine);
-        _infoBox = infoBox;
+        _centeredInfoBox = centeredInfoBox;
+        _clock = clock;
+        _lastSecondSaved = int.MinValue;
     }
     public SpriteManager SnapShot => _checkPointSnapShot;
-    public void GetPlayerSpawnPosition(out int x, out int y)
-    {
-        if (_checkPoints.Count < 1)
-            throw new ArgumentException("No player spawn point found");
-        _checkPoints[0].IsCollected = true;
-        x = _checkPoints[0].X;
-        y = _checkPoints[0].Y;
-    }
+    private bool OneCollected => Collectable.CollectedAmount(_checkPoints) != 0;
     public void ResetPlayerToCheckPoint(Player player)
     {
-        ShowInfoBox();
+        if (_checkPoints.Count <= 0)
+            throw new ArgumentException("No player spawn points found");
+        if (OneCollected)
+        {
+            player.Respawns++;
+            ShowInfoBox();
+        }
+        else _checkPoints[0].IsCollected = true;
         CheckPoint nearestCheckPoint = GetNearestUnlockedCheckPoint(player.X, player.Y);
         player.StopMovingX(); player.StopMovingY();
         player.X = nearestCheckPoint.X;
-        player.Y = nearestCheckPoint.Y - 7;
+        player.Y = nearestCheckPoint.Y;
         player.Heal(double.MaxValue);
-        player.Respawns++;
     }
-    public void MakeSnapshot() => _checkPointSnapShot = _scene.Sprites.Clone(_engine);
     private CheckPoint GetNearestUnlockedCheckPoint(int x, int y)
     {
         CheckPoint? nearestCheckPoint = null;
@@ -62,5 +69,17 @@ public class CheckPointManager
             throw new ArgumentException("No player spawn point found");
         return nearestCheckPoint;
     }
-    private void ShowInfoBox() => _infoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
+    private void ShowInfoBox() => _centeredInfoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
+    public async Task MakeSnapshot()
+    {
+        if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
+            return;
+        _checkPointSnapShot = _scene.Sprites.Clone(_engine);
+        _lastSecondSaved = _clock.PassedSeconds;
+        _infoBox.Y = Console.WindowHeight - 2 - _infoBox.Height;
+        _infoBox.UpdateContent([[$"-💾 Gespeichert: {DateTime.Now.ToShortTimeString()}"]]);
+        _infoBox.Visible = true;
+        await Task.Delay(SavingOffsetSeconds * 1000);
+        _infoBox.Visible = false;
+    }
 }

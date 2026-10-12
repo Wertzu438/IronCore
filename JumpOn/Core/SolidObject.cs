@@ -15,7 +15,7 @@ public class SolidObject : Sprite
         _amount = amount;
         ChangeVisibility(visible);
     }
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new SolidObject(X, Y, Layer, _baseTexture, _textureExpansion, _amount, Visible);
+    public override Sprite? Clone(SpriteManager sprites) => new SolidObject(X, Y, Layer, _baseTexture, _textureExpansion, _amount, Visible);
     private static RGB?[,] GetTexture(RGB?[,] baseTexture, Direction? textureExpansion, int? amount)
     {
         if (!(textureExpansion.HasValue && amount.HasValue) || amount.Value <= 1)
@@ -30,7 +30,7 @@ public class TrapChildObject : Sprite
     {
         
     }
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => null;
+    public override Sprite? Clone(SpriteManager sprites) => null;
 }
 public class DecorationObject : Sprite
 {
@@ -43,7 +43,7 @@ public class DecorationObject : Sprite
         _textureExpansion = textureExpansion;
         _amount = amount;
     }
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new DecorationObject(X, Y, Layer, _baseTexture, _textureExpansion, _amount);
+    public override Sprite? Clone(SpriteManager sprites) => new DecorationObject(X, Y, Layer, _baseTexture, _textureExpansion, _amount);
     private static RGB?[,] GetTexture(RGB?[,] baseTexture, Direction? textureExpansion, int? amount)
     {
         if (!(textureExpansion.HasValue && amount.HasValue) || amount.Value <= 1)

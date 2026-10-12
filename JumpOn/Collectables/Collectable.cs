@@ -36,12 +36,14 @@ public abstract class Collectable : Sprite
         foreach (Collectable collectable in collectables)
             collectable.Update();
     }
-    public static bool AreAllCollected<T>(List<T> collectables) where T : Collectable
+    public static int CollectedAmount<T>(List<T> collectables) where T : Collectable
     {
-        foreach (Collectable collectable in collectables)
-            if (!collectable.Collected)
-                return false;
-        return true;
+        int sum = 0;
+        foreach (T collectable in collectables)
+            if (collectable.IsCollected)
+                sum++;
+        return sum;
     }
+    public static bool AreAllCollected<T>(List<T> collectables) where T : Collectable => CollectedAmount(collectables) == collectables.Count;
     public static List<Collectable> LoadCollectables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Collectable>();
 }

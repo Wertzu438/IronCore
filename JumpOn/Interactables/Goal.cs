@@ -12,6 +12,7 @@ public class Goal : Interactable
 {
     private const string KeyName = "E", OpenTextureName = "goalOpen", CloseTextureName = "goalClosed";
     private readonly RGB?[,] _openTexture;
+    private readonly RGB?[,] _closedTexture;
     private readonly Key _interactingKey;
     private readonly MobileInfoBox _infoBox;
     private List<GameKey>? _keys;
@@ -19,35 +20,25 @@ public class Goal : Interactable
     public Goal(int x, int y, Textures textures, Input input, MobileInfoBox infoBox) : base(x, y, textures.Get(CloseTextureName))
     {
         _openTexture = textures.Get(OpenTextureName);
+        _closedTexture = textures.Get(CloseTextureName);
         _interactingKey = input.Get(KeyName);
         _infoBox = infoBox;
         _open = false;
     }
-    public int CollectedKeysAmount
+    private Goal(int x, int y, RGB?[,] openTexture, RGB?[,] closedTexture, Key interactingKey, MobileInfoBox infoBox) : base(x, y, closedTexture)
     {
-        get
-        {
-            int sum = 0;
-            foreach (var key in Keys)
-                if (key.IsCollected)
-                    sum++;
-            return sum;
-        }
+        _openTexture = openTexture;
+        _closedTexture = closedTexture;
+        _interactingKey = interactingKey;
+        _infoBox = infoBox;
+        _open = false;
     }
     public int KeysAmount => Keys.Count;
-    public List<GameKey> Keys
-    {
-        get => _keys ?? throw new NullReferenceException("Keys cannot be null.");
-        set
-        {
-            //if (_keys is not null)
-            //    throw new ArgumentException("Keys cannot be set twice.");
-            _keys = value ?? throw new NullReferenceException("Value cannot be null.");
-        }
-    }
     public bool EndGame => _endGame;
+    public int CollectedKeysAmount => Collectable.CollectedAmount(Keys);
     private bool CollectedAllKeys => Collectable.AreAllCollected(Keys);
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new Goal(X, Y, engine.Textures, engine.Input, _infoBox);
+    private List<GameKey> Keys => _keys ?? throw new NullReferenceException("Keys cannot be null.");
+    public override Sprite? Clone(SpriteManager sprites) => new Goal(X, Y, _openTexture, _closedTexture, _interactingKey, _infoBox);
     protected override bool IsEntityInteracting(out Entity? entity)
     {
         bool playerInteracting = base.IsEntityInteracting(out entity) && entity as Player is not null;
@@ -55,13 +46,10 @@ public class Goal : Interactable
         if (!(playerInteracting && _interactingKey.Pressed && CollectedAllKeys))
             return false;
         if (_open)
-        {
-            _endGame = true;
-            return true;
-        }
+            return _endGame = true;
         _open = true;
         SetNewTexture(_openTexture);
-        Thread.Sleep(200);
+        Thread.Sleep(100);
         return true;
     }
     private void UpdateInfoBox(bool playerInteracting)
@@ -82,5 +70,13 @@ public class Goal : Interactable
         {
             _infoBox.UsedBy = null;
         }
+    }
+    public static Goal LoadGoal(SpriteManager sprites)
+    {
+        List<Goal> goals = sprites.GetAllSpritesOfType<Goal>();
+        if (goals.Count != 1)
+            throw new ArgumentException("Invalid amount of goals");
+        goals[0]._keys = sprites.GetAllSpritesOfType<GameKey>();
+        return goals[0];
     }
 }

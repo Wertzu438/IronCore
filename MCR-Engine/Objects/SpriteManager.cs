@@ -22,7 +22,7 @@ public class SpriteManager : IEnumerable<Sprite>
             _map = new Sprite?[_scene.Width, _scene.Height];
             foreach (var sprite in scene.Sprites)
             {
-                Sprite? s = sprite.Clone(engine, this);
+                Sprite? s = sprite.Clone(this);
                 if (s is null)
                     continue;
                 Add(s);

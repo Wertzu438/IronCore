@@ -1830,7 +1830,7 @@ internal sealed class EditorSprite : Sprite
     }
 
     // Sprite hat jetzt eine abstrakte Clone-Methode; Editor-Sprites werden nie geklont.
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => null;
+    public override Sprite? Clone(SpriteManager sprites) => null;
 }
 
 /// <summary>Ein Objekt im Level (nur Daten + die zugehörigen Vorschau-Sprites).</summary>

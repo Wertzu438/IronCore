@@ -23,7 +23,7 @@ public class Bar : Interactable
         _amount = amount;
         SetNewTexture(CreateTexture());
     }
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new Bar(X, Y, _baseTexture, _amount);
+    public override Sprite? Clone(SpriteManager sprites) => new Bar(X, Y, _baseTexture, _amount);
     public int HangOnIt() => Y;
     private RGB?[,] CreateTexture() => Textures.CreateExpansion(_baseTexture, Direction.Right, _amount);
 }

@@ -23,7 +23,7 @@ public class Ladder : Interactable
         _amount = amount;
         SetNewTexture(CreateTexture());
     }
-    public override Sprite? Clone(Engine engine, SpriteManager sprites) => new Ladder(X, Y, _baseTexture, _amount);
+    public override Sprite? Clone(SpriteManager sprites) => new Ladder(X, Y, _baseTexture, _amount);
     public void CenterEntity(Entity entity)
     {
         int offset = (Width - entity.Width) / 2;
