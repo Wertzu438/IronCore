@@ -13,7 +13,7 @@ public class Application : IGameProject
     private readonly Account _account;
     public Application(Engine engine)
     {
-        _account = new Account("Wertzu", 6);
+        _account = Account.GetAccount(6);
         _engine = engine;
         engine.Menus.Add(new MainMenu(_account, engine.Input));
         engine.Menus.Add(new LevelMenu(_account, engine.Input));
@@ -35,6 +35,7 @@ public class Application : IGameProject
             _account.CurrentLevel++;
         }
         else _account.UpdateLevelStats(_account.CurrentLevel, passedSeconds, respawns);
+        _account.SaveAccount();
         return ProgramState.Menu;
     }
     public ProgramState OpenMenu()

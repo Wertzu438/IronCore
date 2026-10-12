@@ -16,13 +16,15 @@ public abstract class Menu
     public ProgramState Launch(UIElement infoBox, out Type? nextScreen)
     {
         infoBox.UpdateContent(UpdateContent());
+        AfterUpdateContent();
         return OpenNewWindow(GetKey(infoBox), out nextScreen);
     }
+    protected virtual void AfterUpdateContent() {}
     protected abstract string[][] UpdateContent();
     protected abstract ProgramState OpenNewWindow(Key key, out Type? nextScreen);
-    private Key GetKey(UIElement infoBox)
+    private Key? GetKey(UIElement infoBox)
     {
-        while (true)
+        while (Keys.Length > 0)
         {
             SetInfoBoxStats(infoBox);
             foreach (var key in Keys)
@@ -32,6 +34,7 @@ public abstract class Menu
             }
             Thread.Sleep(30);
         }
+        return null;
     }
     private static void SetInfoBoxStats(UIElement infoBox)
     {
