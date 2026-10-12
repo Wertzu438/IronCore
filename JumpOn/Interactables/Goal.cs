@@ -49,7 +49,7 @@ public class Goal : Interactable
             return _endGame = true;
         _open = true;
         SetNewTexture(_openTexture);
-        Thread.Sleep(100);
+        Thread.Sleep(250);
         return true;
     }
     private void UpdateInfoBox(bool playerInteracting)

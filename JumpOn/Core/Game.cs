@@ -74,6 +74,7 @@ public class Game
                 return false;
             }
             else _pause.Check();
+            Thread.Sleep(1);
         } while (!_goal.EndGame);
         passedSeconds = _clock.PassedSeconds;
         repawns = _player.Respawns;

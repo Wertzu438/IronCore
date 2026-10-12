@@ -73,12 +73,9 @@ public class Switch : Interactable
     {
         Sprite lastSprite = _camera.FollowedSprite;
         await _camera.SetFollowedSprite(_connectedSprite, 0, 0);
-        bool inView = _camera.InView(_connectedSprite.X, _connectedSprite.Y);
-        if (!inView)
-            await Task.Delay(300); 
+        await Task.Delay(300); 
         _connectedSprite.ChangeVisibility(); 
-        if (!inView)
-            await Task.Delay(300); 
+        await Task.Delay(300); 
         await _camera.SetFollowedSprite(lastSprite, 0, 0);
     }
 }
