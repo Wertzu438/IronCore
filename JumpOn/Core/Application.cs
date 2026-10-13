@@ -18,6 +18,7 @@ public class Application : IGameProject
         engine.Menus.Add(new MainMenu(_account, engine.Input));
         engine.Menus.Add(new LevelMenu(_account, engine.Input));
         engine.Menus.Add(new InfoMenu(engine.Input));
+        engine.Menus.Add(new AccountMenu(_account, engine.Input, engine.UpdateRenderAction));
         _menus = engine.Menus;
     }
     public ProgramState OpenEditor()
@@ -41,7 +42,7 @@ public class Application : IGameProject
     public ProgramState OpenMenu()
     {
         _engine.SetRenderScene(LevelLoader.Read("Scenes/level0.txt", _engine, new MobileInfoBox(), new Clock()));
-        return _menus.Launch(_engine.UI);
+        return _menus.Launch(_engine.UI, (_account.ValidName ? typeof(MainMenu) : typeof(AccountMenu)));
     }
     public static void Main(string[] args)
     {

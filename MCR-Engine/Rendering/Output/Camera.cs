@@ -59,7 +59,13 @@ public class Camera
         if (Math.Abs(_velocityY) > _currentMaxVelocityY)
             _velocityY = (_velocityY < 0 ? -SpriteVelocityY : SpriteVelocityY);
     }
-
+    public void SetOffset(double xOffset, double yOffset)
+    {
+        SetOffsetIntoMapBorder(ref xOffset, ref yOffset);
+        _velocityX = _velocityY = 0;
+        _xOffset = xOffset;
+        _yOffset = yOffset;
+    }
     public void ResetOffset()
     {
         _xOffset = _yOffset = _velocityX = _velocityY = 0;
@@ -67,7 +73,7 @@ public class Camera
     }
     public bool InView(int x, int y) => x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
     public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth - 1, xOffset + Console.WindowWidth);
-    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight - 2, yOffset + Console.WindowHeight - 1);
+    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight - 1, yOffset + Console.WindowHeight - 1);
     private List<Direction> GetCameraDirection(Sprite sprite)
     {
         List<Direction> directions = [];

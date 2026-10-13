@@ -53,3 +53,4 @@ Switch,9,55
 SolidObj,72,66,2,metalPlatform,Right,2
 CheckPoint,2,77
 CheckPoint,108,119
+CheckPoint,238,88

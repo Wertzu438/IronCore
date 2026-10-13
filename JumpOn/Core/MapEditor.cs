@@ -1138,8 +1138,8 @@ public class MapEditor
         if (_cy - 10 < offY) offY = _cy - 10;
         else if (_cy + extentY >= offY + viewHeight) offY = _cy + extentY - viewHeight + 1;
 
-        _camera.RecalculateOffset(1);
-        //_camera.SetOffset(Math.Max(0, offX), Math.Max(0, offY) / 2);
+        //_camera.RecalculateOffset(1);
+        _camera.SetOffset(Math.Max(0, offX), Math.Max(0, offY) / 2);
         _camX = _camera.XOffset;
         _camY = _camera.YOffset;
     }

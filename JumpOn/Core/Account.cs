@@ -21,18 +21,27 @@ public class Account
     private readonly LevelStats[] _stats;
     private string? _name;
     private int _currentLevel;
-    public Account(string name, int levelCount)
+    public Account(string? name, int levelCount)
     {
-        Name = name;
         _stats = new LevelStats[levelCount];
         _stats.Initialize();
+        Name = name;
         _currentLevel = 0;
     }
-    public string Name
+    public string? Name
     {
         get => _name ?? throw new InvalidOperationException();
         set
         {
+            if (value == null)
+            {
+                _name = value;
+                for (int i = 0; i < _stats.Length; i++)
+                {
+                    _stats[i] = new LevelStats(0, null, null);
+                }
+                return;
+            }
             _name = value.Trim();
             if (_name.Length >= 20)
                 _name = "??";
@@ -96,9 +105,7 @@ public class Account
         }
         else
         {
-            Console.Write("Gib deinen Namen ein: ");
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            account = new Account(Console.ReadLine(), levelCount);
+            account = new Account(null, levelCount);
         }
         return account;
     }

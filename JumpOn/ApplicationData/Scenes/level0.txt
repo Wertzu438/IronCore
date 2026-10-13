@@ -23,3 +23,6 @@ Medkit,48,30
 SolidObj,208,90,2,brickBlock,Down,1
 CheckPoint,1,26
 Goal,8,86
+SolidObj,0,106,0,brickBlock,Right,28
+SolidObj,216,90,0,brickBlock,Down,2
+CheckPoint,212,78

@@ -16,10 +16,10 @@ public abstract class Menu
     public ProgramState Launch(UIElement infoBox, out Type? nextScreen)
     {
         infoBox.UpdateContent(UpdateContent());
-        AfterUpdateContent();
+        AfterUpdateContent(infoBox);
         return OpenNewWindow(GetKey(infoBox), out nextScreen);
     }
-    protected virtual void AfterUpdateContent() {}
+    protected virtual void AfterUpdateContent(UIElement infoBox) { }
     protected abstract string[][] UpdateContent();
     protected abstract ProgramState OpenNewWindow(Key key, out Type? nextScreen);
     private Key? GetKey(UIElement infoBox)

@@ -18,11 +18,10 @@ public class MenuManager
         public static int MenuWidth => Console.WindowWidth * MenuWidthPercent / 100;
         public static int MenuHeight => 17;
         public void Add(Menu menu) => _menus.Add(menu);
-        public ProgramState Launch(UIManager ui)
+        public ProgramState Launch(UIManager ui, Type? screenType = null)
         {
             ui.Clear(); ui.Add(_infoBox);
             ProgramState newState = ProgramState.Menu;
-            Type? screenType = null;
             do
             {
                 switch (newState)
