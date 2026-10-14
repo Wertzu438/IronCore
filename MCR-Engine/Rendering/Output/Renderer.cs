@@ -84,7 +84,8 @@ internal class Renderer
             {
                 for (int x = startX; x < maxX; x++)
                     AppendPair(_pairs[x, y]);
-                _output.AppendLine();
+                if (y != maxY - 1)
+                    _output.AppendLine();
             }
             RenderStringBuilder();
         }

@@ -6,7 +6,7 @@ namespace JumpOn.Traps;
 
 public class ArrowMachine : Trap
 {
-    private const double EntityDamage = 1.0, ArrowSpeed = 30;
+    private const double EntityDamage = 1.9, ArrowSpeed = 30;
     private const string ArrowDeviceTextureName = "arrowDevice", ArrowTextureName = "arrow";
     private readonly RGB?[,] _arrowTexture; 
     private readonly RGB?[,] _deviceTexture;

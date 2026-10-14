@@ -6,7 +6,7 @@ namespace JumpOn.Traps;
 
 public class Spike : Trap
 {
-    private const double EntityDamage = 1.2;
+    private const double EntityDamage = 1.7;
     private const string TextureName = "spike";
     private readonly RGB?[,] _baseTexture;
     private readonly int _amount;

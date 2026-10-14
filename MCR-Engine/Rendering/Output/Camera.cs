@@ -71,9 +71,9 @@ public class Camera
         _xOffset = _yOffset = _velocityX = _velocityY = 0;
         _followedSprite = null;
     }
-    public bool InView(int x, int y) => x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
+    public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
     public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth - 1, xOffset + Console.WindowWidth);
-    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight - 1, yOffset + Console.WindowHeight - 1);
+    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight - 1, yOffset + Console.WindowHeight);
     private List<Direction> GetCameraDirection(Sprite sprite)
     {
         List<Direction> directions = [];
@@ -107,25 +107,23 @@ public class Camera
     }
     private void SetOffsetIntoMapBorder(ref double xOffset, ref double yOffset)
     {
-        if (xOffset < 0)
+        int width = Console.WindowWidth, height = Console.WindowHeight;
+        
+        if (xOffset >= _render.PixelPairWidth - width)
         {
-            xOffset = 0; _velocityX = 0;
-        }
-        else if (xOffset >= _render.PixelPairWidth - Console.WindowWidth)
-        {
-            xOffset = _render.PixelPairWidth - Console.WindowWidth;
+            xOffset = _render.PixelPairWidth - width;
             _velocityX = 0;
         }
-
-        if (yOffset < 0)
+        if (xOffset < 0)
+            xOffset = _velocityX = 0;
+        
+        if (yOffset >= _render.PixelPairHeight - height)
         {
-            yOffset = 0; _velocityY = 0;
-        }
-        else if (yOffset >= _render.PixelPairHeight - Console.WindowHeight)
-        {
-            yOffset = _render.PixelPairHeight - Console.WindowHeight;
+            yOffset = _render.PixelPairHeight - height;
             _velocityY = 0;
         }
+        if (yOffset < 0)
+            yOffset = _velocityY = 0;
     }
     private double GetMaxVelocityX(double deltaTime)
     {

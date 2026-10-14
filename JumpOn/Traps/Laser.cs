@@ -7,7 +7,7 @@ namespace JumpOn.Traps;
 
 public class Laser : Trap
 {
-    private const double EntityDamage = 2;
+    private const double EntityDamage = 3;
     private const string LaserDeviceTextureName = "laserDevice", RayTextureName = "laserPart";
     private readonly TrapChildObject _laser;
     private readonly Clock _clock;
