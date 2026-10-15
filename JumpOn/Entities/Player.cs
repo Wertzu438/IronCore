@@ -20,7 +20,7 @@ public class Player : Entity
     private (int LastCoordinateChanged, int Index) _textureInfo;
     private int _respawns;
     private PlayerAction _action;
-    public Player(int x, int y, Textures textures, Input input, Clock clock) : base(x, y, Textures.DebuggingTexture(1, 1), 5, clock)
+    public Player(int x, int y, Textures textures, Input input, Clock clock) : base(x, y, textures, 5, clock)
     {
         _movementKeys = [input.Get("A"), input.Get("D"), input.Get("Space"), input.Get("W"), input.Get("S")];
         _standingTextures = [Textures.MirrorLeftRight(textures.Get("playerStand")), textures.Get("playerStand")];
@@ -47,7 +47,10 @@ public class Player : Entity
     public override void Update()
     {
         if (!Alive)
+        {
+            SetNewTexture(DeadTexture);
             return;
+        }
         if (GetFallDamage(out double fallDamage))
             Damage(fallDamage, true);
         _action = GetAction(GetDirection());

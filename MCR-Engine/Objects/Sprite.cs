@@ -90,7 +90,8 @@ public abstract class Sprite : IComparable<Sprite>
         }
     }
     public bool OnScene() => Sprites.SpriteOnScene(this);
-    public int GetDistanceToNextSprite(Direction direction, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) => Sprites.GetDistanceToNextSprite(this, direction, onlySpritesWithCollision, startAtTop, searchFor);
+    public int GetDistanceToNextSprite(Direction direction, bool onlyOnScene, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) 
+        => Sprites.GetDistanceToNextSprite(this, direction, onlyOnScene, onlySpritesWithCollision, startAtTop, searchFor);
     public bool IsBordersCollision(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, false, out collidedSprite, searchFor);
     public bool IsExactCollision(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, true, out collidedSprite, searchFor);
     public void ChangeVisibility(bool? value = null) => _visible = value.HasValue ? value.Value : !_visible;
@@ -100,7 +101,7 @@ public abstract class Sprite : IComparable<Sprite>
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnSprite(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
     public abstract Sprite? Clone(SpriteManager sprites);
-    protected virtual bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, true, false) is 0 && OnScene();
+    protected virtual bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, false, true, false) is 0;
     private void TryMoveX(double xAdd)
     {
         double xOld = _x;

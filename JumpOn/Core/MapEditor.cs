@@ -633,7 +633,7 @@ public class MapEditor
     {
         if (o.Main is null || o.Type is not (ObjType.Key or ObjType.Medkit or ObjType.CheckPoint))
             return;
-        int distance = o.Main.GetDistanceToNextSprite(Direction.Down, true, false);
+        int distance = o.Main.GetDistanceToNextSprite(Direction.Down, true, true, false);
         if (distance <= 0)
             return;
         if (o.Y + o.Main.Height + distance >= _level.Height)
@@ -929,7 +929,7 @@ public class MapEditor
                 continue;
             o.Ray.X = o.X + o.Main.Width / 2;
             o.Ray.Y = o.Y + o.Main.Height;
-            int distance = o.Ray.GetDistanceToNextSprite(Direction.Down, false, true, blockers);
+            int distance = o.Ray.GetDistanceToNextSprite(Direction.Down, true, false, true, blockers);
             o.Ray.SetNewTexture(Textures.CreateExpansion(part, Direction.Down, Math.Max(1, distance + 1)));
         }
     }
@@ -1458,7 +1458,7 @@ public class MapEditor
         {
             if (o.Type is ObjType.Key or ObjType.Medkit or ObjType.CheckPoint && o.Main is not null)
             {
-                if (o.Main!.GetDistanceToNextSprite(Direction.Down, true, false) > 0)
+                if (o.Main!.GetDistanceToNextSprite(Direction.Down, true, true, false) > 0)
                     floating.Add(o);
             }
         }

@@ -8,6 +8,7 @@ namespace MCR_Engine.Rendering.Output;
 internal class Renderer
 {
     private readonly StringBuilder _output;
+    private readonly StreamWriter _writer;
     private readonly Thread _thread;
     private readonly UIManager _ui;
     private readonly Camera _camera;
@@ -19,6 +20,7 @@ internal class Renderer
     public Renderer()
     {
         _output = new StringBuilder();
+        _writer =  new StreamWriter(Console.OpenStandardOutput());
         _thread = new Thread(Loop);
         _camera = new Camera(this);
         _ui = new UIManager(this);
@@ -64,6 +66,8 @@ internal class Renderer
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
     private void Loop()
     {
+        int frames = 0;
+        Stopwatch fpsWatch = Stopwatch.StartNew();
         while (_action is not ProcessAction.Stop)
         {
             while (_action is ProcessAction.Pause || _pairs is null)
@@ -88,13 +92,24 @@ internal class Renderer
                     _output.AppendLine();
             }
             RenderStringBuilder();
+            frames++;
+
+            if (fpsWatch.ElapsedMilliseconds >= 1000)
+            {
+
+                Console.Title = $"FPS: {frames}";
+                frames = 0;
+
+                fpsWatch.Restart();
+            }
         }
         _state = ProcessState.Stopped;
     }
     private void RenderStringBuilder()
     {
         Console.SetCursorPosition(0, 0);
-        Console.Write(_output);
+        _writer.Write(_output.ToString());
+        _writer.Flush();
     }
     private void AppendPair(PixelPair pair)
     {

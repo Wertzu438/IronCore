@@ -9,7 +9,7 @@ ArrowMachine,104,92,Right,1500
 SolidObj,136,61,2,metalPlatform,Right,5
 Bar,65,43,28
 SolidObj,142,41,2,brickBlock,Down,1
-Key,151,54
+Key,151,55
 Laser,155,65,700,1200
 SolidObj,168,65,2,brickBlock,Down,1
 SolidObj,170,73,1,metalWall,Down,9
@@ -18,10 +18,10 @@ SolidObj,176,33,2,brickBlock,Down,5
 SolidObj,142,33,2,brickBlock,Right,5
 Spike,23,36,1
 Spike,42,36,1
-Key,193,90
-Medkit,48,30
+Key,193,92
+Medkit,48,34
 SolidObj,208,90,2,brickBlock,Down,1
-CheckPoint,1,26
+CheckPoint,1,27
 Goal,8,86
 SolidObj,0,106,0,brickBlock,Right,28
 SolidObj,216,90,0,brickBlock,Down,2

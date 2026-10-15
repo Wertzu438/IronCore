@@ -7,22 +7,31 @@ namespace JumpOn.Entities;
 
 public abstract class Entity : Sprite
 {
-    protected readonly Clock Clock;
-    private Interactable? _currentInteractable;
     private const int DamageTickOffsetMs = 1000;
+    protected readonly RGB?[,] DeadTexture;
+    private readonly Clock _clock;
     private readonly double _maxHealth;
+    private Interactable? _currentInteractable;
     private double _currentHealth;
+    private int _lastFloorY;
     private int _lastDamageTimeMs;
-    protected Entity(int x, int y, RGB?[,] texture, int maxHealth, Clock clock) : base(x, y, texture, 1, true, true)
+    protected Entity(int x, int y, Textures textures, int maxHealth, Clock clock) : base(x, y, Textures.DebuggingTexture(1, 1), 1, true, true)
     {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;
         _lastDamageTimeMs = 0;
         _currentInteractable = null;
-        Clock = clock;
+        _clock = clock;
+        _lastFloorY = 0;
+        DeadTexture = textures.Get("deadEntity");
+    }
+    public new int Y
+    {
+        get => base.Y;
+        set => base.Y = _lastFloorY = value;
     }
     public bool Alive => _currentHealth > 0;
-    public double Health => Alive ?  _currentHealth : 0;
+    public double Health => Alive ? _currentHealth : 0;
     protected abstract double WalkingSpeed { get; }
     protected abstract double ClimbingSpeed { get; }
     protected abstract double HangingSpeed { get; }
@@ -35,13 +44,13 @@ public abstract class Entity : Sprite
     {
         if (damage < 0)
             throw new ArgumentException("Damage cannot be negative");
-        bool getDamage = _lastDamageTimeMs + DamageTickOffsetMs < Clock.PassedMilliSeconds;
+        bool getDamage = _lastDamageTimeMs + DamageTickOffsetMs < _clock.PassedMilliSeconds;
         if (!getDamage && !critical)
             return;
-        if (getDamage)
-            Flash(20);
         _currentHealth -= damage;
-        _lastDamageTimeMs = Clock.PassedMilliSeconds;
+        _lastDamageTimeMs = _clock.PassedMilliSeconds;
+        if (getDamage && Alive)
+            Flash(20);
     }
     public void Heal(double heal)
     {
@@ -93,10 +102,21 @@ public abstract class Entity : Sprite
     }
     protected bool GetFallDamage(out double fallDamage)
     {
-        if (VelocityY > 120 && IsFloorBeneath())
+        int distance = Y - _lastFloorY;
+        if (distance > 200)
         {
-            fallDamage = VelocityY / 100;
+            fallDamage = double.MaxValue;
             return true;
+        }
+        if (IsFloorBeneath() || OnLadder || OnBar)
+        {
+            if (distance > 20)
+            {
+                fallDamage = distance / 20.0;
+                _lastFloorY = Y;
+                return true;
+            }
+            _lastFloorY = Y;
         }
         fallDamage = 0;
         return false;
@@ -116,7 +136,9 @@ public abstract class Entity : Sprite
     public static void Update(List<Entity> entities)
     {
         foreach (Entity entity in entities)
+        {
             entity.Update();
+        }
     }
     public static void ResetInteractable(List<Entity> entities)
     {

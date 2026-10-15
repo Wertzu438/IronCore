@@ -36,7 +36,7 @@ public class Game
         _centeredInfoBox = (CenteredInfoBox)UI.Add(new CenteredInfoBox(Input));
         _mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
         _clock = new Clock(); _pause = new PauseChecker(Input, _centeredInfoBox);
-        _engine.SetRenderScene(_scene = LevelLoader.Read($"Scenes/level{level}.txt", _engine, _mobileInfoBox, _clock));
+        _engine.SetRenderScene(_scene = LevelLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _player = (Player)_scene.Sprites.Add(new Player(0, 0, Textures, Input, _clock));
         LoadContent();
         _sideBar = [UI.Add(new UIElement(20, 6, 2, 1, true)), UI.Add(new UIElement(20, 6, 2, 8, true)), UI.Add(new UIElement(20, 7, 2, 15, true))];
@@ -65,9 +65,12 @@ public class Game
             UpdateSideBar();
             if (!_player.Alive || Input.Get("R").Pressed)
             {
+                _scene.Update(1, true);
+                _checkPoints.ShowInfoBox();
                 _scene.SetSpriteSnapshot(_checkPoints.SnapShot);
                 _scene.Sprites.Add(_player);
                 LoadContent();
+                _scene.Update(0, true);
             }
             else if (Input.Get("L").Pressed)
             {

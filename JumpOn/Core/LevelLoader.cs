@@ -11,10 +11,11 @@ namespace JumpOn;
 
 public static class LevelLoader
 {
-    public static Scene Read(string filePath, Engine engine, MobileInfoBox mobileInfoBox, Clock clock)
+    private const string DirectoryName = "Scenes";
+    public static Scene Read(string sceneName, Engine engine, MobileInfoBox mobileInfoBox, Clock clock)
     {
         Scene scene;
-        using (var reader = new StreamReader(filePath))
+        using (var reader = new StreamReader($"{DirectoryName}/{sceneName}.txt"))
         {
             if (reader.EndOfStream)
                 throw new ArgumentException("invalide format - 0");
@@ -51,4 +52,5 @@ public static class LevelLoader
         }
         return scene;
     }
+    public static int GetSceneAmount() => Directory.GetFiles(DirectoryName,  "*.txt").Length;
 }

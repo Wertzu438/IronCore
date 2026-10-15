@@ -44,7 +44,7 @@ public class ArrowMachine : Trap
     {
         foreach (TrapChildObject arrow in _arrows)
         {
-            if (arrow.Visible && arrow.OnScene() && arrow.GetDistanceToNextSprite(_direction, false, false, [typeof(SolidObject), typeof(DecorationObject)]) != 0)
+            if (arrow.Visible && arrow.OnScene() && arrow.GetDistanceToNextSprite(_direction, true, false, false, [typeof(SolidObject), typeof(DecorationObject)]) > 0)
             {
                 arrow.SetNewVelocity(_direction, ArrowSpeed);
                 continue;

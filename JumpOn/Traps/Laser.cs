@@ -40,7 +40,7 @@ public class Laser : Trap
     protected override double Damage => EntityDamage;
     private int RayX => X + (Width / 2);
     private int RayY => Y + Height;
-    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextSprite(Direction.Down, false, true, [typeof(SolidObject), typeof(Ladder)]) + 1);
+    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextSprite(Direction.Down, true, false, true, [typeof(SolidObject), typeof(Ladder)]) + 1);
     public override Sprite? Clone(SpriteManager sprites) => new Laser(X, Y, _onMs, _offMs, _deviceTexture, _rayPartTexture, _clock);
     protected override void Update()
     {

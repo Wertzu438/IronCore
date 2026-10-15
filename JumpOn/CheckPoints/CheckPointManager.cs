@@ -41,7 +41,6 @@ public class CheckPointManager
         if (OneCollected)
         {
             player.Respawns++;
-            ShowInfoBox();
         }
         else _checkPoints[0].IsCollected = true;
         CheckPoint nearestCheckPoint = GetNearestUnlockedCheckPoint(player.X, player.Y);
@@ -50,6 +49,7 @@ public class CheckPointManager
         player.Y = nearestCheckPoint.Y;
         player.Heal(double.MaxValue);
     }
+    public void ShowInfoBox() => _centeredInfoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
     private CheckPoint GetNearestUnlockedCheckPoint(int x, int y)
     {
         CheckPoint? nearestCheckPoint = null;
@@ -69,7 +69,6 @@ public class CheckPointManager
             throw new ArgumentException("No player spawn point found");
         return nearestCheckPoint;
     }
-    private void ShowInfoBox() => _centeredInfoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
     public async Task MakeSnapshot()
     {
         if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)

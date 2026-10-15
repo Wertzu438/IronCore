@@ -28,7 +28,7 @@ public class SpriteManager : IEnumerable<Sprite>
                 Add(s);
             }
         }
-        public double DeltaTime => _deltaTime is not 0 ? _deltaTime : 0.1;
+        public double DeltaTime => _deltaTime >= 0 ? _deltaTime : 0;
         public int Count => _sprites.Count;
         public void Update(double deltaTime)
         {
@@ -77,11 +77,12 @@ public class SpriteManager : IEnumerable<Sprite>
             }
             return false;
         }
-        public int GetDistanceToNextSprite(Sprite sprite, Direction direction, bool onlyWithCollision, bool startAtTop,  Type[]? searchFor = null)
+        public int GetDistanceToNextSprite(Sprite sprite, Direction direction, bool onlyOnScene, bool onlyWithCollision, bool startOppositeSide, Type[]? searchFor = null)
         {
-            int xStart = sprite.X + (direction is Direction.Right && !startAtTop ? sprite.Width - 1 : 0), yStart = sprite.Y+ (direction is Direction.Down && !startAtTop ? sprite.Height - 1 : 0);
+            int xStart = sprite.X + (direction is Direction.Right && !startOppositeSide ? sprite.Width - 1 : 0), 
+                yStart = sprite.Y + (direction is Direction.Down && !startOppositeSide ? sprite.Height - 1 : 0);
             int xAdd = 0, yAdd = 0;
-            bool quit = false, upDown =  direction is Direction.Up or Direction.Down;
+            bool quit = false, upDown = direction is Direction.Up or Direction.Down;
             int distance = upDown ? sprite.Width : sprite.Height;
             do
             {
@@ -95,9 +96,17 @@ public class SpriteManager : IEnumerable<Sprite>
                 for (int i = 0; i < distance; i++)
                 {
                     int x = xStart + xAdd + (upDown ? i : 0), y = yStart + yAdd+ (!upDown ? i : 0);
-                    if (!_scene.ValidPixelCoordinates(x, y) || 
-                    (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y]!.GetType())) &&
-                    (!onlyWithCollision || _map[x, y]!.Collision)))
+                    if (!_scene.ValidPixelCoordinates(x, y))
+                    {
+                        if (onlyOnScene)
+                        {
+                            quit = true;
+                            break;
+                        }
+                        return -1;
+                    }
+                    if (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y]!.GetType())) &&
+                    (!onlyWithCollision || _map[x, y]!.Collision))
                     {
                         quit = true;
                         break;

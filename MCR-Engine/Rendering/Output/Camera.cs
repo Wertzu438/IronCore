@@ -6,7 +6,7 @@ namespace MCR_Engine.Rendering.Output;
 
 public class Camera
 {
-    private const double MinMaxVelocityX = 15, MinMaxVelocityY = 10;
+    private const double MinMaxVelocityX = 20, MinMaxVelocityY = 20;
     private const double DefaultAccelerationX = 220, DefaultAccelerationY = 300;
     private const double DefaultDecelerationX = 40, DefaultDecelerationY = 150;
     private readonly Renderer _render;
@@ -72,8 +72,8 @@ public class Camera
         _followedSprite = null;
     }
     public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
-    public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth - 1, xOffset + Console.WindowWidth);
-    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight - 1, yOffset + Console.WindowHeight);
+    public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth, xOffset + Console.WindowWidth);
+    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight, yOffset + Console.WindowHeight);
     private List<Direction> GetCameraDirection(Sprite sprite)
     {
         List<Direction> directions = [];

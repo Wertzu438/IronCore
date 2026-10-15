@@ -27,6 +27,8 @@ public class AccountMenu : Menu
             return;
         Thread.Sleep(1200);
         _renderAction(ProcessAction.Pause);
+        while (Console.KeyAvailable)
+            Console.ReadKey(true);
         Thread.Sleep(200);
         Console.SetCursorPosition(infoBox.X + 10, infoBox.Y + 11);
         Console.ResetColor(); Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -35,7 +37,7 @@ public class AccountMenu : Menu
     }
     protected override ProgramState OpenNewWindow(Key key, out Type? nextScreen)
     {
-        if ((!_account.ValidName && key != Keys[0]) || key == Keys[1])
+        if (!_account.ValidName || key == Keys[1])
         {
             _account.Name = null;
             nextScreen = typeof(AccountMenu);

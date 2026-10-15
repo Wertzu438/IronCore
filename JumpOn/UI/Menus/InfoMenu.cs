@@ -22,6 +22,6 @@ public class InfoMenu : Menu
     }
     protected override string[][] UpdateContent()
     {
-        return [Application.GetGameHeading(), ["!PROGRAMMINFO"], ["-Developer: Simon Straubinger        Co-Developer: Uzair Abbas"], ["Erstellt am: 15.08.2026", "Fertig am: ??.??.2026"], [$"-[ENTER] Hauptmenü"]];
+        return [Application.GetGameHeading(), ["!PROGRAMMINFO"], ["-Developer: Simon Straubinger        Co-Developer: Uzair Abbas"], ["Erstellt am: 15.08.2026", "Fertig am: 15.10.2026"], [$"-[ENTER] Hauptmenü"]];
     }
 }

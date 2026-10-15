@@ -85,7 +85,7 @@ public class Account
         for (int level = 0; level < _stats.Length; level++)
             if (!_stats[level].LevelFinished)
                 return level;
-        return 0;
+        return _stats.Length - 1;
     }
     public static Account GetAccount(int levelCount)
     {
