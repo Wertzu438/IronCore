@@ -3,17 +3,17 @@
 public class Clock
 {
     private int _seconds;
-    private int _milliSeconds;
+    private float _milliSeconds;
     public Clock()
     {
         _seconds = 0;
         _milliSeconds = 0;
     }
     public int PassedSeconds => _seconds;
-    public int PassedMilliSeconds => _milliSeconds + _seconds * 1000;
-    public void Update(int stopTime)
+    public int PassedMilliSeconds => (int)_milliSeconds + _seconds * 1000;
+    public void Update(float stoppedMilliseconds)
     {
-        _milliSeconds += stopTime;
+        _milliSeconds += stoppedMilliseconds;
         while (_milliSeconds >= 1000)
         {
             _seconds++;

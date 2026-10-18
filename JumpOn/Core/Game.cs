@@ -56,7 +56,7 @@ public class Game
         do
         {
             double deltaTime = Math.Min(stopwatch.Elapsed.TotalSeconds, 1);
-            _clock.Update((int)(deltaTime * 1000));
+            _clock.Update(stopwatch.Elapsed.Microseconds / 1000f);
             stopwatch.Restart();
             Trap.Update(_traps);
             Interactable.Update(_interactables);
@@ -80,6 +80,7 @@ public class Game
                 return false;
             }
             else _pause.Check();
+            Task.Delay(0).Wait();
         } while (!_goal.EndGame);
         passedSeconds = _clock.PassedSeconds;
         repawns = _player.Respawns;
@@ -101,5 +102,6 @@ public class Game
         _sideBar[0].UpdateContent([["!SPIELINFO"], [$"🎯 Level: {_account.CurrentLevel+1}", $"🔐 Schlüssel: {_goal.CollectedKeysAmount}/{_goal.KeysAmount} "]]);
         _sideBar[1].UpdateContent([["!SPIELER"], [$"👤 Name: {_account.Name}", $"❤️ Leben: {Math.Round(_player.Health, 2)}/{Player.MaxHealth}"]]);
         _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{'P'}] ⏸️ Pause", $"[{'R'}] 🔄 Respawnen", $"[{'L'}] 🏠 Verlassen"]]);
+        _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{'P'}] ⏸️ Pause", $"[{'R'}] 🔄 Respawnen", $"[{_clock.PassedMilliSeconds}] 🏠 Verlassen"]]);
     }
 }
