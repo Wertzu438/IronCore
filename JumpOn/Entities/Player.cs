@@ -44,6 +44,7 @@ public class Player : Entity
     protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 20;
     protected override double HangingSpeed => 20;
+    protected override bool IsInteractingWithInteractable => (_action is PlayerAction.Climb or PlayerAction.Hang);
     public override void Update()
     {
         if (!Alive)
@@ -86,7 +87,7 @@ public class Player : Entity
         {
             action = direction is Direction.Left ? PlayerAction.WalkLeft : PlayerAction.WalkRight;
         }
-        else if ((_action is PlayerAction.WalkLeft or PlayerAction.WalkRight && !Move) || (_action is PlayerAction.Hang))
+        else if ((_action is PlayerAction.WalkLeft or PlayerAction.WalkRight && !Move) || (_action is PlayerAction.Hang or PlayerAction.Climb))
         {
             action = (_action is PlayerAction.WalkLeft ? PlayerAction.StandLeft : PlayerAction.StandRight);
         }
@@ -122,5 +123,5 @@ public class Player : Entity
         _textureInfo.LastCoordinateChanged = coordinate;
         return true;
     }
-    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && IsFloorBeneath()) && _action is not (PlayerAction.Climb or PlayerAction.Hang);
+    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && IsFloorBeneath()) && !IsInteractingWithInteractable;
 }

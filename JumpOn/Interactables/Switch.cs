@@ -71,11 +71,15 @@ public class Switch : Interactable
     private RGB?[,] GetCurrentTexture() => _pulled ? _pulledTexture : _unpulledTexture;
     private async Task SwipeCameraOnConnectedSprite()
     {
+        if (_camera.CinematicCamera)
+            return;
         Sprite lastSprite = _camera.FollowedSprite;
         await _camera.SetFollowedSprite(_connectedSprite, 0, 0);
+        _camera.CinematicCamera = true;
         await Task.Delay(300); 
         _connectedSprite.ChangeVisibility(); 
         await Task.Delay(300); 
+        _camera.CinematicCamera = false;
         await _camera.SetFollowedSprite(lastSprite, 0, 0);
     }
 }

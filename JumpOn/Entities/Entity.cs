@@ -19,7 +19,7 @@ public abstract class Entity : Sprite
     {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;
-        _lastDamageTimeMs = 0;
+        _lastDamageTimeMs = int.MinValue;
         _currentInteractable = null;
         _clock = clock;
         _lastFloorY = 0;
@@ -35,7 +35,8 @@ public abstract class Entity : Sprite
     protected abstract double WalkingSpeed { get; }
     protected abstract double ClimbingSpeed { get; }
     protected abstract double HangingSpeed { get; }
-    protected override bool Gravity => !(OnLadder || OnBar);
+    protected abstract bool IsInteractingWithInteractable { get; }
+    protected override bool Gravity => !IsInteractingWithInteractable;
     private bool OnLadder => _currentInteractable is Ladder;
     private bool OnBar => _currentInteractable is Bar;
     private bool OnTopOfLadder => Ladder.IsEntityOnTopOfLadder(this);
@@ -71,13 +72,13 @@ public abstract class Entity : Sprite
     }
     protected bool Climb(Direction direction)
     {
-        if (!Gravity && OnLadder)
-            StopMovingY();
         if (!OnLadder || Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
         {
-            if (OnTopOfLadder)
-                StopMovingY();
-            return false;
+            if (!OnLadder || !IsInteractingWithInteractable)
+                return false;
+            if (Contains(direction, [Direction.Left, Direction.Right]))
+                MoveOnX(direction, 299, ClimbingSpeed);
+            return !IsFloorBeneath();
         }
         StopMovingX();
         ((Ladder)_currentInteractable!).CenterEntity(this);
@@ -133,18 +134,23 @@ public abstract class Entity : Sprite
             throw new ArgumentException("Invalid direction");
         SetNewVelocity(direction, speed);
     }
-    public static void Update(List<Entity> entities)
+    public static void Update(List<Entity> entities, Scene scene)
     {
         foreach (Entity entity in entities)
         {
             entity.Update();
+            entity._currentInteractable =  null;
+            if (!entity.OnScene(Direction.Right))
+            {
+                if (entity.X < 0)
+                {
+                    entity.X = 0;
+                }
+                else entity.X = scene.Width - entity.Width;
+                entity.StopMovingX();
+            }
+            
         }
     }
-    public static void ResetInteractable(List<Entity> entities)
-    {
-        foreach (Entity entity in entities)
-            entity._currentInteractable =  null;
-    }
     public static List<Entity> LoadEntities(SpriteManager sprites) => sprites.GetAllSpritesOfType<Entity>();
-    private static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);
 }

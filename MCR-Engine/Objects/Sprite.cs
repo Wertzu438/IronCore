@@ -89,7 +89,7 @@ public abstract class Sprite : IComparable<Sprite>
             default: throw new ArgumentException("Invalid direction.");
         }
     }
-    public bool OnScene() => Sprites.SpriteOnScene(this);
+    public bool OnScene(Direction? searchingDirection = null) => Sprites.SpriteOnScene(this, searchingDirection);
     public int GetDistanceToNextSprite(Direction direction, bool onlyOnScene, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) 
         => Sprites.GetDistanceToNextSprite(this, direction, onlyOnScene, onlySpritesWithCollision, startAtTop, searchFor);
     public bool IsBordersCollision(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, false, out collidedSprite, searchFor);
@@ -177,4 +177,5 @@ public abstract class Sprite : IComparable<Sprite>
             return layerCompare;
         return (Width * Height).CompareTo(other.Width * other.Height);
     }
+    public static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);
 }

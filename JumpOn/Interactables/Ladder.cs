@@ -34,7 +34,10 @@ public class Ladder : Interactable
     private RGB?[,] CreateTexture() => Textures.CreateExpansion(_baseTexture, Direction.Down, _amount);
     public static bool IsEntityOnTopOfLadder(Entity entity)
     {
-        int distance = entity.GetDistanceToNextSprite(Direction.Down, false, false, true, [typeof(Ladder)]);
-        return distance == entity.Height - 2 ||  distance == entity.Height - 3;
+        if (!entity.IsBordersCollision(out Sprite? sprite, [typeof(Ladder)]))
+            return false;
+        Ladder ladder = (Ladder)sprite!;
+        int distance = ladder.Y - (entity.Y + entity.Height);
+        return distance == -1;
     }
 }

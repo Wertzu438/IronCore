@@ -15,7 +15,7 @@ public class SpriteManager : IEnumerable<Sprite>
             _scene = scene;
             _map = new Sprite?[_scene.Width, _scene.Height];
         }
-        private SpriteManager(Engine engine, Scene scene)
+        private SpriteManager(Scene scene, bool clone)
         {
             _sprites = [];
             _scene = scene;
@@ -56,7 +56,19 @@ public class SpriteManager : IEnumerable<Sprite>
                     return i;
             return -1;
         }
-        public bool SpriteOnScene(Sprite sprite) => _scene.ValidPixelCoordinates(sprite.X, sprite.Y);
+        public bool SpriteOnScene(Sprite sprite, Direction? searchingDirection = null)
+        {
+            if (searchingDirection is null)
+                return _scene.ValidPixelCoordinates(sprite.X, sprite.Y) && 
+                       _scene.ValidPixelCoordinates(sprite.X + sprite.Width, sprite.Y + sprite.Height);
+            if (searchingDirection is Direction.Up or Direction.Down)
+                return _scene.ValidPixelCoordinates(0, sprite.Y) && 
+                       _scene.ValidPixelCoordinates(0, sprite.Y + sprite.Height);
+            if (searchingDirection is Direction.Left or Direction.Right)
+                return _scene.ValidPixelCoordinates(sprite.X, 0) &&
+                       _scene.ValidPixelCoordinates(sprite.X + sprite.Width - 1, 0);
+            throw new ArgumentException($"Invalid direction {searchingDirection}");
+        }
         public Sprite? GetSpriteMapPixel(int x, int y) => _scene.ValidPixelCoordinates(x, y) ? _map[x, y] : throw new ArgumentException("The specified coordinates are invalid.");
         public bool Collision(Sprite searchingSprite, bool searchExact, out Sprite? collidedSprite, Type[]? searchFor = null)
         {
@@ -67,7 +79,7 @@ public class SpriteManager : IEnumerable<Sprite>
                     continue;
                 if (currentSprite == searchingSprite)
                     continue;
-                if (!currentSprite.Collision)
+                if (!currentSprite.Collision && searchFor is null)
                     continue;
                 if (!SpriteBordersTouching(currentSprite, searchingSprite))
                     continue;
@@ -116,7 +128,7 @@ public class SpriteManager : IEnumerable<Sprite>
             return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
         }
         public bool SpriteBordersTouching(Sprite s1, Sprite s2) => s1.X + s1.Width > s2.X && s1.Y + s1.Height > s2.Y && s1.X < s2.X + s2.Width && s1.Y < s2.Y + s2.Height;
-        public SpriteManager Clone(Engine engine) => new SpriteManager(engine, _scene);
+        public SpriteManager Clone(Engine engine) => new SpriteManager(_scene, true);
         public bool Contains(Sprite sprite) => _sprites.Contains(sprite);
         public List<T> GetAllSpritesOfType<T>() => _sprites.OfType<T>().ToList();
         private void MoveSprites()

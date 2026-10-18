@@ -23,6 +23,7 @@ public class Game
     private readonly PauseChecker _pause;
     private readonly CenteredInfoBox _centeredInfoBox;
     private readonly MobileInfoBox _mobileInfoBox;
+    private readonly UIElement[] _otherInfoBoxes;
     private List<Interactable> _interactables;
     private List<Trap> _traps;
     private List<Collectable> _collectables;
@@ -33,6 +34,7 @@ public class Game
     {
         _engine = engine;
         _account = account;
+        _otherInfoBoxes = [UI.Add(new UIElement(0, 0, 0, 0, true))];
         _centeredInfoBox = (CenteredInfoBox)UI.Add(new CenteredInfoBox(Input));
         _mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
         _clock = new Clock(); _pause = new PauseChecker(Input, _centeredInfoBox);
@@ -59,14 +61,15 @@ public class Game
             Trap.Update(_traps);
             Interactable.Update(_interactables);
             Collectable.Update(_collectables);
-            Entity.Update(_entities);
-            _scene.Update(deltaTime, false);
-            Entity.ResetInteractable(_entities);
+            Entity.Update(_entities, _scene);
+            _scene.Update(deltaTime);
             UpdateSideBar();
-            if (!_player.Alive || Input.Get("R").Pressed)
+            bool respawnPressed = Input.Get("R").Pressed;
+            if (!_player.Alive || respawnPressed)
             {
-                _scene.Update(1, true);
-                _checkPoints.ShowInfoBox();
+                _scene.Update(0.2, true);
+                if (!respawnPressed)
+                    _checkPoints.ShowInfoBox();
                 _scene.SetSpriteSnapshot(_checkPoints.SnapShot);
                 _scene.Sprites.Add(_player);
                 LoadContent();
@@ -77,7 +80,6 @@ public class Game
                 return false;
             }
             else _pause.Check();
-            Thread.Sleep(1);
         } while (!_goal.EndGame);
         passedSeconds = _clock.PassedSeconds;
         repawns = _player.Respawns;
@@ -85,12 +87,13 @@ public class Game
     }
     private void LoadContent()
     {
+        _mobileInfoBox.Visible = false;
         _interactables = Interactable.LoadInteractables(_scene.Sprites);
         _collectables = Collectable.LoadCollectables(_scene.Sprites);
         _traps = Trap.LoadTraps(_scene.Sprites);
         _entities = Entity.LoadEntities(_scene.Sprites);
         _goal = Goal.LoadGoal(_scene.Sprites);
-        _checkPoints = new CheckPointManager(_engine, _scene, UI, _clock, _centeredInfoBox);
+        _checkPoints = new CheckPointManager(_engine, _scene, _clock, _centeredInfoBox, _otherInfoBoxes[0]);
         _checkPoints.ResetPlayerToCheckPoint(_player);
     }
     private void UpdateSideBar()

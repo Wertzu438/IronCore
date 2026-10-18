@@ -19,11 +19,11 @@ public class CheckPointManager
     private readonly Clock _clock;
     private int _lastSecondSaved;
     private SpriteManager _checkPointSnapShot;
-    public CheckPointManager(Engine engine, Scene scene, UIManager ui, Clock clock, CenteredInfoBox centeredInfoBox)
+    public CheckPointManager(Engine engine, Scene scene, Clock clock, CenteredInfoBox centeredInfoBox, UIElement infoBox)
     {
         _engine = engine;
         _scene = scene;
-        _infoBox = ui.Add(new UIElement(25, 3, 2, 0, true, false));
+        _infoBox = infoBox;
         _checkPoints = _scene.Sprites.GetAllSpritesOfType<CheckPoint>();
         foreach (CheckPoint checkPoint in _checkPoints)
             checkPoint.CheckPoints = this;
@@ -75,6 +75,8 @@ public class CheckPointManager
             return;
         _checkPointSnapShot = _scene.Sprites.Clone(_engine);
         _lastSecondSaved = _clock.PassedSeconds;
+        _infoBox.UpdateSize(25, 3);
+        _infoBox.X = 2;
         _infoBox.Y = Console.WindowHeight - 2 - _infoBox.Height;
         _infoBox.UpdateContent([[$"-💾 Gespeichert: {DateTime.Now.ToShortTimeString()}"]]);
         _infoBox.Visible = true;

@@ -13,10 +13,18 @@ public abstract class Interactable : Sprite
     protected virtual bool IsEntityInteracting(out Entity? entity)
     {
         entity = null;
-        if (!Visible || !IsBordersCollision(out Sprite? sprite, [typeof(Player)]))
+        if (!Visible || !IsExactCollision(out Sprite? sprite, [typeof(Player)]))
             return false;
         entity = sprite as Entity;
-        return true;
+        return EntityCoveringHalf(entity);
+    }
+    private bool EntityCoveringHalf(Entity entity)
+    {
+        int overlap =
+            Math.Min(entity.X + entity.Width, X + Width) -
+            Math.Max(entity.X, X);
+
+        return overlap >= entity.Width / 1.9;
     }
     public static void Update(List<Interactable> interactables)
     {

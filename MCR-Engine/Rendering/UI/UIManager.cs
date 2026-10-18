@@ -7,7 +7,7 @@ public class UIManager
     {
         private const char FrameOutput = '▀';
         private readonly RGB _textColor, _specialTextColor, _borderColor, _backgroundColor;
-        private readonly List<UIElement> _elements;
+        private readonly HashSet<UIElement> _elements;
         private readonly Renderer _render;
         internal UIManager(Renderer render)
         {
@@ -18,6 +18,7 @@ public class UIManager
             _backgroundColor = new RGB(0, 0, 0);
             _elements = [];
         }
+        public int Count => _elements.Count;
         public void UpdateMap()
         {
             lock (_elements)

@@ -23,6 +23,11 @@ public class Camera
         _followedSprite = null;
         _cinematicCamera = false;
     }
+    public bool CinematicCamera
+    {
+        get => _cinematicCamera;
+        set => _cinematicCamera = value;
+    }
     public Sprite FollowedSprite => _followedSprite ?? throw new InvalidOperationException("Followed sprite is not set");
     public int XOffset => (int)Math.Round(_xOffset);
     public int YOffset => (int)Math.Round(_yOffset);

@@ -33,9 +33,13 @@ public class Application : IGameProject
         if (game.Play(out int? passedSeconds, out int? respawns))
         {
             _account.UpdateLevelStats(_account.CurrentLevel, passedSeconds, respawns);
+            if (_account.CurrentLevel == _account.MaxLevel)
+                return ProgramState.Menu;
             _account.CurrentLevel++;
+            _account.SaveAccount();
+            return ProgramState.Game;
         }
-        else _account.UpdateLevelStats(_account.CurrentLevel, passedSeconds, respawns);
+        _account.UpdateLevelStats(_account.CurrentLevel, passedSeconds, respawns);
         _account.SaveAccount();
         return ProgramState.Menu;
     }
