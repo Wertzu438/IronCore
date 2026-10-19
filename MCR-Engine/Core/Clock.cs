@@ -2,27 +2,18 @@
 
 public class Clock
 {
-    private int _seconds;
-    private float _milliSeconds;
+    private float _seconds;
     public Clock()
     {
         _seconds = 0;
-        _milliSeconds = 0;
     }
-    public int PassedSeconds => _seconds;
-    public int PassedMilliSeconds => (int)_milliSeconds + _seconds * 1000;
-    public void Update(float stoppedMilliseconds)
+    public int PassedSeconds => (int)_seconds;
+    public int PassedMilliSeconds => (int)(_seconds * 1000);
+    public void Update(float deltaTime)
     {
-        _milliSeconds += stoppedMilliseconds;
-        while (_milliSeconds >= 1000)
-        {
-            _seconds++;
-            _milliSeconds -= 1000;
-        }
+        if (deltaTime < 0)
+            throw new ArgumentOutOfRangeException(nameof(deltaTime));
+        _seconds += deltaTime;
     }
-    public void Reset()
-    {
-        _seconds = 0;
-        _milliSeconds = 0;
-    }
+    public void Reset() => _seconds = 0;
 }

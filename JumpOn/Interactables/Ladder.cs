@@ -9,7 +9,7 @@ public class Ladder : Interactable
     private const string TextureName = "ladderPart";
     private readonly RGB?[,] _baseTexture;
     private readonly int _amount;
-    public Ladder(int x, int y, Textures textures, int partsCount) : base(x, y, textures.Get(TextureName))
+    public Ladder(int x, int y, Textures textures, int partsCount) : base(x, y, textures.Get(TextureName), false)
     {
         if (partsCount <= 0)
             throw new ArgumentException("partsCount <= 0");
@@ -17,7 +17,7 @@ public class Ladder : Interactable
         _amount = partsCount;
         SetNewTexture(CreateTexture());
     }
-    private Ladder(int x, int y, RGB?[,] baseTexture, int amount) : base(x, y, Textures.DebuggingTexture(1, 1))
+    private Ladder(int x, int y, RGB?[,] baseTexture, int amount) : base(x, y, Textures.DebuggingTexture(1, 1), false)
     {
         _baseTexture = baseTexture;
         _amount = amount;

@@ -93,7 +93,6 @@ internal class Renderer
             }
             RenderStringBuilder();
             frames++;
-
             if (fpsWatch.ElapsedMilliseconds >= 1000)
             {
 

@@ -6,9 +6,10 @@ namespace JumpOn.Interactables;
 
 public abstract class Interactable : Sprite
 {
-    public Interactable(int x, int y, RGB?[,] texture) : base(x, y, texture, 0, false, false)
+    private bool _ignoreHalfCoverage;
+    public Interactable(int x, int y, RGB?[,] texture, bool ignoreHalfCoverage) : base(x, y, texture, 0, false, false)
     {
-        
+        _ignoreHalfCoverage = ignoreHalfCoverage;
     }
     protected virtual bool IsEntityInteracting(out Entity? entity)
     {
@@ -16,7 +17,7 @@ public abstract class Interactable : Sprite
         if (!Visible || !IsExactCollision(out Sprite? sprite, [typeof(Player)]))
             return false;
         entity = sprite as Entity;
-        return EntityCoveringHalf(entity);
+        return _ignoreHalfCoverage || EntityCoveringHalf(entity);
     }
     private bool EntityCoveringHalf(Entity entity)
     {

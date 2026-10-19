@@ -234,12 +234,12 @@ public class MapEditor
         if (_raysDirty)
         {
             HideOverlays();
-            _scene.Update(0.016, all);
+            _scene.Update(0.016f, all);
             RecomputeRays();
             _raysDirty = false;
             UpdateOverlays();
         }
-        _scene.Update(0.016, all);
+        _scene.Update(0.016f, all);
     }
 
     private void RegisterKeys(Input input)

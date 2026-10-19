@@ -15,7 +15,7 @@ public class Laser : Trap
     private readonly RGB?[,] _deviceTexture;
     private readonly int _onMs, _offMs;
     private int _lastMsChanged;
-    public Laser(int x, int y, int onMs, int offMs, Textures textures, Clock clock) : base(x, y, textures.Get(LaserDeviceTextureName))
+    public Laser(int x, int y, int onMs, int offMs, Textures textures, Clock clock) : base(x, y, textures.Get(LaserDeviceTextureName), false)
     {
         _laser = new TrapChildObject(RayX, RayY, textures.Get(RayTextureName));
         _laser.ChangeVisibility();
@@ -26,7 +26,7 @@ public class Laser : Trap
         _offMs = offMs;
         _lastMsChanged = 0;
     }
-    private Laser(int x, int y, int onMs, int offMs, RGB?[,] deviceTexture, RGB?[,] rayPartTexture, Clock clock) : base(x, y, deviceTexture)
+    private Laser(int x, int y, int onMs, int offMs, RGB?[,] deviceTexture, RGB?[,] rayPartTexture, Clock clock) : base(x, y, deviceTexture, false)
     {
         _clock = clock;
         _onMs = onMs;

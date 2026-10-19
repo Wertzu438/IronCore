@@ -15,7 +15,7 @@ public class ArrowMachine : Trap
     private readonly Direction _direction;
     private readonly double _arrowOffset;
     private int _lastMsShot;
-    public ArrowMachine(int x, int y, Direction direction, double arrowOffset, Textures textures, Clock clock) : base(x, y, GetDeviceTexture(textures, direction))
+    public ArrowMachine(int x, int y, Direction direction, double arrowOffset, Textures textures, Clock clock) : base(x, y, GetDeviceTexture(textures, direction), true)
     {
         _arrows = [];
         _direction = direction;
@@ -25,7 +25,7 @@ public class ArrowMachine : Trap
         _arrowTexture = ShootRight ? textures.Get(ArrowTextureName) : Textures.MirrorLeftRight(textures.Get(ArrowTextureName));
         _deviceTexture = GetDeviceTexture(textures, direction);
     }
-    private ArrowMachine(int x, int y, Direction direction, double arrowOffset, RGB?[,] deviceTexture, RGB?[,] arrowTexture, Clock clock) : base(x, y, deviceTexture)
+    private ArrowMachine(int x, int y, Direction direction, double arrowOffset, RGB?[,] deviceTexture, RGB?[,] arrowTexture, Clock clock) : base(x, y, deviceTexture, true)
     {
         _direction = direction;
         _arrowOffset = arrowOffset;

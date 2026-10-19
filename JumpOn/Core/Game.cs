@@ -55,8 +55,8 @@ public class Game
         Stopwatch stopwatch = Stopwatch.StartNew();
         do
         {
-            double deltaTime = Math.Min(stopwatch.Elapsed.TotalSeconds, 1);
-            _clock.Update(stopwatch.Elapsed.Microseconds / 1000f);
+            float deltaTime = (float)stopwatch.ElapsedTicks / Stopwatch.Frequency;
+            _clock.Update(deltaTime);
             stopwatch.Restart();
             Trap.Update(_traps);
             Interactable.Update(_interactables);
@@ -67,7 +67,7 @@ public class Game
             bool respawnPressed = Input.Get("R").Pressed;
             if (!_player.Alive || respawnPressed)
             {
-                _scene.Update(0.2, true);
+                _scene.Update(0.2f, true);
                 if (!respawnPressed)
                     _checkPoints.ShowInfoBox();
                 _scene.SetSpriteSnapshot(_checkPoints.SnapShot);
@@ -80,7 +80,6 @@ public class Game
                 return false;
             }
             else _pause.Check();
-            Task.Delay(0).Wait();
         } while (!_goal.EndGame);
         passedSeconds = _clock.PassedSeconds;
         repawns = _player.Respawns;

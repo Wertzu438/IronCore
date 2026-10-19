@@ -27,7 +27,7 @@ public class Scene
     public int Height => _height;
     private int BackgroundWidth => _backgroundTexture.GetLength(0);
     private int BackgroundHeight => _backgroundTexture.GetLength(1);
-    public void Update(double deltaTime, bool renderAll = false)
+    public void Update(float deltaTime, bool renderAll = false)
     {
         int xStart, yStart, xEnd, yEnd;
         lock (_camera)

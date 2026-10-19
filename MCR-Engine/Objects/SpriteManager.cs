@@ -8,7 +8,7 @@ public class SpriteManager : IEnumerable<Sprite>
         private readonly List<Sprite> _sprites;
         private readonly Scene _scene;
         private readonly Sprite?[,] _map;
-        private double _deltaTime;
+        private float _deltaTime;
         internal SpriteManager(Scene scene)
         {
             _sprites = [];
@@ -28,9 +28,9 @@ public class SpriteManager : IEnumerable<Sprite>
                 Add(s);
             }
         }
-        public double DeltaTime => _deltaTime >= 0 ? _deltaTime : 0;
+        public float DeltaTime => _deltaTime >= 0 ? _deltaTime : 0;
         public int Count => _sprites.Count;
-        public void Update(double deltaTime)
+        public void Update(float deltaTime)
         {
             _deltaTime = deltaTime;
             MoveSprites();

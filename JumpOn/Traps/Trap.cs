@@ -6,8 +6,10 @@ namespace JumpOn.Traps;
 
 public abstract class Trap : Sprite
 {
-    protected Trap(int x, int y, RGB?[,] texture) : base(x, y, texture, 2, false, false)
+    private readonly bool _criticalDamage;
+    protected Trap(int x, int y, RGB?[,] texture, bool criticalDamage) : base(x, y, texture, 2, false, false)
     {
+        _criticalDamage = criticalDamage;
     }
     protected abstract double Damage { get; }
     protected virtual void Update()
@@ -19,7 +21,7 @@ public abstract class Trap : Sprite
     {
         if (!IsSomeoneInTrap(out Entity? entity))
             return;
-        entity!.Damage(Damage, false);
+        entity!.Damage(Damage, _criticalDamage);
     }
     public static void Update(List<Trap> traps)
     {

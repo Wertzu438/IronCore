@@ -33,7 +33,7 @@ public class Camera
     public int YOffset => (int)Math.Round(_yOffset);
     private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityX) * 1.05;
     private double SpriteVelocityY => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityY) / 2;
-    public void RecalculateOffset(double deltaTime)
+    public void RecalculateOffset(float deltaTime)
     {
         if (_followedSprite is null)
             return;

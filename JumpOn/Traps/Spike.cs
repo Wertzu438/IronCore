@@ -6,11 +6,11 @@ namespace JumpOn.Traps;
 
 public class Spike : Trap
 {
-    private const double EntityDamage = 1.7;
+    private const double EntityDamage = 2.2;
     private const string TextureName = "spike";
     private readonly RGB?[,] _baseTexture;
     private readonly int _amount;
-    public Spike(int x, int y, Textures textures, int partsCount) : base(x, y, textures.Get(TextureName))
+    public Spike(int x, int y, Textures textures, int partsCount) : base(x, y, textures.Get(TextureName), false)
     {
         if (partsCount <= 0)
             throw new ArgumentException("partsCount <= 0");
@@ -18,7 +18,7 @@ public class Spike : Trap
         _amount = partsCount;
         SetNewTexture(CreateTexture());
     }
-    private Spike(int x, int y, RGB?[,] baseTexture, int partsCount) : base(x, y, baseTexture)
+    private Spike(int x, int y, RGB?[,] baseTexture, int partsCount) : base(x, y, baseTexture, false)
     {
         if (partsCount <= 0)
             throw new ArgumentException("partsCount <= 0");

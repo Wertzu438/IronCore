@@ -16,8 +16,8 @@ public class Goal : Interactable
     private readonly Key _interactingKey;
     private readonly MobileInfoBox _infoBox;
     private List<GameKey>? _keys;
-    private bool _open, _endGame;
-    public Goal(int x, int y, Textures textures, Input input, MobileInfoBox infoBox) : base(x, y, textures.Get(CloseTextureName))
+    private bool _open;
+    public Goal(int x, int y, Textures textures, Input input, MobileInfoBox infoBox) : base(x, y, textures.Get(CloseTextureName), true)
     {
         _openTexture = textures.Get(OpenTextureName);
         _closedTexture = textures.Get(CloseTextureName);
@@ -25,7 +25,7 @@ public class Goal : Interactable
         _infoBox = infoBox;
         _open = false;
     }
-    private Goal(int x, int y, RGB?[,] openTexture, RGB?[,] closedTexture, Key interactingKey, MobileInfoBox infoBox) : base(x, y, closedTexture)
+    private Goal(int x, int y, RGB?[,] openTexture, RGB?[,] closedTexture, Key interactingKey, MobileInfoBox infoBox) : base(x, y, closedTexture, true)
     {
         _openTexture = openTexture;
         _closedTexture = closedTexture;
@@ -34,7 +34,7 @@ public class Goal : Interactable
         _open = false;
     }
     public int KeysAmount => Keys.Count;
-    public bool EndGame => _endGame;
+    public bool EndGame => _open;
     public int CollectedKeysAmount => Collectable.CollectedAmount(Keys);
     private bool CollectedAllKeys => Collectable.AreAllCollected(Keys);
     private List<GameKey> Keys => _keys ?? throw new NullReferenceException("Keys cannot be null.");
@@ -45,22 +45,17 @@ public class Goal : Interactable
         UpdateInfoBox(playerInteracting);
         if (!(playerInteracting && _interactingKey.Pressed && CollectedAllKeys))
             return false;
-        if (_open)
-            return _endGame = true;
         _open = true;
+        _infoBox.Visible = false;
         SetNewTexture(_openTexture);
-        Thread.Sleep(250);
+        Thread.Sleep(350);
         return true;
     }
     private void UpdateInfoBox(bool playerInteracting)
     {
         if (playerInteracting)
         {
-            if (_open)
-            {
-                _infoBox.Show(this, X + 7, Y / 2, 16, 1, [[$"!{KeyName} - Durchgehen"]]);
-            }
-            else if(CollectedAllKeys)
+            if(CollectedAllKeys)
             {
                 _infoBox.Show(this, X + 7, Y / 2, 14, 1, [[$"!{KeyName} - Öffnen"]]);
             }

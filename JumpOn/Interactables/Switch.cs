@@ -20,7 +20,7 @@ public class Switch : Interactable
     private readonly Clock _clock;
     private int _lastMsPulled;
     private bool _pulled;
-    public Switch(int x, int y, Sprite connectedSprite, Input input, Camera camera, MobileInfoBox infoBox, Textures textures, Clock clock) : base(x, y, textures.Get(TextureName))
+    public Switch(int x, int y, Sprite connectedSprite, Input input, Camera camera, MobileInfoBox infoBox, Textures textures, Clock clock) : base(x, y, textures.Get(TextureName), true)
     {
         _infoBox = infoBox;
         _unpulledTexture = textures.Get(TextureName);
@@ -32,7 +32,7 @@ public class Switch : Interactable
         _lastMsPulled = 0;
         _pulled = false;
     }
-    private Switch(int x, int y, Sprite connectedSprite, Key interactingKey, Camera camera, MobileInfoBox infoBox, RGB?[,] pulledTexture, RGB?[,] unpulledTexture, Clock clock) : base(x, y, unpulledTexture)
+    private Switch(int x, int y, Sprite connectedSprite, Key interactingKey, Camera camera, MobileInfoBox infoBox, RGB?[,] pulledTexture, RGB?[,] unpulledTexture, Clock clock) : base(x, y, unpulledTexture, true)
     {
         _connectedSprite = connectedSprite;
         _interactingKey = interactingKey;
@@ -47,7 +47,7 @@ public class Switch : Interactable
     public override Sprite? Clone(SpriteManager sprites) => new Switch(X, Y, sprites.Get(sprites.Count - 1), _interactingKey, _camera, _infoBox, _pulledTexture, _unpulledTexture, _clock);
     protected override bool IsEntityInteracting(out Entity? entity)
     {
-        bool playerInteracting = base.IsEntityInteracting(out entity) && entity as Player is not null;
+        bool playerInteracting = base.IsEntityInteracting(out entity) && entity is Player;
         UpdateInfoBox(playerInteracting);
         if (!playerInteracting || !_interactingKey.Pressed || _lastMsPulled + WaitingIntervalMs > _clock.PassedMilliSeconds)
             return false;
