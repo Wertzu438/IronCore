@@ -97,7 +97,7 @@ internal class Renderer
             if (fpsWatch.ElapsedMilliseconds >= 1000)
             {
 
-                Console.Title = $"FPS: {frames}; {_ui.Count}";
+                Console.Title = $"FPS: {frames}";
                 frames = 0;
 
                 fpsWatch.Restart();

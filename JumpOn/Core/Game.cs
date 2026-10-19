@@ -102,6 +102,5 @@ public class Game
         _sideBar[0].UpdateContent([["!SPIELINFO"], [$"🎯 Level: {_account.CurrentLevel+1}", $"🔐 Schlüssel: {_goal.CollectedKeysAmount}/{_goal.KeysAmount} "]]);
         _sideBar[1].UpdateContent([["!SPIELER"], [$"👤 Name: {_account.Name}", $"❤️ Leben: {Math.Round(_player.Health, 2)}/{Player.MaxHealth}"]]);
         _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{'P'}] ⏸️ Pause", $"[{'R'}] 🔄 Respawnen", $"[{'L'}] 🏠 Verlassen"]]);
-        _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{'P'}] ⏸️ Pause", $"[{'R'}] 🔄 Respawnen", $"[{_clock.PassedMilliSeconds}] 🏠 Verlassen"]]);
     }
 }
