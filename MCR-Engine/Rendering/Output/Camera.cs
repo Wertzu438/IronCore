@@ -31,13 +31,8 @@ public class Camera
     public Sprite FollowedSprite => _followedSprite ?? throw new InvalidOperationException("Followed sprite is not set");
     public int XOffset => (int)Math.Round(_xOffset);
     public int YOffset => (int)Math.Round(_yOffset);
-<<<<<<< Updated upstream
-    private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityX) * 1.05;
-    private double SpriteVelocityY => _followedSprite is null ? 0 : Math.Abs(_followedSprite.VelocityY) / 2;
-=======
     private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.GetVelocity().X) * 1.05;
     private double SpriteVelocityY => _followedSprite is null ? 0 : Math.Abs(_followedSprite.GetVelocity().Y) / 2;
->>>>>>> Stashed changes
     public void RecalculateOffset(float deltaTime)
     {
         if (_followedSprite is null)
