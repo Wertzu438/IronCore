@@ -24,8 +24,6 @@ public abstract class Sprite : IComparable<Sprite>
     }
     public int Width => _texture.GetLength(0);
     public int Height => _texture.GetLength(1);
-    public double VelocityX => _velocityX;
-    public double VelocityY => _velocityY;
     public bool Collision => _collision && Visible;
     public bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
     public bool Visible => _visible;
@@ -39,7 +37,7 @@ public abstract class Sprite : IComparable<Sprite>
     }
     public int Layer
     {
-        get => _layer; private set => _layer = (value >= 0 ? value : throw new ArgumentException("Value must be equal or greater than 0."));
+        get => _layer; set => _layer = (value >= 0 ? value : throw new ArgumentException("Value must be equal or greater than 0."));
     }
     public SpriteManager Sprites
     {
@@ -89,6 +87,7 @@ public abstract class Sprite : IComparable<Sprite>
             default: throw new ArgumentException("Invalid direction.");
         }
     }
+    public (double X, double Y) GetVelocity() => (_velocityX, _velocityY);
     public bool OnScene(Direction? searchingDirection = null) => Sprites.SpriteOnScene(this, searchingDirection);
     public int GetDistanceToNextSprite(Direction direction, bool onlyOnScene, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) 
         => Sprites.GetDistanceToNextSprite(this, direction, onlyOnScene, onlySpritesWithCollision, startAtTop, searchFor);
