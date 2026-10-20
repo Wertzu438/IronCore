@@ -1,7 +1,7 @@
 ﻿using MCR_Engine.Core;
 using MCR_Engine.Objects;
 
-namespace JumpOn;
+namespace JumpOn.Core;
 
 public class SolidObject : Sprite
 {
