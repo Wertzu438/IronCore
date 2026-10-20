@@ -18,6 +18,9 @@
     <ItemGroup>
         <AppDataFiles Include="ApplicationData\**\*" />
     </ItemGroup>
+    <PropertyGroup>
+        <ApplicationIcon>ApplicationData\Icon.ico</ApplicationIcon>
+    </PropertyGroup>
 
 
 </Project>

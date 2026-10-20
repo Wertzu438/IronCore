@@ -7,7 +7,7 @@ namespace JumpOn.Entities;
 
 public abstract class Entity : Sprite
 {
-    private const int DamageTickOffsetMs = 1000;
+    private const int DamageTickOffsetMs = 850;
     protected readonly RGB?[,] DeadTexture;
     private readonly Clock _clock;
     private readonly double _maxHealth;
