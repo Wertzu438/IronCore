@@ -65,18 +65,18 @@ public abstract class Entity : Sprite
     protected override bool IsFloorBeneath() => base.IsFloorBeneath() || OnTopOfLadder;
     protected bool Walk(Direction direction)
     {
-        if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
+        if (Engine.Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             return false;
         MoveOnX(direction, 229, WalkingSpeed);
         return true;
     }
     protected bool Climb(Direction direction)
     {
-        if (!OnLadder || Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
+        if (!OnLadder || Engine.Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
         {
             if (!OnLadder || !IsInteractingWithInteractable)
                 return false;
-            if (Contains(direction, [Direction.Left, Direction.Right]))
+            if (Engine.Contains(direction, [Direction.Left, Direction.Right]))
                 MoveOnX(direction, 299, ClimbingSpeed);
             return !IsFloorBeneath();
         }
@@ -91,7 +91,7 @@ public abstract class Entity : Sprite
             return false;
         StopMovingY();
         Y = ((Bar)_currentInteractable!).HangOnIt();
-        if (Contains(direction, [Direction.None, Direction.Up]))
+        if (Engine.Contains(direction, [Direction.None, Direction.Up]))
             return true;
         if (direction is Direction.Down)
         {
@@ -124,13 +124,13 @@ public abstract class Entity : Sprite
     }
     private void MoveOnX(Direction direction, double acceleration, double maxSpeed)
     {
-        if (Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
+        if (Engine.Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             throw new ArgumentException("Invalid direction");
         AddVelocity(direction, acceleration, maxSpeed);
     }
     private void MoveOnY(Direction direction, double speed)
     {
-        if (Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
+        if (Engine.Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
             throw new ArgumentException("Invalid direction");
         SetNewVelocity(direction, speed);
     }

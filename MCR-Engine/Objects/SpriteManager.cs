@@ -39,7 +39,7 @@ public class SpriteManager : IEnumerable<Sprite>
         public Sprite Add(Sprite sprite)
         {
             ArgumentNullException.ThrowIfNull(sprite);
-            sprite.Sprites = this;
+            sprite.SetSpriteManager(this);
             _sprites.Add(sprite);
             return  sprite;
         }

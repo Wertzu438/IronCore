@@ -52,5 +52,6 @@ public class Engine
     }
     public void UpdateRenderAction(ProcessAction newAction) => _renderer.ChangeAction(newAction);
     public void UpdateInputAction(ProcessAction newAction) => _input.ChangeAction(newAction);
-    static void Main() => throw new ArgumentException("Should never be called => Start with game project");
+    public static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);
+    public static void Main() => throw new ArgumentException("Should never be called => Start with game project");
 }

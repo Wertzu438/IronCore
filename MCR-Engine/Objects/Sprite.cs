@@ -5,7 +5,9 @@ namespace MCR_Engine.Objects;
 
 public abstract class Sprite : IComparable<Sprite>
 {
+    public const int MinLayer = 0, MaxLayer = 8;
     private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
+    protected SpriteManager? Sprites;
     private readonly bool _collision, _gravity;
     private bool _visible;
     private int _layer;
@@ -37,15 +39,12 @@ public abstract class Sprite : IComparable<Sprite>
     }
     public int Layer
     {
-        get => _layer; set => _layer = (value >= 0 ? value : throw new ArgumentException("Value must be equal or greater than 0."));
-    }
-    public SpriteManager Sprites
-    {
-        protected get => field ?? throw new InvalidOperationException("Sprite manager is not set."); set => field = value;
+        get => _layer; set => _layer = (value >= MinLayer && value <= MaxLayer ? value : throw new ArgumentException("Value must be equal or greater than 0."));
     }
     protected virtual bool Gravity => _gravity;
     public void UpdatePosition()
     {
+        ArgumentNullException.ThrowIfNull(Sprites);
         if (Gravity) 
             HandleGravity();
         if (!Move) 
@@ -63,6 +62,7 @@ public abstract class Sprite : IComparable<Sprite>
     }
     public void AddVelocity(Direction direction, double acceleration, double maxVelocity)
     {
+        ArgumentNullException.ThrowIfNull(Sprites);
         if (acceleration <= 0 || maxVelocity <= 0)
             throw new ArgumentException("Invalid acceleration or maxVelocity.");
         switch (direction)
@@ -87,13 +87,31 @@ public abstract class Sprite : IComparable<Sprite>
             default: throw new ArgumentException("Invalid direction.");
         }
     }
+    public int GetDistanceToNextSprite(Direction direction, bool onlyOnScene, bool onlySpritesWithCollision,
+        bool startAtTop, Type[]? searchFor = null)
+    {
+        ArgumentNullException.ThrowIfNull(Sprites);
+        return Sprites.GetDistanceToNextSprite(this, direction, onlyOnScene, onlySpritesWithCollision, 
+            startAtTop, searchFor);
+    }
+    public bool IsBordersCollision(out Sprite? collidedSprite, Type[]? searchFor = null)
+    {
+        ArgumentNullException.ThrowIfNull(Sprites);
+        return Sprites.Collision(this, false, out collidedSprite, searchFor);
+    }
+    public bool IsExactCollision(out Sprite? collidedSprite, Type[]? searchFor = null)
+    {
+        ArgumentNullException.ThrowIfNull(Sprites);
+        return Sprites.Collision(this, true, out collidedSprite, searchFor);
+    }
+    public bool OnScene(Direction? searchingDirection = null)
+    {
+        ArgumentNullException.ThrowIfNull(Sprites);
+        return Sprites.SpriteOnScene(this, searchingDirection);
+    }
     public (double X, double Y) GetVelocity() => (_velocityX, _velocityY);
-    public bool OnScene(Direction? searchingDirection = null) => Sprites.SpriteOnScene(this, searchingDirection);
-    public int GetDistanceToNextSprite(Direction direction, bool onlyOnScene, bool onlySpritesWithCollision, bool startAtTop, Type[]? searchFor = null) 
-        => Sprites.GetDistanceToNextSprite(this, direction, onlyOnScene, onlySpritesWithCollision, startAtTop, searchFor);
-    public bool IsBordersCollision(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, false, out collidedSprite, searchFor);
-    public bool IsExactCollision(out Sprite? collidedSprite, Type[]? searchFor = null) => Sprites.Collision(this, true, out collidedSprite, searchFor);
-    public void ChangeVisibility(bool? value = null) => _visible = value.HasValue ? value.Value : !_visible;
+    public void SetSpriteManager(SpriteManager sprites) => Sprites = sprites ?? throw new InvalidOperationException("Sprite manager is not set.");
+    public void ChangeVisibility(bool? value = null) => _visible = value ?? !_visible;
     public void StopMovingX() => _velocityX = 0;
     public void StopMovingY() => _velocityY = 0;
     public RGB? GetColor(int x, int y) => _texture[x, y];
@@ -133,6 +151,7 @@ public abstract class Sprite : IComparable<Sprite>
     }
     private void ApplyDeceleration()
     {
+        ArgumentNullException.ThrowIfNull(Sprites);
         if (_velocityY > 0)
             _velocityY = Math.Max(_velocityY - DefaultDeceleration * Sprites.DeltaTime, 0);
         else if (_velocityY < 0)
@@ -176,5 +195,4 @@ public abstract class Sprite : IComparable<Sprite>
             return layerCompare;
         return (Width * Height).CompareTo(other.Width * other.Height);
     }
-    public static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);
 }
