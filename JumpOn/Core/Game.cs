@@ -74,6 +74,8 @@ public class Game
                 _scene.Sprites.Add(_player);
                 LoadContent();
                 _scene.Update(0, true);
+                if (respawnPressed)
+                    Thread.Sleep(200);
             }
             else if (Input.Get("L").Pressed)
             {
