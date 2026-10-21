@@ -75,7 +75,7 @@ public class Game
                 LoadContent();
                 _scene.Update(0, true);
                 if (respawnPressed)
-                    Thread.Sleep(200);
+                    Thread.Sleep(800);
             }
             else if (Input.Get("L").Pressed)
             {
