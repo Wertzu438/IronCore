@@ -5,7 +5,7 @@ namespace MCR_Engine.Objects;
 
 public abstract class Sprite : IComparable<Sprite>
 {
-    public const int MinLayer = 0, MaxLayer = 8;
+    public const int MinLayer = 0, MaxLayer = 14;
     private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
     protected SpriteManager? Sprites;
     private readonly bool _collision, _gravity;

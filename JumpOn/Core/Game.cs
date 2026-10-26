@@ -14,16 +14,17 @@ namespace JumpOn.Core;
 
 public class Game
 {
+    private const string PauseKeyName = "P", LeaveKeyName = "L", RespawnKeyName = "R";
     private readonly Engine _engine;
     private readonly Scene _scene;
     private readonly Account _account;
     private readonly Clock _clock;
     private readonly UIElement[] _sideBar;
     private readonly Player _player;
-    private readonly PauseChecker _pause;
     private readonly CenteredInfoBox _centeredInfoBox;
     private readonly MobileInfoBox _mobileInfoBox;
     private readonly UIElement[] _otherInfoBoxes;
+    private readonly PathFinding _pathFinding;
     private List<Interactable> _interactables;
     private List<Trap> _traps;
     private List<Collectable> _collectables;
@@ -34,14 +35,20 @@ public class Game
     {
         _engine = engine;
         _account = account;
-        _otherInfoBoxes = [UI.Add(new UIElement(0, 0, 0, 0, true))];
         _centeredInfoBox = (CenteredInfoBox)UI.Add(new CenteredInfoBox(Input));
         _mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
-        _clock = new Clock(); _pause = new PauseChecker(Input, _centeredInfoBox);
-        _engine.SetRenderScene(_scene = LevelLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
+        _otherInfoBoxes = [
+            UI.Add(new UIElement(0, 0, 0, 0, true)),
+        ];
+        _sideBar = [
+            UI.Add(new UIElement(20, 6, 2, 1, true)), 
+            UI.Add(new UIElement(20, 6, 2, 8, true)), 
+            UI.Add(new UIElement(20, 7, 2, 15, true))
+        ];
+        _clock = new Clock();
+        _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _player = (Player)_scene.Sprites.Add(new Player(0, 0, Textures, Input, _clock));
         LoadContent();
-        _sideBar = [UI.Add(new UIElement(20, 6, 2, 1, true)), UI.Add(new UIElement(20, 6, 2, 8, true)), UI.Add(new UIElement(20, 7, 2, 15, true))];
         Camera.SetFollowedSprite(_player, 10, 10);
     }
     private Input Input => _engine.Input;
@@ -64,7 +71,7 @@ public class Game
             Entity.Update(_entities, _scene);
             _scene.Update(deltaTime);
             UpdateSideBar();
-            bool respawnPressed = Input.Get("R").Pressed;
+            bool respawnPressed = Input.Get(RespawnKeyName).Pressed;
             if (!_player.Alive || respawnPressed)
             {
                 _scene.Update(0.2f, true);
@@ -75,13 +82,17 @@ public class Game
                 LoadContent();
                 _scene.Update(0, true);
                 if (respawnPressed)
-                    Thread.Sleep(800);
+                    Thread.Sleep(400);
             }
-            else if (Input.Get("L").Pressed)
+            else if (Input.Get(LeaveKeyName).Pressed)
             {
                 return false;
             }
-            else _pause.Check();
+            else if (Input.Get(PauseKeyName).Pressed)
+            {
+                _centeredInfoBox.Show(24, 5, [["!⏸️ PAUSIERT"], [$"-Fortfahren mit {CenteredInfoBox.ConfirmKeyName}"]], true);
+                stopwatch.Restart();
+            }
         } while (!_goal.EndGame);
         passedSeconds = _clock.PassedSeconds;
         repawns = _player.Respawns;
@@ -102,6 +113,6 @@ public class Game
     {
         _sideBar[0].UpdateContent([["!SPIELINFO"], [$"🎯 Level: {_account.CurrentLevel+1}", $"🔐 Schlüssel: {_goal.CollectedKeysAmount}/{_goal.KeysAmount} "]]);
         _sideBar[1].UpdateContent([["!SPIELER"], [$"👤 Name: {_account.Name}", $"❤️ Leben: {Math.Round(_player.Health, 2)}/{Player.MaxHealth}"]]);
-        _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{'P'}] ⏸️ Pause", $"[{'R'}] 🔄 Respawnen", $"[{'L'}] 🏠 Verlassen"]]);
+        _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{PauseKeyName}] ⏸️ Pause", $"[{RespawnKeyName}] 🔄 Respawnen", $"[{LeaveKeyName}] 🏠 Verlassen"]]);
     }
 }

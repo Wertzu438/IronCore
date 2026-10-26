@@ -51,7 +51,6 @@ public class Scene
                 _pixels[x, y].SetNewRGB((RGB)rgb);
             }
         }
-        Debug.WriteLine("---SCENE---");
     }
     public void SetSpriteSnapshot(SpriteManager sprites)
     {

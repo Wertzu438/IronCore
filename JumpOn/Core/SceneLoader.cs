@@ -9,7 +9,7 @@ using MCR_Engine.Objects;
 
 namespace JumpOn.Core;
 
-public static class LevelLoader
+public static class SceneLoader
 {
     private const string DirectoryName = "Scenes";
     public static Scene Read(string sceneName, Engine engine, MobileInfoBox mobileInfoBox, Clock clock)

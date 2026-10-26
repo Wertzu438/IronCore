@@ -13,7 +13,7 @@ public class Application : IGameProject
     private readonly Account _account;
     public Application(Engine engine)
     {
-        _account = Account.GetAccount(LevelLoader.GetSceneAmount());
+        _account = Account.GetAccount(SceneLoader.GetSceneAmount());
         _engine = engine;
         engine.Menus.Add(new MainMenu(_account, engine.Input));
         engine.Menus.Add(new LevelMenu(_account, engine.Input));
@@ -45,7 +45,7 @@ public class Application : IGameProject
     }
     public ProgramState OpenMenu()
     {
-        _engine.SetRenderScene(LevelLoader.Read("level0", _engine, new MobileInfoBox(), new Clock()));
+        _engine.SetRenderScene(SceneLoader.Read("level0", _engine, new MobileInfoBox(), new Clock()));
         return _menus.Launch(_engine.UI, (_account.ValidName ? typeof(MainMenu) : typeof(AccountMenu)));
     }
     public static void Main(string[] args)
