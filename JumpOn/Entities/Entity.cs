@@ -15,7 +15,7 @@ public abstract class Entity : Sprite
     private double _currentHealth;
     private int _lastFloorY;
     private int _lastDamageTimeMs;
-    protected Entity(int x, int y, Textures textures, int maxHealth, Clock clock) : base(x, y, Textures.DebuggingTexture(1, 1), 1, true, true)
+    protected Entity(int x, int y, Textures textures, int maxHealth, Clock clock) : base(x, y, Textures.DebuggingTexture(4, 4), 1, true, true)
     {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;

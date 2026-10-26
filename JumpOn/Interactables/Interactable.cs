@@ -14,7 +14,7 @@ public abstract class Interactable : Sprite
     protected virtual bool IsEntityInteracting(out Entity? entity)
     {
         entity = null;
-        if (!Visible || !IsExactCollision(out Sprite? sprite, [typeof(Player)]))
+        if (!Visible || !IsExactCollision(out Sprite? sprite, [typeof(Player), typeof(TestEnemy)]))
             return false;
         entity = sprite as Entity;
         return _ignoreHalfCoverage || EntityCoveringHalf(entity);

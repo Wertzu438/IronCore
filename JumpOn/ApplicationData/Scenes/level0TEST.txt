@@ -1,0 +1,6 @@
+693,268,clouds2
+SolidObj,0,78,0,brickBlock,Right,51
+CheckPoint,0,66
+Goal,219,66
+Ladder,92,46,8
+SolidObj,44,47,0,brickBlock,Right,6

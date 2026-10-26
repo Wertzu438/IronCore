@@ -7,7 +7,7 @@ namespace JumpOn.Entities;
 
 public class Player : Entity
 {
-    private enum PlayerAction
+    public enum PlayerAction
     {
         StandRight, StandLeft, Hang, Climb, WalkLeft, WalkRight
     }
@@ -124,4 +124,21 @@ public class Player : Entity
         return true;
     }
     private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && IsFloorBeneath()) && !IsInteractingWithInteractable;
+}
+public struct PlayerData
+{
+    private int _respawns;
+    private double _takenTrapDamage;
+    private double _takenFallDamage;
+    public PlayerData()
+    {
+        _respawns = 0;
+        _takenTrapDamage = 0;
+        _takenFallDamage = 0;
+    }
+    public int Respawns => _respawns;
+    public bool NoDamage => _takenTrapDamage == 0 && _takenFallDamage == 0;
+    public void AddRespawn() => _respawns++;
+    public void AddTakenTrapDamage(double amount) => _takenTrapDamage += amount;
+    public void AddTakenFallDamage(double amount) => _takenFallDamage += amount;
 }
