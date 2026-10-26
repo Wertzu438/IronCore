@@ -99,10 +99,20 @@ public abstract class Sprite : IComparable<Sprite>
         ArgumentNullException.ThrowIfNull(Sprites);
         return Sprites.Collision(this, false, out collidedSprite, searchFor);
     }
+    public bool IsBordersCollision(Sprite otherSprite)
+    {
+        ArgumentNullException.ThrowIfNull(Sprites);
+        return Sprites.Collision(this, otherSprite, false);
+    }
     public bool IsExactCollision(out Sprite? collidedSprite, Type[]? searchFor = null)
     {
         ArgumentNullException.ThrowIfNull(Sprites);
         return Sprites.Collision(this, true, out collidedSprite, searchFor);
+    }
+    public bool IsExactCollision(Sprite otherSprite)
+    {
+        ArgumentNullException.ThrowIfNull(Sprites);
+        return Sprites.Collision(this, otherSprite, true);
     }
     public bool OnScene(Direction? searchingDirection = null)
     {

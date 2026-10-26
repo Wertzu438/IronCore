@@ -39,9 +39,9 @@ public class Goal : Interactable
     private bool CollectedAllKeys => Collectable.AreAllCollected(Keys);
     private List<GameKey> Keys => _keys ?? throw new NullReferenceException("Keys cannot be null.");
     public override Sprite? Clone(SpriteManager sprites) => new Goal(X, Y, _openTexture, _closedTexture, _interactingKey, _infoBox);
-    protected override bool IsEntityInteracting(out Entity? entity)
+    protected override bool IsEntityInteracting(Entity entity)
     {
-        bool playerInteracting = base.IsEntityInteracting(out entity) && entity as Player is not null;
+        bool playerInteracting = base.IsEntityInteracting(entity) && entity is Player;
         UpdateInfoBox(playerInteracting);
         if (!(playerInteracting && _interactingKey.Pressed && CollectedAllKeys))
             return false;

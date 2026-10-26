@@ -45,9 +45,9 @@ public class Switch : Interactable
         _pulled = false;
     }
     public override Sprite? Clone(SpriteManager sprites) => new Switch(X, Y, sprites.Get(sprites.Count - 1), _interactingKey, _camera, _infoBox, _pulledTexture, _unpulledTexture, _clock);
-    protected override bool IsEntityInteracting(out Entity? entity)
+    protected override bool IsEntityInteracting(Entity entity)
     {
-        bool playerInteracting = base.IsEntityInteracting(out entity) && entity is Player;
+        bool playerInteracting = base.IsEntityInteracting(entity) && entity is Player;
         UpdateInfoBox(playerInteracting);
         if (!playerInteracting || !_interactingKey.Pressed || _lastMsPulled + WaitingIntervalMs > _clock.PassedMilliSeconds)
             return false;

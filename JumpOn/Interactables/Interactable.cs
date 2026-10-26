@@ -11,12 +11,10 @@ public abstract class Interactable : Sprite
     {
         _ignoreHalfCoverage = ignoreHalfCoverage;
     }
-    protected virtual bool IsEntityInteracting(out Entity? entity)
+    protected virtual bool IsEntityInteracting(Entity entity)
     {
-        entity = null;
-        if (!Visible || !IsExactCollision(out Sprite? sprite, [typeof(Player), typeof(TestEnemy)]))
+        if (!Visible || !IsExactCollision(entity))
             return false;
-        entity = sprite as Entity;
         return _ignoreHalfCoverage || EntityCoveringHalf(entity);
     }
     private bool EntityCoveringHalf(Entity entity)
@@ -27,11 +25,17 @@ public abstract class Interactable : Sprite
 
         return overlap >= entity.Width / 1.9;
     }
-    public static void Update(List<Interactable> interactables)
+    public static void Update(List<Interactable> interactables, List<Entity> entities)
     {
         foreach (Interactable interactable in interactables)
-            if (interactable.IsEntityInteracting(out Entity? entity))
-                entity!.SetInteractable(interactable);
+        {
+            foreach (Entity entity in entities)
+            {
+                if (interactable.IsEntityInteracting(entity))
+                    entity.SetInteractable(interactable);
+            }
+        }
+            
     }
     public static List<Interactable> LoadInteractables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Interactable>();
 }

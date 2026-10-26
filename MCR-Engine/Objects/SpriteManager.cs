@@ -89,6 +89,16 @@ public class SpriteManager : IEnumerable<Sprite>
             }
             return false;
         }
+        public bool Collision(Sprite searchingSprite, Sprite searchFor, bool searchExact)
+        {
+            if (!searchFor.Collision)
+                return false;
+            if (!SpriteBordersTouching(searchingSprite, searchFor))
+                return false;
+            if (!searchExact || SpritesOverlap(searchingSprite, searchFor))
+                return true;
+            return false;
+        }
         public int GetDistanceToNextSprite(Sprite sprite, Direction direction, bool onlyOnScene, bool onlyWithCollision, bool startOppositeSide, Type[]? searchFor = null)
         {
             int xStart = sprite.X + (direction is Direction.Right && !startOppositeSide ? sprite.Width - 1 : 0), 

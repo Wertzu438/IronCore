@@ -68,7 +68,7 @@ public class Game
             _clock.Update(deltaTime);
             stopwatch.Restart();
             Trap.Update(_traps);
-            Interactable.Update(_interactables);
+            Interactable.Update(_interactables, _entities);
             Collectable.Update(_collectables);
             Entity.Update(_entities, _scene);
             _scene.Update(deltaTime, false, _pathFinding.Map);
