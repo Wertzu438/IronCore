@@ -48,6 +48,8 @@ public class Game
         _clock = new Clock();
         _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _player = (Player)_scene.Sprites.Add(new Player(0, 0, Textures, Input, _clock));
+        _pathFinding = new PathFinding(_scene);
+        _scene.Sprites.Add(new TestEnemy(120, 0, _engine.Textures, _clock, _pathFinding, _player));
         LoadContent();
         Camera.SetFollowedSprite(_player, 10, 10);
     }
@@ -69,7 +71,7 @@ public class Game
             Interactable.Update(_interactables);
             Collectable.Update(_collectables);
             Entity.Update(_entities, _scene);
-            _scene.Update(deltaTime);
+            _scene.Update(deltaTime, false, _pathFinding.Map);
             UpdateSideBar();
             bool respawnPressed = Input.Get(RespawnKeyName).Pressed;
             if (!_player.Alive || respawnPressed)
