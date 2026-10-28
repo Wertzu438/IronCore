@@ -13,17 +13,16 @@ public class TestEnemy : Entity
     {
         _pathFinding = pathFinding;
         _player = player;
-        //SetNewTexture(Textures.DebuggingTexture(4, 8));
     }
     protected override double WalkingSpeed => 25;
     protected override double ClimbingSpeed => 15;
     protected override double HangingSpeed => 40;
     protected override bool IsInteractingWithInteractable => _action is Player.PlayerAction.Climb;
-    public override Sprite? Clone(SpriteManager sprites) => null;
+    public override GameObject? Clone(ObjectManager objects) => null;
     public override void Update()
     {
-        Direction d = _pathFinding.Find(this, _player);
-        if (Walk(d))
+        (Direction d, PathType p) = _pathFinding.Find(this, _player);
+        if (p is PathType.Walk && Walk(d))
         {
             _action = Player.PlayerAction.WalkLeft;
         }

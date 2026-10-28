@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics;
 using JumpOn.Interactables;
 using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
 
 namespace JumpOn.Entities;
 
-public abstract class Entity : GameObject
+public abstract class Entity : MovingObject
 {
     private const int DamageTickOffsetMs = 850;
     protected readonly RGB?[,] DeadTexture;
@@ -16,7 +17,7 @@ public abstract class Entity : GameObject
     private double _currentHealth;
     private int _lastFloorY;
     private int _lastDamageTimeMs;
-    protected Entity(int x, int y, Textures textures, int maxHealth, Clock clock) : base(x, y, Textures.DebuggingTexture(6, 4), 1, true, true)
+    protected Entity(int x, int y, Textures textures, int maxHealth, Clock clock) : base(x, y, 1, true, Textures.DebuggingTexture(6, 4))
     {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;

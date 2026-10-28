@@ -8,10 +8,10 @@ public abstract class GameObject : IComparable<GameObject>
     public const int MinLayer = 0, MaxLayer = 14;
     private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
     protected ObjectManager? Objects;
+    protected double VelocityX, VelocityY;
     private readonly bool _collision, _gravity;
     private bool _visible;
     private int _layer;
-    private double _velocityX, _velocityY;
     private double _x,  _y;
     private RGB?[,] _texture;
     protected GameObject(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
@@ -21,13 +21,13 @@ public abstract class GameObject : IComparable<GameObject>
         Layer = layer;
         _collision = collision;
         _gravity = gravity;
-        _velocityX = _velocityY = 0;
+        VelocityX = VelocityY = 0;
         _visible = true;
     }
     public int Width => _texture.GetLength(0);
     public int Height => _texture.GetLength(1);
     public bool Collision => _collision && Visible;
-    public bool Move => Math.Abs(_velocityX) + Math.Abs(_velocityY) > 0;
+    public bool Move => Math.Abs(VelocityX) + Math.Abs(VelocityY) > 0;
     public bool Visible => _visible;
     public int X
     {
@@ -49,8 +49,8 @@ public abstract class GameObject : IComparable<GameObject>
             HandleGravity();
         if (!Move) 
             return;
-        double[] velocityStepsX = GetVelocitySteps(_velocityX * Objects.DeltaTime);
-        double[] velocityStepsY = GetVelocitySteps(_velocityY * Objects.DeltaTime);
+        double[] velocityStepsX = GetVelocitySteps(VelocityX * Objects.DeltaTime);
+        double[] velocityStepsY = GetVelocitySteps(VelocityY * Objects.DeltaTime);
         for (int i = 0; i < Math.Max(velocityStepsX.Length, velocityStepsY.Length); i++)
         {
             if (i < velocityStepsY.Length)
@@ -67,10 +67,10 @@ public abstract class GameObject : IComparable<GameObject>
             throw new ArgumentException("Invalid acceleration or maxVelocity.");
         switch (direction)
         {
-            case Direction.Up: _velocityY = Math.Max(_velocityY - acceleration * Objects.DeltaTime, -maxVelocity); break;
-            case Direction.Down: _velocityY = Math.Min(_velocityY + acceleration * Objects.DeltaTime, maxVelocity); break;
-            case Direction.Left: _velocityX = Math.Max(_velocityX - acceleration * Objects.DeltaTime, -maxVelocity); break;
-            case Direction.Right: _velocityX = Math.Min(_velocityX + acceleration * Objects.DeltaTime, maxVelocity); break;
+            case Direction.Up: VelocityY = Math.Max(VelocityY - acceleration * Objects.DeltaTime, -maxVelocity); break;
+            case Direction.Down: VelocityY = Math.Min(VelocityY + acceleration * Objects.DeltaTime, maxVelocity); break;
+            case Direction.Left: VelocityX = Math.Max(VelocityX - acceleration * Objects.DeltaTime, -maxVelocity); break;
+            case Direction.Right: VelocityX = Math.Min(VelocityX + acceleration * Objects.DeltaTime, maxVelocity); break;
             default: throw new ArgumentException("Invalid direction.");
         }
     }
@@ -80,10 +80,10 @@ public abstract class GameObject : IComparable<GameObject>
             throw new ArgumentException("Velocity must be greater than or equal to 0.");
         switch (direction)
         {
-            case Direction.Up: _velocityY = -velocity; break;
-            case Direction.Down: _velocityY = velocity; break;
-            case Direction.Left: _velocityX = -velocity; break;
-            case Direction.Right: _velocityX = velocity; break;
+            case Direction.Up: VelocityY = -velocity; break;
+            case Direction.Down: VelocityY = velocity; break;
+            case Direction.Left: VelocityX = -velocity; break;
+            case Direction.Right: VelocityX = velocity; break;
             default: throw new ArgumentException("Invalid direction.");
         }
     }
@@ -118,17 +118,17 @@ public abstract class GameObject : IComparable<GameObject>
         ArgumentNullException.ThrowIfNull(Objects);
         return Objects.ObjectOnScene(this, searchingDirection);
     }
-    public (double X, double Y) GetVelocity() => (_velocityX, _velocityY);
+    public (double X, double Y) GetVelocity() => (VelocityX, VelocityY);
     public void SetObjectManager(ObjectManager objects) => Objects = objects ?? throw new InvalidOperationException("Sprite manager is not set.");
     public void ChangeVisibility(bool? value = null) => _visible = value ?? !_visible;
-    public void StopMovingX() => _velocityX = 0;
-    public void StopMovingY() => _velocityY = 0;
+    public void StopMovingX() => VelocityX = 0;
+    public void StopMovingY() => VelocityY = 0;
     public RGB? GetColor(int x, int y) => _texture[x, y];
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnObject(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
     public abstract GameObject? Clone(ObjectManager objects);
     protected virtual bool IsFloorBeneath() => GetDistanceToNextObject(Direction.Down, false, true, false) is 0;
-    private void TryMoveX(double xAdd)
+    protected void TryMoveX(double xAdd)
     {
         double xOld = _x;
         _x += xAdd;
@@ -137,7 +137,7 @@ public abstract class GameObject : IComparable<GameObject>
         StopMovingX();
         _x = xOld;
     }
-    private void TryMoveY(double yAdd)
+    protected void TryMoveY(double yAdd)
     {
         double yOld = _y;
         _y += yAdd;
@@ -146,34 +146,34 @@ public abstract class GameObject : IComparable<GameObject>
         StopMovingY();
         _y = yOld;
     }
-    private void HandleGravity()
+    protected void HandleGravity()
     {
         if (!Gravity)
             throw new InvalidOperationException("Gravity is set to false or object has no collision.");
         if (IsFloorBeneath())
         {
-            if (_velocityY > 0)
+            if (VelocityY > 0)
                 StopMovingY();
             return;
         }
         AddVelocity(Direction.Down, DefaultGravity, MaxGravity);
     }
-    private void ApplyDeceleration()
+    protected void ApplyDeceleration()
     {
         ArgumentNullException.ThrowIfNull(Objects);
-        if (_velocityY > 0)
-            _velocityY = Math.Max(_velocityY - DefaultDeceleration * Objects.DeltaTime, 0);
-        else if (_velocityY < 0)
-            _velocityY = Math.Min(_velocityY + DefaultDeceleration * Objects.DeltaTime, 0);
+        if (VelocityY > 0)
+            VelocityY = Math.Max(VelocityY - DefaultDeceleration * Objects.DeltaTime, 0);
+        else if (VelocityY < 0)
+            VelocityY = Math.Min(VelocityY + DefaultDeceleration * Objects.DeltaTime, 0);
 
         bool inAir = !IsFloorBeneath();
         
-        if (_velocityX > 0)
-            _velocityX = Math.Max(_velocityX - (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Objects.DeltaTime, 0);
-        else if (_velocityX < 0)
-            _velocityX = Math.Min(_velocityX + (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Objects.DeltaTime, 0);
+        if (VelocityX > 0)
+            VelocityX = Math.Max(VelocityX - (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Objects.DeltaTime, 0);
+        else if (VelocityX < 0)
+            VelocityX = Math.Min(VelocityX + (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Objects.DeltaTime, 0);
     }
-    private static double[] GetVelocitySteps(double velocity)
+    protected static double[] GetVelocitySteps(double velocity)
     {
         double[] velocitySteps = new double[Math.Abs((int)velocity) + 1];
         double velocityPerStep = velocity / velocitySteps.Length;

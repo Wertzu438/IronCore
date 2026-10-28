@@ -137,6 +137,35 @@ public class ObjectManager : IEnumerable<GameObject>
             } while (!quit);
             return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
         }
+        public GameObject? GetNearestObject(GameObject gameObject, Direction direction, Type[] searchFor)
+        {
+            if (searchFor.Length == 0 || direction is Direction.None)
+                throw new ArgumentException("The values are invalid.");
+            int x = gameObject.X + (direction is Direction.Right ? gameObject.Width - 1 : 0);
+            int y = gameObject.Y + (direction is Direction.Down ? gameObject.Height - 1 : 0);
+            bool upDown = direction is Direction.Up or Direction.Down;
+            int distance = upDown ? gameObject.Width : gameObject.Height;
+            do
+            {
+                switch (direction)
+                {
+                    case Direction.Up: y--; break;
+                    case Direction.Down: y++; break;
+                    case Direction.Left: x--; break;
+                    case Direction.Right: x++; break;
+                }
+                for (int add = 0; add < distance; add++)
+                {
+                    int cX = x + (upDown ? 0 : add);
+                    int cY = y + (upDown ? add : 0);
+                    if (!_scene.ValidPixelCoordinates(cX, cY))
+                        return null;
+                    if (_map[cX, cY] is not null && searchFor.Contains(_map[cX, cY]!.GetType()))
+                        return _map[cX, cY];
+                }
+                
+            } while (true);
+        }
         public bool ObjectBordersTouching(GameObject o1, GameObject o2) => o1.X + o1.Width > o2.X && o1.Y + o1.Height > o2.Y && o1.X < o2.X + o2.Width && o1.Y < o2.Y + o2.Height;
         public ObjectManager Clone() => new ObjectManager(_scene, true);
         public bool Contains(GameObject gameObject) => _objects.Contains(gameObject);
