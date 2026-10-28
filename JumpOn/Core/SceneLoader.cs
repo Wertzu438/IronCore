@@ -28,14 +28,14 @@ public static class SceneLoader
             {
                 line = reader.ReadLine().Split(",");
                 int x = int.Parse(line[1]), y = int.Parse(line[2]);
-                Sprite sprite = (line[0]) switch 
+                GameObject gameObject = (line[0]) switch 
                 {
                     "SolidObj" => new SolidObject(x, y, int.Parse(line[3]), engine.Textures.Get(line[4]), Enum.Parse<Direction>(line[5]), int.Parse(line[6])),
                     "Decoration" => new DecorationObject(x, y, int.Parse(line[3]), engine.Textures.Get(line[4]), Enum.Parse<Direction>(line[5]), int.Parse(line[6])),
                     //INTERACTEBLES
                     "Ladder" => new Ladder(x, y, engine.Textures, int.Parse(line[3])),
                     "Bar" => new Bar(x, y, engine.Textures, int.Parse(line[3])),
-                    "Switch" => new Switch(x, y, scene.Sprites.Get(scene.Sprites.Count - 1), engine.Input, engine.Camera, mobileInfoBox, engine.Textures, clock),
+                    "Switch" => new Switch(x, y, scene.Objects.Get(scene.Objects.Count - 1), engine.Input, engine.Camera, mobileInfoBox, engine.Textures, clock),
                     //TRAPS
                     "Laser" => new Laser(x, y, int.Parse(line[3]), int.Parse(line[4]), engine.Textures, clock),
                     "ArrowMachine" => new ArrowMachine(x, y, Enum.Parse<Direction>(line[3]), int.Parse(line[4]), engine.Textures, clock),
@@ -47,7 +47,7 @@ public static class SceneLoader
                     "CheckPoint" => new CheckPoint(x, y, engine.Textures),
                     _ => throw new ArgumentException("invalide format"),
                 };
-                scene.Sprites.Add(sprite);
+                scene.Objects.Add(gameObject);
             }
         }
         return scene;

@@ -23,7 +23,7 @@ public class Ladder : Interactable
         _amount = amount;
         SetNewTexture(CreateTexture());
     }
-    public override Sprite? Clone(SpriteManager sprites) => new Ladder(X, Y, _baseTexture, _amount);
+    public override GameObject? Clone(ObjectManager objects) => new Ladder(X, Y, _baseTexture, _amount);
     public void CenterEntity(Entity entity)
     {
         int offset = (Width - entity.Width) / 2;
@@ -34,7 +34,7 @@ public class Ladder : Interactable
     private RGB?[,] CreateTexture() => Textures.CreateExpansion(_baseTexture, Direction.Down, _amount);
     public static bool IsEntityOnTopOfLadder(Entity entity)
     {
-        if (!entity.IsBordersCollision(out Sprite? sprite, [typeof(Ladder)]))
+        if (!entity.IsBordersCollision(out GameObject? sprite, [typeof(Ladder)]))
             return false;
         Ladder ladder = (Ladder)sprite!;
         int distance = ladder.Y - (entity.Y + entity.Height);

@@ -127,7 +127,7 @@ public class MapEditor
     private EditorObject _brush = new();
     private EditorObject? _held, _linkSwitch;
     private Scene? _scene;
-    private Sprite? _cursor, _ghost, _outline, _partner, _spawnPreview;
+    private GameObject? _cursor, _ghost, _outline, _partner, _spawnPreview;
     private RGB?[,]? _playerTexture;
     private Modal? _modal;
     private string _message = "H = Hilfe, Esc = Menü";
@@ -633,7 +633,7 @@ public class MapEditor
     {
         if (o.Main is null || o.Type is not (ObjType.Key or ObjType.Medkit or ObjType.CheckPoint))
             return;
-        int distance = o.Main.GetDistanceToNextSprite(Direction.Down, true, true, false);
+        int distance = o.Main.GetDistanceToNextObject(Direction.Down, true, true, false);
         if (distance <= 0)
             return;
         if (o.Y + o.Main.Height + distance >= _level.Height)
@@ -798,23 +798,23 @@ public class MapEditor
         o.Main = CreateSprite(o);
         if (o.Type == ObjType.Laser)
         {
-            o.Ray = _scene!.Sprites.Add(new EditorSprite(o.X, o.Y, Tex("laserPart"), 0));
+            o.Ray = _scene!.Objects.Add(new EditorGameObject(o.X, o.Y, Tex("laserPart"), 0));
             _raysDirty = true;
         }
     }
 
-    private Sprite CreateSprite(EditorObject o)
+    private GameObject CreateSprite(EditorObject o)
     {
         RGB?[,] texture = TextureFor(o);
         // SolidObject und Ladder sind die echten Spielklassen, weil der Laser-Strahl nach genau diesen Typen sucht.
-        Sprite sprite = o.Type switch
+        GameObject gameObject = o.Type switch
         {
             ObjType.Solid => new SolidObject(o.X, o.Y, o.Layer, texture),
             ObjType.Decoration => new DecorationObject(o.X, o.Y, o.Layer, texture),
             ObjType.Ladder => new Ladder(o.X, o.Y, _textures, Math.Max(1, o.Amount)),
-            _ => new EditorSprite(o.X, o.Y, texture, DrawLayer(o))
+            _ => new EditorGameObject(o.X, o.Y, texture, DrawLayer(o))
         };
-        return _scene!.Sprites.Add(sprite);
+        return _scene!.Objects.Add(gameObject);
     }
 
     /// <summary>Wendet geänderte Parameter auf das Sprite an. Die Layer ist unveränderlich, dann wird ein neues Sprite angelegt.</summary>
@@ -929,7 +929,7 @@ public class MapEditor
                 continue;
             o.Ray.X = o.X + o.Main.Width / 2;
             o.Ray.Y = o.Y + o.Main.Height;
-            int distance = o.Ray.GetDistanceToNextSprite(Direction.Down, true, false, true, blockers);
+            int distance = o.Ray.GetDistanceToNextObject(Direction.Down, true, false, true, blockers);
             o.Ray.SetNewTexture(Textures.CreateExpansion(part, Direction.Down, Math.Max(1, distance + 1)));
         }
     }
@@ -975,11 +975,11 @@ public class MapEditor
         foreach (EditorObject o in _level.Objects)
             BuildSprites(o);
 
-        _spawnPreview = scene.Sprites.Add(new EditorSprite(0, 0, _playerTexture ?? new RGB?[1, 1], _maxLayer + 1));
-        _ghost = scene.Sprites.Add(new EditorSprite(0, 0, new RGB?[1, 1], _maxLayer + 2));
-        _outline = scene.Sprites.Add(new EditorSprite(0, 0, new RGB?[1, 1], _maxLayer + 3));
-        _partner = scene.Sprites.Add(new EditorSprite(0, 0, new RGB?[1, 1], _maxLayer + 3));
-        _cursor = scene.Sprites.Add(new EditorSprite(0, 0, CursorTexture(), _maxLayer + 4));
+        _spawnPreview = scene.Objects.Add(new EditorGameObject(0, 0, _playerTexture ?? new RGB?[1, 1], _maxLayer + 1));
+        _ghost = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer + 2));
+        _outline = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer + 3));
+        _partner = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer + 3));
+        _cursor = scene.Objects.Add(new EditorGameObject(0, 0, CursorTexture(), _maxLayer + 4));
         _ghostDirty = true;
         _raysDirty = true;
 
@@ -1047,7 +1047,7 @@ public class MapEditor
         _spawnPreview?.ChangeVisibility(false);
     }
 
-    private static void ShowOutline(Sprite outline, EditorObject? o, RGB color)
+    private static void ShowOutline(GameObject outline, EditorObject? o, RGB color)
     {
         if (o is null || o.Deleted || o.Main is null)
         {
@@ -1128,7 +1128,7 @@ public class MapEditor
     {
         int usableWidth = Math.Max(20, Console.WindowWidth - (_panels ? PanelWidth + PanelMargin * 2 + 2 : 0));
         int viewHeight = Math.Max(4, (Console.WindowHeight - 1) * 2);   // Pixelzeilen, 2 pro Zellenzeile
-        Sprite? shown = _held?.Main ?? _ghost;
+        GameObject? shown = _held?.Main ?? _ghost;
         int extentX = Math.Clamp(shown?.Width ?? 0, 10, Math.Max(10, usableWidth / 2));
         int extentY = Math.Clamp(shown?.Height ?? 0, 10, Math.Max(10, viewHeight / 2));
 
@@ -1458,7 +1458,7 @@ public class MapEditor
         {
             if (o.Type is ObjType.Key or ObjType.Medkit or ObjType.CheckPoint && o.Main is not null)
             {
-                if (o.Main!.GetDistanceToNextSprite(Direction.Down, true, true, false) > 0)
+                if (o.Main!.GetDistanceToNextObject(Direction.Down, true, true, false) > 0)
                     floating.Add(o);
             }
         }
@@ -1823,14 +1823,14 @@ internal enum ObjType
 }
 
 /// <summary>Reines Vorschau-Sprite ohne Spiellogik (keine Kollision, keine Schwerkraft).</summary>
-internal sealed class EditorSprite : Sprite
+internal sealed class EditorGameObject : GameObject
 {
-    public EditorSprite(int x, int y, RGB?[,] texture, int layer) : base(x, y, texture, layer, false, false)
+    public EditorGameObject(int x, int y, RGB?[,] texture, int layer) : base(x, y, texture, layer, false, false)
     {
     }
 
     // Sprite hat jetzt eine abstrakte Clone-Methode; Editor-Sprites werden nie geklont.
-    public override Sprite? Clone(SpriteManager sprites) => null;
+    public override GameObject? Clone(ObjectManager objects) => null;
 }
 
 /// <summary>Ein Objekt im Level (nur Daten + die zugehörigen Vorschau-Sprites).</summary>
@@ -1846,7 +1846,7 @@ internal sealed class EditorObject
     public int IntervalMs = 1500;              // Pfeilwerfer
     public EditorObject? Target;               // nur Schalter: das verbundene Objekt
     public bool Deleted;
-    public Sprite? Main, Ray;
+    public GameObject? Main, Ray;
 
     /// <summary>Kopiert nur die Daten (keine Sprites, kein Ziel, nicht gelöscht).</summary>
     public EditorObject Copy() => new()

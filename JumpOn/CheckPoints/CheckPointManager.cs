@@ -14,25 +14,23 @@ public class CheckPointManager
     private readonly List<CheckPoint> _checkPoints;
     private readonly CenteredInfoBox _centeredInfoBox;
     private readonly UIElement _infoBox;
-    private readonly Engine _engine;
     private readonly Scene _scene;
     private readonly Clock _clock;
     private int _lastSecondSaved;
-    private SpriteManager _checkPointSnapShot;
-    public CheckPointManager(Engine engine, Scene scene, Clock clock, CenteredInfoBox centeredInfoBox, UIElement infoBox)
+    private ObjectManager _checkPointSnapShot;
+    public CheckPointManager(Scene scene, Clock clock, CenteredInfoBox centeredInfoBox, UIElement infoBox)
     {
-        _engine = engine;
         _scene = scene;
         _infoBox = infoBox;
-        _checkPoints = _scene.Sprites.GetAllSpritesOfType<CheckPoint>();
+        _checkPoints = _scene.Objects.GetAllObjectsOfType<CheckPoint>();
         foreach (CheckPoint checkPoint in _checkPoints)
             checkPoint.CheckPoints = this;
-        _checkPointSnapShot = _scene.Sprites.Clone(_engine);
+        _checkPointSnapShot = _scene.Objects.Clone();
         _centeredInfoBox = centeredInfoBox;
         _clock = clock;
         _lastSecondSaved = int.MinValue;
     }
-    public SpriteManager SnapShot => _checkPointSnapShot;
+    public ObjectManager SnapShot => _checkPointSnapShot;
     private bool OneCollected => Collectable.CollectedAmount(_checkPoints) != 0;
     public void ResetPlayerToCheckPoint(Player player)
     {
@@ -73,7 +71,7 @@ public class CheckPointManager
     {
         if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
             return;
-        _checkPointSnapShot = _scene.Sprites.Clone(_engine);
+        _checkPointSnapShot = _scene.Objects.Clone();
         _lastSecondSaved = _clock.PassedSeconds;
         _infoBox.UpdateSize(25, 3);
         _infoBox.X = 2;

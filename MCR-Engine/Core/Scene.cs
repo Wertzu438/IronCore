@@ -15,7 +15,7 @@ public class Scene
     private readonly Pixel[,] _pixels;
     private readonly RGB[,] _backgroundTexture;
     private readonly Camera _camera;
-    private SpriteManager _sprites;
+    private ObjectManager _objects;
     public Scene(Camera camera, int width, int height, RGB[,] backgroundTexture)
     {
         if (height % 2 != 0)
@@ -24,10 +24,10 @@ public class Scene
         _width = width;
         _height = height;
         _backgroundTexture = backgroundTexture;
-        _sprites = new SpriteManager(this);
+        _objects = new ObjectManager(this);
         _pixels = Create();
     }
-    public SpriteManager Sprites => _sprites;
+    public ObjectManager Objects => _objects;
     public int Width => _width;
     public int Height => _height;
     private int BackgroundWidth => _backgroundTexture.GetLength(0);
@@ -40,28 +40,28 @@ public class Scene
             _camera.RecalculateOffset(deltaTime);
             (xStart, xEnd, yStart, yEnd) = GetVisibleArea(renderAll);
         }
-        Sprites.Update(deltaTime);
+        Objects.Update(deltaTime);
         int backgroundWidth = BackgroundWidth, backgroundHeight = BackgroundHeight;
         for (int y = yStart; y < yEnd; y++)
         {
             for (int x = xStart; x < xEnd; x++)
             {
                 RGB? rgb = null;
-                Sprite? sprite = _sprites.GetSpriteMapPixel(x, y);
-                if (sprite is not null && sprite.Visible)
+                GameObject? gameObject = _objects.GetObjectMapPixel(x, y);
+                if (gameObject is not null && gameObject.Visible)
                 {
-                    rgb = sprite.GetColor(x - sprite.X, y - sprite.Y);
+                    rgb = gameObject.GetColor(x - gameObject.X, y - gameObject.Y);
                 }
                 rgb ??= _backgroundTexture[x % backgroundWidth, y % backgroundHeight];
                 _pixels[x, y].SetNewRGB((RGB)rgb);
             }
         }
     }
-    public void SetSpriteSnapshot(SpriteManager sprites)
+    public void SetSpriteSnapshot(ObjectManager objects)
     {
-        if (ReferenceEquals(sprites, _sprites))
+        if (ReferenceEquals(objects, _objects))
             throw new ArgumentException("Sprites cannot be the same.");
-        _sprites = sprites;
+        _objects = objects;
     }
     public bool ValidPixelCoordinates(int x, int y) => x >= 0 && y >= 0 && x < _width && y < _height;
     internal Pixel GetPixel(int x, int y)

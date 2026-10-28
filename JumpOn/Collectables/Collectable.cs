@@ -5,7 +5,7 @@ using MCR_Engine.Objects;
 
 namespace JumpOn.Collectables;
 
-public abstract class Collectable : Sprite
+public abstract class Collectable : GameObject
 {
     protected bool Collected;
     protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, texture, 3, false, true)
@@ -23,7 +23,7 @@ public abstract class Collectable : Sprite
     public abstract void Update();
     protected bool IsPlayerTouching(out Player? player)
     {
-        if (IsBordersCollision(out Sprite? sprite, [typeof(Player)]))
+        if (IsBordersCollision(out GameObject? sprite, [typeof(Player)]))
         {
             player = sprite as Player;
             return true;
@@ -45,5 +45,5 @@ public abstract class Collectable : Sprite
         return sum;
     }
     public static bool AreAllCollected<T>(List<T> collectables) where T : Collectable => CollectedAmount(collectables) == collectables.Count;
-    public static List<Collectable> LoadCollectables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Collectable>();
+    public static List<Collectable> LoadCollectables(ObjectManager objects) => objects.GetAllObjectsOfType<Collectable>();
 }

@@ -10,7 +10,7 @@ public class Camera
     private const double DefaultAccelerationX = 220, DefaultAccelerationY = 300;
     private const double DefaultDecelerationX = 40, DefaultDecelerationY = 150;
     private readonly Renderer _render;
-    private Sprite? _followedSprite;
+    private GameObject? _followedObject;
     private double _xOffset, _yOffset;
     private double _currentMaxVelocityX, _currentMaxVelocityY;
     private double _velocityX, _velocityY;
@@ -20,7 +20,7 @@ public class Camera
         _render = render;
         _xOffset = 0; _yOffset = 0;
         _velocityX = 0; _velocityY = 0;
-        _followedSprite = null;
+        _followedObject = null;
         _cinematicCamera = false;
     }
     public bool CinematicCamera
@@ -28,14 +28,14 @@ public class Camera
         get => _cinematicCamera;
         set => _cinematicCamera = value;
     }
-    public Sprite FollowedSprite => _followedSprite ?? throw new InvalidOperationException("Followed sprite is not set");
+    public GameObject FollowedObject => _followedObject ?? throw new InvalidOperationException("Followed sprite is not set");
     public int XOffset => (int)Math.Round(_xOffset);
     public int YOffset => (int)Math.Round(_yOffset);
-    private double SpriteVelocityX => _followedSprite is null ? 0 : Math.Abs(_followedSprite.GetVelocity().X) * 1.05;
-    private double SpriteVelocityY => _followedSprite is null ? 0 : Math.Abs(_followedSprite.GetVelocity().Y) / 2;
+    private double ObjectVelocityX => _followedObject is null ? 0 : Math.Abs(_followedObject.GetVelocity().X) * 1.05;
+    private double ObjectVelocityY => _followedObject is null ? 0 : Math.Abs(_followedObject.GetVelocity().Y) / 2;
     public void RecalculateOffset(float deltaTime)
     {
-        if (_followedSprite is null)
+        if (_followedObject is null)
             return;
         double newXOffset = _xOffset + _velocityX * deltaTime;
         double newYOffset = _yOffset + _velocityY * deltaTime;
@@ -44,25 +44,25 @@ public class Camera
         _currentMaxVelocityX = GetMaxVelocityX(deltaTime);
         _currentMaxVelocityY = GetMaxVelocityY(deltaTime);
         ReduceCameraSpeed(deltaTime);
-        List<Direction> directions = GetCameraDirection(_followedSprite);
+        List<Direction> directions = GetCameraDirection(_followedObject);
 
-        if (InDeadZone(_followedSprite))
+        if (InDeadZone(_followedObject))
             return;
 
         _velocityX += GetVelocityXAdd(directions, deltaTime);
         _velocityY += GetVelocityYAdd(directions, deltaTime);
 
-        if (!InView(GetSpriteX(_followedSprite), GetSpriteY(_followedSprite)))
+        if (!InView(GetObjectX(_followedObject), GetObjectY(_followedObject)))
         {
             if (!_cinematicCamera)
-                SetFollowedSprite(_followedSprite, _currentMaxVelocityX, _currentMaxVelocityY);
+                SetFollowedObject(_followedObject, _currentMaxVelocityX, _currentMaxVelocityY);
             return;
         }
         
         if (Math.Abs(_velocityX) > _currentMaxVelocityX)
-            _velocityX = (_velocityX < 0 ? -SpriteVelocityX : SpriteVelocityX);
+            _velocityX = (_velocityX < 0 ? -ObjectVelocityX : ObjectVelocityX);
         if (Math.Abs(_velocityY) > _currentMaxVelocityY)
-            _velocityY = (_velocityY < 0 ? -SpriteVelocityY : SpriteVelocityY);
+            _velocityY = (_velocityY < 0 ? -ObjectVelocityY : ObjectVelocityY);
     }
     public void SetOffset(double xOffset, double yOffset)
     {
@@ -74,27 +74,27 @@ public class Camera
     public void ResetOffset()
     {
         _xOffset = _yOffset = _velocityX = _velocityY = 0;
-        _followedSprite = null;
+        _followedObject = null;
     }
     public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
     public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth, xOffset + Console.WindowWidth);
     public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight, yOffset + Console.WindowHeight);
-    private List<Direction> GetCameraDirection(Sprite sprite)
+    private List<Direction> GetCameraDirection(GameObject gameObject)
     {
         List<Direction> directions = [];
-        int spriteX = GetSpriteX(sprite), spriteY = GetSpriteY(sprite);
+        int objectX = GetObjectX(gameObject), objectY = GetObjectY(gameObject);
         int width = Console.WindowWidth, height = Console.WindowHeight;
         int leftBorder = XOffset + CalculatePercentageDistance(width, 21), rightBorder = XOffset + width - 20 - CalculatePercentageDistance(width, 18);
         int upBorder = YOffset + CalculatePercentageDistance(height, 35), downBorder = YOffset + height - CalculatePercentageDistance(height, 30);
         
-        if (spriteX < leftBorder && _xOffset > 0)
+        if (objectX < leftBorder && _xOffset > 0)
             directions.Add(Direction.Left);
-        else if (spriteX > rightBorder && _xOffset + width < _render.PixelPairWidth - 1)
+        else if (objectX > rightBorder && _xOffset + width < _render.PixelPairWidth - 1)
             directions.Add(Direction.Right);
         
-        if (spriteY < upBorder && _yOffset > 0)
+        if (objectY < upBorder && _yOffset > 0)
             directions.Add(Direction.Up);
-        else if (spriteY > downBorder && _yOffset + height < _render.PixelPairHeight - 1)
+        else if (objectY > downBorder && _yOffset + height < _render.PixelPairHeight - 1)
             directions.Add(Direction.Down);
         return directions;
     }
@@ -134,15 +134,15 @@ public class Camera
     {
         if (_currentMaxVelocityX < MinMaxVelocityX)
             return MinMaxVelocityX;
-        return _currentMaxVelocityX + (SpriteVelocityX - _currentMaxVelocityX) * 3 * deltaTime;
+        return _currentMaxVelocityX + (ObjectVelocityX - _currentMaxVelocityX) * 3 * deltaTime;
     }
     private double GetMaxVelocityY(double deltaTime)
     {
         if (_currentMaxVelocityY < MinMaxVelocityY)
             return MinMaxVelocityY;
-        return _currentMaxVelocityY + (SpriteVelocityY - _currentMaxVelocityY) * 3 * deltaTime;
+        return _currentMaxVelocityY + (ObjectVelocityY - _currentMaxVelocityY) * 3 * deltaTime;
     }
-    private bool InDeadZone(Sprite sprite) => GetCameraDirection(sprite).Count is 0;
+    private bool InDeadZone(GameObject gameObject) => GetCameraDirection(gameObject).Count is 0;
     private static double GetVelocityXAdd(List<Direction> directions, double deltaTime)
     {
         if (directions.Contains(Direction.Left))
@@ -159,18 +159,18 @@ public class Camera
             return +(DefaultAccelerationY * deltaTime);
         return 0;
     }
-    private static int GetSpriteX(Sprite sprite) => sprite.X + sprite.Width / 2;
-    private static int GetSpriteY(Sprite sprite) => (sprite.Y + sprite.Height / 2) / 2;
+    private static int GetObjectX(GameObject gameObject) => gameObject.X + gameObject.Width / 2;
+    private static int GetObjectY(GameObject gameObject) => (gameObject.Y + gameObject.Height / 2) / 2;
     private static int CalculatePercentageDistance(int distance, int percentage) => (int)(distance * percentage / 100.0);
-    public async Task SetFollowedSprite(Sprite sprite, double maxVelocityX, double maxVelocityY)
+    public async Task SetFollowedObject(GameObject gameObject, double maxVelocityX, double maxVelocityY)
     {
         if (_cinematicCamera)
             return;
         _velocityX = _velocityY = 0;
         _cinematicCamera = true;
-        _followedSprite = sprite;
+        _followedObject = gameObject;
         _currentMaxVelocityX = _currentMaxVelocityY = double.PositiveInfinity; 
-        while (!InDeadZone(_followedSprite))
+        while (!InDeadZone(_followedObject))
             await Task.Delay(50);
         _currentMaxVelocityX = maxVelocityX; _currentMaxVelocityY = maxVelocityY;
         _velocityX = _velocityY = 0;

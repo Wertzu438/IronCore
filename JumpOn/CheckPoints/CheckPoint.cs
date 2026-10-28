@@ -46,5 +46,5 @@ public class CheckPoint : Collectable
         SetNewTexture(_activeTexture);
         (_checkPoints ?? throw new NullReferenceException("Checkpoints was null.")).MakeSnapshot();
     }
-    public override Sprite? Clone(SpriteManager sprites) => new CheckPoint(X, Y, _activeTexture, _inactiveTexture, Collected);
+    public override GameObject? Clone(ObjectManager objects) => new CheckPoint(X, Y, _activeTexture, _inactiveTexture, Collected);
 }

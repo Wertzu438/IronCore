@@ -15,26 +15,26 @@ public class Switch : Interactable
     private readonly RGB?[,] _pulledTexture;
     private readonly RGB?[,] _unpulledTexture;
     private readonly Key _interactingKey;
-    private readonly Sprite _connectedSprite;
+    private readonly GameObject _connectedGameObject;
     private readonly Camera _camera;
     private readonly Clock _clock;
     private int _lastMsPulled;
     private bool _pulled;
-    public Switch(int x, int y, Sprite connectedSprite, Input input, Camera camera, MobileInfoBox infoBox, Textures textures, Clock clock) : base(x, y, textures.Get(TextureName), true)
+    public Switch(int x, int y, GameObject connectedGameObject, Input input, Camera camera, MobileInfoBox infoBox, Textures textures, Clock clock) : base(x, y, textures.Get(TextureName), true)
     {
         _infoBox = infoBox;
         _unpulledTexture = textures.Get(TextureName);
         _pulledTexture = Textures.MirrorLeftRight(textures.Get(TextureName));
         _interactingKey = input.Get(KeyName);
-        _connectedSprite = connectedSprite;
+        _connectedGameObject = connectedGameObject;
         _camera = camera;
         _clock = clock;
         _lastMsPulled = 0;
         _pulled = false;
     }
-    private Switch(int x, int y, Sprite connectedSprite, Key interactingKey, Camera camera, MobileInfoBox infoBox, RGB?[,] pulledTexture, RGB?[,] unpulledTexture, Clock clock) : base(x, y, unpulledTexture, true)
+    private Switch(int x, int y, GameObject connectedGameObject, Key interactingKey, Camera camera, MobileInfoBox infoBox, RGB?[,] pulledTexture, RGB?[,] unpulledTexture, Clock clock) : base(x, y, unpulledTexture, true)
     {
-        _connectedSprite = connectedSprite;
+        _connectedGameObject = connectedGameObject;
         _interactingKey = interactingKey;
         _camera = camera;
         _infoBox = infoBox;
@@ -44,14 +44,14 @@ public class Switch : Interactable
         _lastMsPulled = 0;
         _pulled = false;
     }
-    public override Sprite? Clone(SpriteManager sprites) => new Switch(X, Y, sprites.Get(sprites.Count - 1), _interactingKey, _camera, _infoBox, _pulledTexture, _unpulledTexture, _clock);
+    public override GameObject? Clone(ObjectManager objects) => new Switch(X, Y, objects.Get(objects.Count - 1), _interactingKey, _camera, _infoBox, _pulledTexture, _unpulledTexture, _clock);
     protected override bool IsEntityInteracting(Entity entity)
     {
         bool playerInteracting = base.IsEntityInteracting(entity) && entity is Player;
         UpdateInfoBox(playerInteracting);
         if (!playerInteracting || !_interactingKey.Pressed || _lastMsPulled + WaitingIntervalMs > _clock.PassedMilliSeconds)
             return false;
-        SwipeCameraOnConnectedSprite();
+        SwipeCameraOnConnectedObject();
         _lastMsPulled = _clock.PassedMilliSeconds;
         _pulled = !_pulled;
         SetNewTexture(GetCurrentTexture());
@@ -69,17 +69,17 @@ public class Switch : Interactable
         }
     }
     private RGB?[,] GetCurrentTexture() => _pulled ? _pulledTexture : _unpulledTexture;
-    private async Task SwipeCameraOnConnectedSprite()
+    private async Task SwipeCameraOnConnectedObject()
     {
         if (_camera.CinematicCamera)
             return;
-        Sprite lastSprite = _camera.FollowedSprite;
-        await _camera.SetFollowedSprite(_connectedSprite, 0, 0);
+        GameObject lastGameObject = _camera.FollowedObject;
+        await _camera.SetFollowedObject(_connectedGameObject, 0, 0);
         _camera.CinematicCamera = true;
         await Task.Delay(300); 
-        _connectedSprite.ChangeVisibility(); 
+        _connectedGameObject.ChangeVisibility(); 
         await Task.Delay(300); 
         _camera.CinematicCamera = false;
-        await _camera.SetFollowedSprite(lastSprite, 0, 0);
+        await _camera.SetFollowedObject(lastGameObject, 0, 0);
     }
 }

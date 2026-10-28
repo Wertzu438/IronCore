@@ -4,7 +4,7 @@ using MCR_Engine.Objects;
 
 namespace JumpOn.Traps;
 
-public abstract class Trap : Sprite
+public abstract class Trap : GameObject
 {
     private readonly bool _criticalDamage;
     protected Trap(int x, int y, RGB?[,] texture, bool criticalDamage) : base(x, y, texture, 2, false, false)
@@ -28,5 +28,5 @@ public abstract class Trap : Sprite
         foreach (Trap trap in traps)
             trap.Update();
     }
-    public static List<Trap> LoadTraps(SpriteManager sprites) => sprites.GetAllSpritesOfType<Trap>();
+    public static List<Trap> LoadTraps(ObjectManager objects) => objects.GetAllObjectsOfType<Trap>();
 }

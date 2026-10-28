@@ -4,7 +4,7 @@ using MCR_Engine.Objects;
 
 namespace JumpOn.Interactables;
 
-public abstract class Interactable : Sprite
+public abstract class Interactable : GameObject
 {
     private readonly bool _ignoreHalfCoverage;
     public Interactable(int x, int y, RGB?[,] texture, bool ignoreHalfCoverage) : base(x, y, texture, 0, false, false)
@@ -37,5 +37,5 @@ public abstract class Interactable : Sprite
         }
             
     }
-    public static List<Interactable> LoadInteractables(SpriteManager sprites) => sprites.GetAllSpritesOfType<Interactable>();
+    public static List<Interactable> LoadInteractables(ObjectManager objects) => objects.GetAllObjectsOfType<Interactable>();
 }

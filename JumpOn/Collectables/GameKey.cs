@@ -24,5 +24,5 @@ public class GameKey : Collectable
             IsCollected = true;
         }
     }
-    public override Sprite? Clone(SpriteManager sprites) => new GameKey(X, Y, _texture, Collected);
+    public override GameObject? Clone(ObjectManager objects) => new GameKey(X, Y, _texture, Collected);
 }

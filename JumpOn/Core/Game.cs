@@ -47,11 +47,11 @@ public class Game
         ];
         _clock = new Clock();
         _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
-        _player = (Player)_scene.Sprites.Add(new Player(0, 0, Textures, Input, _clock));
+        _player = (Player)_scene.Objects.Add(new Player(0, 0, Textures, Input, _clock));
         _pathFinding = new PathFinding(_scene);
-        _scene.Sprites.Add(new TestEnemy(120, 0, _engine.Textures, _clock, _pathFinding, _player));
+        //_scene.Sprites.Add(new TestEnemy(120, 0, _engine.Textures, _clock, _pathFinding, _player));
         LoadContent();
-        Camera.SetFollowedSprite(_player, 10, 10);
+        Camera.SetFollowedObject(_player, 10, 10);
     }
     private Input Input => _engine.Input;
     private UIManager UI => _engine.UI;
@@ -80,7 +80,7 @@ public class Game
                 if (!respawnPressed)
                     _checkPoints.ShowInfoBox();
                 _scene.SetSpriteSnapshot(_checkPoints.SnapShot);
-                _scene.Sprites.Add(_player);
+                _scene.Objects.Add(_player);
                 LoadContent();
                 _scene.Update(0, true);
                 if (respawnPressed)
@@ -103,12 +103,12 @@ public class Game
     private void LoadContent()
     {
         _mobileInfoBox.Visible = false;
-        _interactables = Interactable.LoadInteractables(_scene.Sprites);
-        _collectables = Collectable.LoadCollectables(_scene.Sprites);
-        _traps = Trap.LoadTraps(_scene.Sprites);
-        _entities = Entity.LoadEntities(_scene.Sprites);
-        _goal = Goal.LoadGoal(_scene.Sprites);
-        _checkPoints = new CheckPointManager(_engine, _scene, _clock, _centeredInfoBox, _otherInfoBoxes[0]);
+        _interactables = Interactable.LoadInteractables(_scene.Objects);
+        _collectables = Collectable.LoadCollectables(_scene.Objects);
+        _traps = Trap.LoadTraps(_scene.Objects);
+        _entities = Entity.LoadEntities(_scene.Objects);
+        _goal = Goal.LoadGoal(_scene.Objects);
+        _checkPoints = new CheckPointManager(_scene, _clock, _centeredInfoBox, _otherInfoBoxes[0]);
         _checkPoints.ResetPlayerToCheckPoint(_player);
     }
     private void UpdateSideBar()

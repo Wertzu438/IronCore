@@ -41,12 +41,12 @@ public class Laser : Trap
     protected override double Damage => EntityDamage;
     private int RayX => X + (Width / 2);
     private int RayY => Y + Height;
-    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextSprite(Direction.Down, true, false, true, [typeof(SolidObject), typeof(Ladder)]) + 1);
-    public override Sprite? Clone(SpriteManager sprites) => new Laser(X, Y, _onMs, _offMs, _deviceTexture, _rayPartTexture, _clock);
+    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextObject(Direction.Down, true, false, true, [typeof(SolidObject), typeof(Ladder)]) + 1);
+    public override GameObject? Clone(ObjectManager objects) => new Laser(X, Y, _onMs, _offMs, _deviceTexture, _rayPartTexture, _clock);
     protected override void Update()
     {
-        if (!Sprites.Contains(_laser))
-            Sprites.Add(_laser);
+        if (!Objects.Contains(_laser))
+            Objects.Add(_laser);
         if (_lastMsChanged < _clock.PassedMilliSeconds - GetTime())
         {
             _laser.SetNewTexture(RayTexture);
@@ -58,7 +58,7 @@ public class Laser : Trap
     protected override bool IsSomeoneInTrap(out Entity? entity)
     {
         entity = null;
-        if (_laser.Visible && _laser.IsExactCollision(out Sprite? sprite, [typeof(Player)]))
+        if (_laser.Visible && _laser.IsExactCollision(out GameObject? sprite, [typeof(Player)]))
             entity = sprite as Entity;
         else return false;
         return true;

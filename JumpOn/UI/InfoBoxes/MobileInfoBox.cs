@@ -5,12 +5,12 @@ namespace JumpOn.UI.InfoBoxes;
 
 public class MobileInfoBox : UIElement
 {
-    private Sprite? _usedBy;
+    private GameObject? _usedBy;
     public MobileInfoBox() : base(3, 3, 0, 0, false, false)
     {
         _usedBy = null;
     }
-    public Sprite? UsedBy
+    public GameObject? UsedBy
     {
         get => _usedBy;
         set
@@ -20,7 +20,7 @@ public class MobileInfoBox : UIElement
             _usedBy = value;
         }
     }
-    public void Show(Sprite usedBy, int x, int y, int width, int height, string[][] content)
+    public void Show(GameObject usedBy, int x, int y, int width, int height, string[][] content)
     {
         UsedBy = usedBy;
         X = x; Y = y;

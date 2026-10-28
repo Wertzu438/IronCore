@@ -36,7 +36,7 @@ public class Medkit : Collectable
         player!.Heal(HealAmount);
         IsCollected = true;
     }
-    public override Sprite? Clone(SpriteManager sprites) => new Medkit(X, Y, _texture, _interactingKey, _infoBox, Collected);
+    public override GameObject? Clone(ObjectManager objects) => new Medkit(X, Y, _texture, _interactingKey, _infoBox, Collected);
     private void UpdateInfoBox(bool interacting)
     {
         if (interacting)

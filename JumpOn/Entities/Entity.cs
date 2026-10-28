@@ -5,7 +5,7 @@ using MCR_Engine.Objects;
 
 namespace JumpOn.Entities;
 
-public abstract class Entity : Sprite
+public abstract class Entity : GameObject
 {
     private const int DamageTickOffsetMs = 850;
     protected readonly RGB?[,] DeadTexture;
@@ -158,5 +158,5 @@ public abstract class Entity : Sprite
             
         }
     }
-    public static List<Entity> LoadEntities(SpriteManager sprites) => sprites.GetAllSpritesOfType<Entity>();
+    public static List<Entity> LoadEntities(ObjectManager objects) => objects.GetAllObjectsOfType<Entity>();
 }

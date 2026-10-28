@@ -3,18 +3,18 @@ using MCR_Engine.Core;
 
 namespace MCR_Engine.Objects;
 
-public abstract class Sprite : IComparable<Sprite>
+public abstract class GameObject : IComparable<GameObject>
 {
     public const int MinLayer = 0, MaxLayer = 14;
     private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
-    protected SpriteManager? Sprites;
+    protected ObjectManager? Objects;
     private readonly bool _collision, _gravity;
     private bool _visible;
     private int _layer;
     private double _velocityX, _velocityY;
     private double _x,  _y;
     private RGB?[,] _texture;
-    protected Sprite(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
+    protected GameObject(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
     {
         X  = x; Y = y;
         _texture = texture;
@@ -44,13 +44,13 @@ public abstract class Sprite : IComparable<Sprite>
     protected virtual bool Gravity => _gravity;
     public void UpdatePosition()
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
+        ArgumentNullException.ThrowIfNull(Objects);
         if (Gravity) 
             HandleGravity();
         if (!Move) 
             return;
-        double[] velocityStepsX = GetVelocitySteps(_velocityX * Sprites.DeltaTime);
-        double[] velocityStepsY = GetVelocitySteps(_velocityY * Sprites.DeltaTime);
+        double[] velocityStepsX = GetVelocitySteps(_velocityX * Objects.DeltaTime);
+        double[] velocityStepsY = GetVelocitySteps(_velocityY * Objects.DeltaTime);
         for (int i = 0; i < Math.Max(velocityStepsX.Length, velocityStepsY.Length); i++)
         {
             if (i < velocityStepsY.Length)
@@ -62,15 +62,15 @@ public abstract class Sprite : IComparable<Sprite>
     }
     public void AddVelocity(Direction direction, double acceleration, double maxVelocity)
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
+        ArgumentNullException.ThrowIfNull(Objects);
         if (acceleration <= 0 || maxVelocity <= 0)
             throw new ArgumentException("Invalid acceleration or maxVelocity.");
         switch (direction)
         {
-            case Direction.Up: _velocityY = Math.Max(_velocityY - acceleration * Sprites.DeltaTime, -maxVelocity); break;
-            case Direction.Down: _velocityY = Math.Min(_velocityY + acceleration * Sprites.DeltaTime, maxVelocity); break;
-            case Direction.Left: _velocityX = Math.Max(_velocityX - acceleration * Sprites.DeltaTime, -maxVelocity); break;
-            case Direction.Right: _velocityX = Math.Min(_velocityX + acceleration * Sprites.DeltaTime, maxVelocity); break;
+            case Direction.Up: _velocityY = Math.Max(_velocityY - acceleration * Objects.DeltaTime, -maxVelocity); break;
+            case Direction.Down: _velocityY = Math.Min(_velocityY + acceleration * Objects.DeltaTime, maxVelocity); break;
+            case Direction.Left: _velocityX = Math.Max(_velocityX - acceleration * Objects.DeltaTime, -maxVelocity); break;
+            case Direction.Right: _velocityX = Math.Min(_velocityX + acceleration * Objects.DeltaTime, maxVelocity); break;
             default: throw new ArgumentException("Invalid direction.");
         }
     }
@@ -87,48 +87,47 @@ public abstract class Sprite : IComparable<Sprite>
             default: throw new ArgumentException("Invalid direction.");
         }
     }
-    public int GetDistanceToNextSprite(Direction direction, bool onlyOnScene, bool onlySpritesWithCollision,
+    public int GetDistanceToNextObject(Direction direction, bool onlyOnScene, bool onlyWithCollision,
         bool startAtTop, Type[]? searchFor = null)
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
-        return Sprites.GetDistanceToNextSprite(this, direction, onlyOnScene, onlySpritesWithCollision, 
-            startAtTop, searchFor);
+        ArgumentNullException.ThrowIfNull(Objects);
+        return Objects.GetDistanceToNextObject(this, direction, onlyOnScene, onlyWithCollision, startAtTop, searchFor);
     }
-    public bool IsBordersCollision(out Sprite? collidedSprite, Type[]? searchFor = null)
+    public bool IsBordersCollision(out GameObject? collidedGameObject, Type[]? searchFor = null)
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
-        return Sprites.Collision(this, false, out collidedSprite, searchFor);
+        ArgumentNullException.ThrowIfNull(Objects);
+        return Objects.Collision(this, false, out collidedGameObject, searchFor);
     }
-    public bool IsBordersCollision(Sprite otherSprite)
+    public bool IsBordersCollision(GameObject otherGameObject)
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
-        return Sprites.Collision(this, otherSprite, false);
+        ArgumentNullException.ThrowIfNull(Objects);
+        return Objects.Collision(this, otherGameObject, false);
     }
-    public bool IsExactCollision(out Sprite? collidedSprite, Type[]? searchFor = null)
+    public bool IsExactCollision(out GameObject? collidedGameObject, Type[]? searchFor = null)
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
-        return Sprites.Collision(this, true, out collidedSprite, searchFor);
+        ArgumentNullException.ThrowIfNull(Objects);
+        return Objects.Collision(this, true, out collidedGameObject, searchFor);
     }
-    public bool IsExactCollision(Sprite otherSprite)
+    public bool IsExactCollision(GameObject otherGameObject)
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
-        return Sprites.Collision(this, otherSprite, true);
+        ArgumentNullException.ThrowIfNull(Objects);
+        return Objects.Collision(this, otherGameObject, true);
     }
     public bool OnScene(Direction? searchingDirection = null)
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
-        return Sprites.SpriteOnScene(this, searchingDirection);
+        ArgumentNullException.ThrowIfNull(Objects);
+        return Objects.ObjectOnScene(this, searchingDirection);
     }
     public (double X, double Y) GetVelocity() => (_velocityX, _velocityY);
-    public void SetSpriteManager(SpriteManager sprites) => Sprites = sprites ?? throw new InvalidOperationException("Sprite manager is not set.");
+    public void SetObjectManager(ObjectManager objects) => Objects = objects ?? throw new InvalidOperationException("Sprite manager is not set.");
     public void ChangeVisibility(bool? value = null) => _visible = value ?? !_visible;
     public void StopMovingX() => _velocityX = 0;
     public void StopMovingY() => _velocityY = 0;
     public RGB? GetColor(int x, int y) => _texture[x, y];
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
-    public bool CoordinatesOnSprite(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
-    public abstract Sprite? Clone(SpriteManager sprites);
-    protected virtual bool IsFloorBeneath() => GetDistanceToNextSprite(Direction.Down, false, true, false) is 0;
+    public bool CoordinatesOnObject(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
+    public abstract GameObject? Clone(ObjectManager objects);
+    protected virtual bool IsFloorBeneath() => GetDistanceToNextObject(Direction.Down, false, true, false) is 0;
     private void TryMoveX(double xAdd)
     {
         double xOld = _x;
@@ -150,7 +149,7 @@ public abstract class Sprite : IComparable<Sprite>
     private void HandleGravity()
     {
         if (!Gravity)
-            throw new InvalidOperationException("Gravity is set to or sprite has no collision false.");
+            throw new InvalidOperationException("Gravity is set to false or object has no collision.");
         if (IsFloorBeneath())
         {
             if (_velocityY > 0)
@@ -161,18 +160,18 @@ public abstract class Sprite : IComparable<Sprite>
     }
     private void ApplyDeceleration()
     {
-        ArgumentNullException.ThrowIfNull(Sprites);
+        ArgumentNullException.ThrowIfNull(Objects);
         if (_velocityY > 0)
-            _velocityY = Math.Max(_velocityY - DefaultDeceleration * Sprites.DeltaTime, 0);
+            _velocityY = Math.Max(_velocityY - DefaultDeceleration * Objects.DeltaTime, 0);
         else if (_velocityY < 0)
-            _velocityY = Math.Min(_velocityY + DefaultDeceleration * Sprites.DeltaTime, 0);
+            _velocityY = Math.Min(_velocityY + DefaultDeceleration * Objects.DeltaTime, 0);
 
         bool inAir = !IsFloorBeneath();
         
         if (_velocityX > 0)
-            _velocityX = Math.Max(_velocityX - (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Sprites.DeltaTime, 0);
+            _velocityX = Math.Max(_velocityX - (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Objects.DeltaTime, 0);
         else if (_velocityX < 0)
-            _velocityX = Math.Min(_velocityX + (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Sprites.DeltaTime, 0);
+            _velocityX = Math.Min(_velocityX + (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Objects.DeltaTime, 0);
     }
     private static double[] GetVelocitySteps(double velocity)
     {
@@ -194,7 +193,7 @@ public abstract class Sprite : IComparable<Sprite>
             await Task.Delay(msBetweenChange);
         }
     }
-    public int CompareTo(Sprite? other)
+    public int CompareTo(GameObject? other)
     {
         if (ReferenceEquals(this, other)) 
             return 0;

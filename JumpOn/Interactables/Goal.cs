@@ -38,7 +38,7 @@ public class Goal : Interactable
     public int CollectedKeysAmount => Collectable.CollectedAmount(Keys);
     private bool CollectedAllKeys => Collectable.AreAllCollected(Keys);
     private List<GameKey> Keys => _keys ?? throw new NullReferenceException("Keys cannot be null.");
-    public override Sprite? Clone(SpriteManager sprites) => new Goal(X, Y, _openTexture, _closedTexture, _interactingKey, _infoBox);
+    public override GameObject? Clone(ObjectManager objects) => new Goal(X, Y, _openTexture, _closedTexture, _interactingKey, _infoBox);
     protected override bool IsEntityInteracting(Entity entity)
     {
         bool playerInteracting = base.IsEntityInteracting(entity) && entity is Player;
@@ -66,12 +66,12 @@ public class Goal : Interactable
             _infoBox.UsedBy = null;
         }
     }
-    public static Goal LoadGoal(SpriteManager sprites)
+    public static Goal LoadGoal(ObjectManager objects)
     {
-        List<Goal> goals = sprites.GetAllSpritesOfType<Goal>();
+        List<Goal> goals = objects.GetAllObjectsOfType<Goal>();
         if (goals.Count != 1)
             throw new ArgumentException("Invalid amount of goals");
-        goals[0]._keys = sprites.GetAllSpritesOfType<GameKey>();
+        goals[0]._keys = objects.GetAllObjectsOfType<GameKey>();
         return goals[0];
     }
 }

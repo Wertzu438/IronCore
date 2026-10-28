@@ -27,11 +27,11 @@ public class Spike : Trap
         SetNewTexture(CreateTexture());
     }
     protected override double Damage => EntityDamage;
-    public override Sprite? Clone(SpriteManager sprites) => new Spike(X, Y, _baseTexture, _amount);
+    public override GameObject? Clone(ObjectManager objects) => new Spike(X, Y, _baseTexture, _amount);
     protected override bool IsSomeoneInTrap(out Entity? entity)
     {
         entity = null;
-        if (IsExactCollision(out Sprite? sprite, [typeof(Player)]))
+        if (IsExactCollision(out GameObject? sprite, [typeof(Player)]))
             entity = sprite as Entity;
         else return false;
         return true;

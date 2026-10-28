@@ -40,12 +40,12 @@ public class ArrowMachine : Trap
     private int ArrowStartX => (ShootRight ? X + Width : X - Width);
     private int ArrowStartY => Y;
     private bool ShootRight => _direction is Direction.Right;
-    public override Sprite? Clone(SpriteManager sprites) => new ArrowMachine(X, Y, _direction, _arrowOffset, _deviceTexture, _arrowTexture, _clock);
+    public override GameObject? Clone(ObjectManager objects) => new ArrowMachine(X, Y, _direction, _arrowOffset, _deviceTexture, _arrowTexture, _clock);
     protected override void Update()
     {
         foreach (TrapChildObject arrow in _arrows)
         {
-            if (arrow.Visible && arrow.OnScene() && arrow.GetDistanceToNextSprite(_direction, true, false, false, [typeof(SolidObject), typeof(DecorationObject)]) > 0)
+            if (arrow.Visible && arrow.OnScene() && arrow.GetDistanceToNextObject(_direction, true, false, false, [typeof(SolidObject), typeof(DecorationObject)]) > 0)
             {
                 arrow.SetNewVelocity(_direction, ArrowSpeed);
                 continue;
@@ -64,7 +64,7 @@ public class ArrowMachine : Trap
     {
         foreach (TrapChildObject arrow in _arrows)
         {
-            if (!arrow.Visible || !arrow.IsExactCollision(out Sprite? sprite, [typeof(Player)]))
+            if (!arrow.Visible || !arrow.IsExactCollision(out GameObject? sprite, [typeof(Player)]))
                 continue;
             arrow.ChangeVisibility(false);
             entity = sprite as Entity;
@@ -87,7 +87,7 @@ public class ArrowMachine : Trap
         TrapChildObject arrow = new TrapChildObject(ArrowStartX, ArrowStartY, _arrowTexture);
         arrow.ChangeVisibility(true);
         arrow.SetNewVelocity(_direction, ArrowSpeed);
-        Sprites.Add(arrow);
+        Objects.Add(arrow);
         _arrows.Add(arrow);
     }
     private static RGB?[,] GetDeviceTexture(Textures textures, Direction direction) => direction is Direction.Right ? textures.Get(ArrowDeviceTextureName) : Textures.MirrorLeftRight(textures.Get(ArrowDeviceTextureName));
