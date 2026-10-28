@@ -1,7 +1,9 @@
 ﻿using JumpOn.Core;
 using JumpOn.Entities;
 using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
+using SolidObject = MCR_Engine.Core.BaseObjectTypes.SolidObject;
 
 namespace JumpOn.Traps;
 

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using JumpOn.Core;
 using JumpOn.Interactables;
 using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.InputSystem;
 using MCR_Engine.Objects;
 using MCR_Engine.Rendering.Output;
@@ -918,7 +919,6 @@ public class MapEditor
                 o.Main.SetNewTexture(TextureFor(o));
         }
     }
-
     private void RecomputeRays()
     {
         Type[] blockers = [typeof(SolidObject), typeof(Ladder)];
