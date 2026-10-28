@@ -57,10 +57,10 @@ public class Game
     private UIManager UI => _engine.UI;
     private Textures Textures => _engine.Textures;
     private Camera Camera => _engine.Camera;
-    public bool Play(out int? passedSeconds, out int? repawns)
+    public bool Play(out int? passedSeconds, out EntityData? gameData)
     {
         passedSeconds = null;
-        repawns = null;
+        gameData = null;
         Stopwatch stopwatch = Stopwatch.StartNew();
         do
         {
@@ -97,7 +97,7 @@ public class Game
             }
         } while (!_goal.EndGame);
         passedSeconds = _clock.PassedSeconds;
-        repawns = _player.Respawns;
+        gameData = _player.GameData;
         return true;
     }
     private void LoadContent()

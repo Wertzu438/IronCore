@@ -9,13 +9,14 @@ public abstract class Entity : Sprite
 {
     private const int DamageTickOffsetMs = 850;
     protected readonly RGB?[,] DeadTexture;
+    protected EntityData Data;
     private readonly Clock _clock;
     private readonly double _maxHealth;
     private Interactable? _currentInteractable;
     private double _currentHealth;
     private int _lastFloorY;
     private int _lastDamageTimeMs;
-    protected Entity(int x, int y, Textures textures, int maxHealth, Clock clock) : base(x, y, Textures.DebuggingTexture(4, 4), 1, true, true)
+    protected Entity(int x, int y, Textures textures, int maxHealth, Clock clock) : base(x, y, Textures.DebuggingTexture(6, 4), 1, true, true)
     {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;
@@ -24,12 +25,14 @@ public abstract class Entity : Sprite
         _clock = clock;
         _lastFloorY = 0;
         DeadTexture = textures.Get("deadEntity");
+        Data = new EntityData();
     }
     public new int Y
     {
         get => base.Y;
         set => base.Y = _lastFloorY = value;
     }
+    public EntityData GameData => Data;
     public bool Alive => _currentHealth > 0;
     public double Health => Alive ? _currentHealth : 0;
     protected abstract double WalkingSpeed { get; }
@@ -48,6 +51,7 @@ public abstract class Entity : Sprite
         bool getDamage = _lastDamageTimeMs + DamageTickOffsetMs < _clock.PassedMilliSeconds;
         if (!getDamage && !critical)
             return;
+        Data.AddTakenDamage(damage);
         _currentHealth -= damage;
         _lastDamageTimeMs = _clock.PassedMilliSeconds;
         if (getDamage && Alive)
@@ -62,6 +66,7 @@ public abstract class Entity : Sprite
             _currentHealth = _maxHealth;
     }
     public void SetInteractable(Interactable? interactable) => _currentInteractable = interactable;
+    public void AddRespawn() => Data.AddRespawn();
     protected override bool IsFloorBeneath() => base.IsFloorBeneath() || OnTopOfLadder;
     protected bool Walk(Direction direction)
     {
@@ -115,6 +120,7 @@ public abstract class Entity : Sprite
             {
                 fallDamage = distance / 20.0;
                 _lastFloorY = Y;
+                Data.AddTakenFallDamage(fallDamage);
                 return true;
             }
             _lastFloorY = Y;

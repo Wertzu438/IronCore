@@ -40,7 +40,7 @@ public class CheckPointManager
             throw new ArgumentException("No player spawn points found");
         if (OneCollected)
         {
-            player.Respawns++;
+            player.AddRespawn();
         }
         else _checkPoints[0].IsCollected = true;
         CheckPoint nearestCheckPoint = GetNearestUnlockedCheckPoint(player.X, player.Y);

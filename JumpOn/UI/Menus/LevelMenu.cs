@@ -54,6 +54,18 @@ public class LevelMenu : Menu
         {
             return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: - (Level nicht geschafft)", $"Versuche: {stats.Tries}"], buttonInfo];
         }
-        return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: {stats.Time} Sekunden mit {stats.Respawns} Respawns", $"Versuche: {stats.Tries}"], buttonInfo];
+        if (stats.NoDamage)
+        {
+            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: {stats.Time} Sekunden |  Respawns: {stats.Respawns} | Schaden: Keiner", $"Versuche: {stats.Tries}"], buttonInfo];
+        }
+        if (stats.TakenFallDamage == 0)
+        {
+            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: {stats.Time} Sekunden | Respawns: {stats.Respawns} | Trapschaden: {stats.TakenTrapDamage}", $"Versuche: {stats.Tries}"], buttonInfo];
+        }
+        if (stats.TakenTrapDamage == 0)
+        {
+            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: {stats.Time} Sekunden | Respawns: {stats.Respawns} | Fallschaden: {stats.TakenFallDamage}", $"Versuche: {stats.Tries}"], buttonInfo];
+        }
+        return [Application.GetGameHeading(), menuHeading, levelInfo, [$"Bester Versuch: {stats.Time} Sekunden | Respawns: {stats.Respawns} | Schaden: {stats.TakenDamage}", $"Versuche: {stats.Tries}"], buttonInfo];
     }
 }

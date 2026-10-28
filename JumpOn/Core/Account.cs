@@ -1,15 +1,23 @@
-﻿namespace JumpOn.Core;
+﻿using JumpOn.Entities;
+
+namespace JumpOn.Core;
 
 public struct LevelStats
 {
     public int Tries;
     public int? Time;
     public int? Respawns;
-    public LevelStats(int tries, int? time, int? respawns)
+    public int? TakenTrapDamage;
+    public int? TakenFallDamage;
+    public int TakenDamage => (TakenFallDamage.HasValue && TakenTrapDamage.HasValue) ? TakenFallDamage.Value + TakenTrapDamage.Value : 0;
+    public bool NoDamage => TakenFallDamage.HasValue && TakenTrapDamage.HasValue && TakenTrapDamage.Value == 0 && TakenFallDamage == 0;
+    public LevelStats(int tries, int? time, int? respawns, int? trapDamage, int? fallDamage)
     {
         Tries = tries;
         Time = time;
         Respawns = respawns;
+        TakenTrapDamage = trapDamage;
+        TakenFallDamage = fallDamage;
     }
     public bool LevelFinished => Time.HasValue && Respawns.HasValue;
     public bool LevelStarted => Tries > 0;
@@ -38,7 +46,7 @@ public class Account
                 _name = value;
                 for (int i = 0; i < _stats.Length; i++)
                 {
-                    _stats[i] = new LevelStats(0, null, null);
+                    _stats[i] = new LevelStats(0, null, null, null, null);
                 }
                 return;
             }
@@ -64,21 +72,23 @@ public class Account
         {
             if (_stats[i].LevelFinished)
             {
-                lines[i+ 1] = $"{_stats[i].Tries};{_stats[i].Time};{_stats[i].Respawns}";
+                lines[i + 1] = $"{_stats[i].Tries};{_stats[i].Time};{_stats[i].Respawns};{_stats[i].TakenTrapDamage};{_stats[i].TakenFallDamage}";
             }
-            else lines[i + 1] = $"{_stats[i].Tries};null;null";
+            else lines[i + 1] = $"{_stats[i].Tries};null;null;null;null";
         }
         File.WriteAllLines(FileName, lines);
     }
-    public void UpdateLevelStats(int level, int? time, int? respawns)
+    public void UpdateLevelStats(int level, int? time, EntityData? data)
     {
         _stats[level].AddTry();
-        if (!(time.HasValue && respawns.HasValue))
+        if (!(time.HasValue && data.HasValue))
             return;
         if (_stats[level].Time < time)
             return;
+        _stats[level].Respawns = data.Value.Respawns;
+        _stats[level].TakenTrapDamage = data.Value.TakenTrapDamage;
+        _stats[level].TakenFallDamage = data.Value.TakenFallDamage;
         _stats[level].Time = time.Value;
-        _stats[level].Respawns = respawns;
     }
     private int GetMaxLevel()
     {
@@ -98,9 +108,12 @@ public class Account
             {
                 string[] parts = lines[i].Split(';');
                 account._stats[i - 1] = new LevelStats(
-                    int.Parse(parts[0]),
-                    int.TryParse(parts[1], out int time) ? time : null, 
-                    int.TryParse(parts[2], out int respawns) ? respawns : null);
+                    int.TryParse(parts[0], out int tries) ? tries : 0,
+                    int.TryParse(parts[1], out int time) ? time : null,
+                    int.TryParse(parts[2], out int respawns) ? respawns : null,
+                    int.TryParse(parts[3], out int trapDamage) ? trapDamage : null,
+                    int.TryParse(parts[4], out int fallDamage) ? fallDamage : null
+                );
             }
         }
         else

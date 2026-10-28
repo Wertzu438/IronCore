@@ -18,7 +18,6 @@ public class Player : Entity
     private readonly RGB?[][,] _climbingTextures;
     private readonly RGB?[][,] _hangingTextures;
     private (int LastCoordinateChanged, int Index) _textureInfo;
-    private int _respawns;
     private PlayerAction _action;
     public Player(int x, int y, Textures textures, Input input, Clock clock) : base(x, y, textures, 5, clock)
     {
@@ -34,12 +33,6 @@ public class Player : Entity
         _hangingTextures = [textures.Get("playerBar_1"), textures.Get("playerBar_2")];
         _action = PlayerAction.StandRight;
         _textureInfo = (0, 0);
-        _respawns = 0;
-    }
-    public int Respawns
-    {
-        get => _respawns;
-        set => _respawns = (value > _respawns ? value : throw new ArgumentException("Value must be greater than respawns."));
     }
     protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 20;
@@ -124,21 +117,4 @@ public class Player : Entity
         return true;
     }
     private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && IsFloorBeneath()) && !IsInteractingWithInteractable;
-}
-public struct PlayerData
-{
-    private int _respawns;
-    private double _takenTrapDamage;
-    private double _takenFallDamage;
-    public PlayerData()
-    {
-        _respawns = 0;
-        _takenTrapDamage = 0;
-        _takenFallDamage = 0;
-    }
-    public int Respawns => _respawns;
-    public bool NoDamage => _takenTrapDamage == 0 && _takenFallDamage == 0;
-    public void AddRespawn() => _respawns++;
-    public void AddTakenTrapDamage(double amount) => _takenTrapDamage += amount;
-    public void AddTakenFallDamage(double amount) => _takenFallDamage += amount;
 }
