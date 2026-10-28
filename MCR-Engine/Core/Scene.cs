@@ -19,7 +19,7 @@ public class Scene
     public Scene(Camera camera, int width, int height, RGB[,] backgroundTexture)
     {
         if (height % 2 != 0)
-            throw new ArgumentException("Hight must be dividable by 2.");
+            throw new ArgumentException("Height must be dividable by 2.");
         _camera = camera;
         _width = width;
         _height = height;
@@ -32,7 +32,7 @@ public class Scene
     public int Height => _height;
     private int BackgroundWidth => _backgroundTexture.GetLength(0);
     private int BackgroundHeight => _backgroundTexture.GetLength(1);
-    public void Update(float deltaTime, bool renderAll = false, PathType?[,]? makeBlack = null)
+    public void Update(float deltaTime, bool renderAll = false)
     {
         int xStart, yStart, xEnd, yEnd;
         lock (_camera)
@@ -46,11 +46,6 @@ public class Scene
         {
             for (int x = xStart; x < xEnd; x++)
             {
-                if (makeBlack != null && makeBlack[x, y] != null)
-                {
-                    _pixels[x, y].SetNewRGB(new RGB(0, 0, 0));
-                    continue;
-                }
                 RGB? rgb = null;
                 Sprite? sprite = _sprites.GetSpriteMapPixel(x, y);
                 if (sprite is not null && sprite.Visible)

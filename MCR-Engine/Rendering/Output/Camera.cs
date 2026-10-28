@@ -166,6 +166,7 @@ public class Camera
     {
         if (_cinematicCamera)
             return;
+        _velocityX = _velocityY = 0;
         _cinematicCamera = true;
         _followedSprite = sprite;
         _currentMaxVelocityX = _currentMaxVelocityY = double.PositiveInfinity; 

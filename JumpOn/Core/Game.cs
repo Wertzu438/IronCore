@@ -71,7 +71,7 @@ public class Game
             Interactable.Update(_interactables, _entities);
             Collectable.Update(_collectables);
             Entity.Update(_entities, _scene);
-            _scene.Update(deltaTime, false, _pathFinding.Map);
+            _scene.Update(deltaTime);
             UpdateSideBar();
             bool respawnPressed = Input.Get(RespawnKeyName).Pressed;
             if (!_player.Alive || respawnPressed)
