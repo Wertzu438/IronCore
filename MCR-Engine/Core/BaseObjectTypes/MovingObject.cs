@@ -14,8 +14,7 @@ public class MovingObject : GameObject
         _amount = amount;
         ChangeVisibility(visible);
     }
-    public int ObjectMass => Width * Height;
-    internal override void UpdatePosition()
+    protected internal override void UpdatePosition()
     {
         ArgumentNullException.ThrowIfNull(Objects);
         (double X, double Y) objVelocity = (0, 0);

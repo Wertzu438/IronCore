@@ -42,7 +42,7 @@ public abstract class GameObject : IComparable<GameObject>
         get => _layer; set => _layer = (value >= MinLayer && value <= MaxLayer ? value : throw new ArgumentException("Value must be equal or greater than 0."));
     }
     protected virtual bool Gravity => _gravity;
-    internal virtual void UpdatePosition()
+    protected internal virtual void UpdatePosition()
     {
         ArgumentNullException.ThrowIfNull(Objects);
         if (Gravity) 
