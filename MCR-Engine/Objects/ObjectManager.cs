@@ -7,19 +7,23 @@ public class ObjectManager : IEnumerable<GameObject>
     {
         private readonly List<GameObject> _objects;
         private readonly Scene _scene;
-        private readonly GameObject?[,] _map;
+        private readonly GameObject?[][,] _map;
         private float _deltaTime;
         internal ObjectManager(Scene scene)
         {
             _objects = [];
             _scene = scene;
-            _map = new GameObject?[_scene.Width, _scene.Height];
+            _map = new GameObject[GameObject.MaxLayer][,];
+            for (int i = GameObject.MinLayer; i < GameObject.MaxLayer; i++)
+                _map[i] = new GameObject?[_scene.Width, _scene.Height];
         }
         private ObjectManager(Scene scene, bool clone)
         {
             _objects = [];
             _scene = scene;
-            _map = new GameObject?[_scene.Width, _scene.Height];
+            _map = new GameObject[GameObject.MaxLayer][,];
+            for (int i = GameObject.MinLayer; i < GameObject.MaxLayer; i++)
+                _map[i] = new GameObject?[_scene.Width, _scene.Height];
             foreach (var gameObject in scene.Objects)
             {
                 GameObject? s = gameObject.Clone(this);
@@ -69,7 +73,18 @@ public class ObjectManager : IEnumerable<GameObject>
                        _scene.ValidPixelCoordinates(gameObject.X + gameObject.Width - 1, 0);
             throw new ArgumentException($"Invalid direction {searchingDirection}");
         }
-        public GameObject? GetObjectMapPixel(int x, int y) => _scene.ValidPixelCoordinates(x, y) ? _map[x, y] : throw new ArgumentException("The specified coordinates are invalid.");
+        public GameObject? GetObjectMapPixel(int x, int y, Type[]? searchFor = null)
+        {
+            if (!_scene.ValidPixelCoordinates(x, y))
+                throw new ArgumentException($"Invalid pixel coordinates {x},{y}");
+            for (int currentLayer = GameObject.MaxLayer - 1; currentLayer >= GameObject.MinLayer; currentLayer--)
+            {
+                if (_map[currentLayer][x, y] is null || (searchFor != null && !searchFor.Any(t => t.IsAssignableFrom(_map[currentLayer][x, y]!.GetType()))))
+                    continue;
+                return _map[currentLayer][x, y];
+            }
+            return null;
+        }
         public bool Collision(GameObject searchingGameObject, bool searchExact, out GameObject? collidedGameObject, Type[]? searchFor = null)
         {
             collidedGameObject = null;
@@ -127,8 +142,9 @@ public class ObjectManager : IEnumerable<GameObject>
                         }
                         return -1;
                     }
-                    if (_map[x, y] is not null && (searchFor is null || searchFor.Contains(_map[x, y]!.GetType())) &&
-                    (!onlyWithCollision || _map[x, y]!.Collision))
+                    GameObject? obj = GetObjectMapPixel(x, y, searchFor);
+                    if (obj is not null && (searchFor is null || searchFor.Any(t => t.IsAssignableFrom(obj!.GetType()))) &&
+                    (!onlyWithCollision || obj.Collision))
                     {
                         quit = true;
                         break;
@@ -160,8 +176,9 @@ public class ObjectManager : IEnumerable<GameObject>
                     int cY = y + (upDown ? add : 0);
                     if (!_scene.ValidPixelCoordinates(cX, cY))
                         return null;
-                    if (_map[cX, cY] is not null && searchFor.Contains(_map[cX, cY]!.GetType()))
-                        return _map[cX, cY];
+                    GameObject? obj = GetObjectMapPixel(cX, cY, searchFor);
+                    if (obj is not null && searchFor.Any(t => t.IsAssignableFrom(obj!.GetType())))
+                        return obj;
                 }
                 
             } while (true);
@@ -178,9 +195,7 @@ public class ObjectManager : IEnumerable<GameObject>
         private void UpdateMap()
         {
             ClearMap();
-            List<GameObject> order = new List<GameObject>(_objects);
-            order.Sort();
-            foreach (GameObject gameObject in order)
+            foreach (GameObject gameObject in _objects)
             {
                 for (int y = 0; y < gameObject.Height; y++)
                 {
@@ -189,16 +204,17 @@ public class ObjectManager : IEnumerable<GameObject>
                         int xObject = gameObject.X + x, yObject = gameObject.Y + y;
                         if (!_scene.ValidPixelCoordinates(xObject, yObject) || gameObject.GetColor(x, y) is null || !gameObject.Visible)
                             continue;
-                        _map[xObject, yObject] = gameObject;
+                        _map[gameObject.Layer][xObject, yObject] = gameObject;
                     }
                 }
             }
         }
         private void ClearMap()
         {
-            for (int y = 0; y < _scene.Height; y++)
-                for (int x = 0; x < _scene.Width; x++)
-                    _map[x, y] = null;
+            for (int layer = GameObject.MinLayer; layer < GameObject.MaxLayer; layer++)
+                for (int y = 0; y < _scene.Height; y++)
+                    for (int x = 0; x < _scene.Width; x++)
+                        _map[layer][x, y] = null;
         }
         public static bool ObjectsOverlap(GameObject s1, GameObject s2)
         {

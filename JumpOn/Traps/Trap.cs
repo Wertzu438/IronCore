@@ -7,7 +7,7 @@ namespace JumpOn.Traps;
 public abstract class Trap : GameObject
 {
     private readonly bool _criticalDamage;
-    protected Trap(int x, int y, RGB?[,] texture, bool criticalDamage) : base(x, y, texture, 2, false, false)
+    protected Trap(int x, int y, RGB?[,] texture, bool criticalDamage) : base(x, y, texture, 1, false, false)
     {
         _criticalDamage = criticalDamage;
     }
