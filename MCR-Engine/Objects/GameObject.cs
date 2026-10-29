@@ -5,7 +5,7 @@ namespace MCR_Engine.Objects;
 
 public abstract class GameObject : IComparable<GameObject>
 {
-    public const int MinLayer = 0, MaxLayer = 14;
+    public const int MinLayer = 0, MaxLayer = 8;
     private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
     protected ObjectManager? Objects;
     protected double VelocityX, VelocityY;
@@ -39,7 +39,7 @@ public abstract class GameObject : IComparable<GameObject>
     }
     public int Layer
     {
-        get => _layer; set => _layer = (value >= MinLayer && value <= MaxLayer ? value : throw new ArgumentException("Value must be equal or greater than 0."));
+        get => _layer; set => _layer = (value >= MinLayer && value < MaxLayer ? value : throw new ArgumentException($"Value must be equal or greater than 0 and smaller than {MaxLayer}. ({value})"));
     }
     protected virtual bool Gravity => _gravity;
     protected internal virtual void UpdatePosition()

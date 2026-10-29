@@ -975,11 +975,11 @@ public class MapEditor
         foreach (EditorObject o in _level.Objects)
             BuildSprites(o);
 
-        _spawnPreview = scene.Objects.Add(new EditorGameObject(0, 0, _playerTexture ?? new RGB?[1, 1], _maxLayer + 1));
-        _ghost = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer + 2));
-        _outline = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer + 3));
-        _partner = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer + 3));
-        _cursor = scene.Objects.Add(new EditorGameObject(0, 0, CursorTexture(), _maxLayer + 4));
+        _spawnPreview = scene.Objects.Add(new EditorGameObject(0, 0, _playerTexture ?? new RGB?[1, 1], _maxLayer));
+        _ghost = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer));
+        _outline = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer));
+        _partner = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer));
+        _cursor = scene.Objects.Add(new EditorGameObject(0, 0, CursorTexture(), _maxLayer));
         _ghostDirty = true;
         _raysDirty = true;
 
