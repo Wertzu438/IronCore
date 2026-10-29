@@ -202,7 +202,9 @@ public class ObjectManager : IEnumerable<GameObject>
                     for (int x = 0; x < gameObject.Width; x++)
                     {
                         int xObject = gameObject.X + x, yObject = gameObject.Y + y;
-                        if (!_scene.ValidPixelCoordinates(xObject, yObject) || gameObject.GetColor(x, y) is null || !gameObject.Visible)
+                        if (!_scene.ValidPixelCoordinates(xObject, yObject) || gameObject.CompareTo(_map[gameObject.Layer][xObject, yObject]) != 1)
+                            continue;
+                        if (gameObject.GetColor(x, y) is null || !gameObject.Visible)
                             continue;
                         _map[gameObject.Layer][xObject, yObject] = gameObject;
                     }
@@ -228,6 +230,6 @@ public class ObjectManager : IEnumerable<GameObject>
             }
             return false;
         }
-        public IEnumerator<GameObject> GetEnumerator() => new ObjectManagerIEnumerator(_objects);
+        public IEnumerator<GameObject> GetEnumerator() => new ObjectManagerEnumerator(_objects);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

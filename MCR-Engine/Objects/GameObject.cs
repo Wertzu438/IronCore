@@ -198,7 +198,7 @@ public abstract class GameObject : IComparable<GameObject>
         if (ReferenceEquals(this, other)) 
             return 0;
         if (other is null)
-            return -1;
+            return 1;
         int layerCompare = _layer.CompareTo(other._layer);
         if (layerCompare != 0)
             return layerCompare;
