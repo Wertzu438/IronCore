@@ -114,10 +114,10 @@ public class ObjectManager : IEnumerable<GameObject>
                 return true;
             return false;
         }
-        public int GetDistanceToNextObject(GameObject gameObject, Direction direction, bool onlyOnScene, bool onlyWithCollision, bool startOppositeSide, Type[]? searchFor = null)
+        public int GetDistanceToNextObject(GameObject gameObject, Direction direction, bool onlyOnScene, bool onlyWithCollision, Type[]? searchFor = null)
         {
-            int xStart = gameObject.X + (direction is Direction.Right && !startOppositeSide ? gameObject.Width - 1 : 0), 
-                yStart = gameObject.Y + (direction is Direction.Down && !startOppositeSide ? gameObject.Height - 1 : 0);
+            int xStart = gameObject.X + (direction is Direction.Right ? gameObject.Width - 1 : 0), 
+                yStart = gameObject.Y + (direction is Direction.Down ? gameObject.Height - 1 : 0);
             int xAdd = 0, yAdd = 0;
             bool quit = false, upDown = direction is Direction.Up or Direction.Down;
             int distance = upDown ? gameObject.Width : gameObject.Height;
@@ -170,10 +170,10 @@ public class ObjectManager : IEnumerable<GameObject>
                     case Direction.Left: x--; break;
                     case Direction.Right: x++; break;
                 }
-                for (int add = 0; add < distance; add++)
+                for (int add = 1; add < distance; add++)
                 {
-                    int cX = x + (upDown ? 0 : add);
-                    int cY = y + (upDown ? add : 0);
+                    int cX = x + (upDown ? add : 0);
+                    int cY = y + (upDown ? 0 : add);
                     if (!_scene.ValidPixelCoordinates(cX, cY))
                         return null;
                     GameObject? obj = GetObjectMapPixel(cX, cY, searchFor);
