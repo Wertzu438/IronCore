@@ -2,6 +2,7 @@
 using JumpOn.Entities;
 using JumpOn.Interactables;
 using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
 using SolidObject = MCR_Engine.Core.BaseObjectTypes.SolidObject;
 
@@ -42,7 +43,7 @@ public class Laser : Trap
     protected override double Damage => EntityDamage;
     private int RayX => X + (Width / 2);
     private int RayY => Y + Height;
-    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextObject(Direction.Down, true, false, true, [typeof(SolidObject), typeof(Ladder)]) + 1);
+    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextObject(Direction.Down, true, false, [typeof(SolidObject), typeof(Ladder), typeof(MovingObject)]) + 1);
     public override GameObject? Clone(ObjectManager objects) => new Laser(X, Y, _onMs, _offMs, _deviceTexture, _rayPartTexture, _clock);
     protected override void Update()
     {
