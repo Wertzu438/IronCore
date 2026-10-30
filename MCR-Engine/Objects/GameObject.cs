@@ -44,21 +44,31 @@ public abstract class GameObject : IComparable<GameObject>
     protected virtual bool Gravity => _gravity;
     protected internal virtual void UpdatePosition()
     {
-        ArgumentNullException.ThrowIfNull(Objects);
         if (Gravity) 
             HandleGravity();
         if (!Move) 
             return;
-        double[] velocityStepsX = GetVelocitySteps(VelocityX * Objects.DeltaTime);
-        double[] velocityStepsY = GetVelocitySteps(VelocityY * Objects.DeltaTime);
+        MoveAndCheckForCollision(VelocityX, VelocityY, true);
+        ApplyDeceleration();
+    }
+    protected internal void MoveAndCheckForCollision(double velocityX, double velocityY, bool stopWhenCollision)
+    {
+        ArgumentNullException.ThrowIfNull(Objects);
+        double[] velocityStepsX = GetVelocitySteps(velocityX * Objects.DeltaTime);
+        double[] velocityStepsY = GetVelocitySteps(velocityY * Objects.DeltaTime);
         for (int i = 0; i < Math.Max(velocityStepsX.Length, velocityStepsY.Length); i++)
         {
             if (i < velocityStepsY.Length)
-                TryMoveY(velocityStepsY[i]);
+            {
+                if (!TryMoveY(velocityStepsY[i]) && stopWhenCollision)
+                    StopMovingY();
+            }
             if (i < velocityStepsX.Length)
-                TryMoveX(velocityStepsX[i]);
+            {
+                if (!TryMoveX(velocityStepsX[i]) && stopWhenCollision)
+                    StopMovingX();
+            }
         }
-        ApplyDeceleration();
     }
     public void AddVelocity(Direction direction, double acceleration, double maxVelocity)
     {
@@ -87,11 +97,15 @@ public abstract class GameObject : IComparable<GameObject>
             default: throw new ArgumentException("Invalid direction.");
         }
     }
-    public int GetDistanceToNextObject(Direction direction, bool onlyOnScene, bool onlyWithCollision,
-        bool startAtTop, Type[]? searchFor = null)
+    public int GetDistanceToNextObject(Direction direction, bool onlyOnScene, bool onlyWithCollision, Type[]? searchFor = null)
     {
         ArgumentNullException.ThrowIfNull(Objects);
-        return Objects.GetDistanceToNextObject(this, direction, onlyOnScene, onlyWithCollision, startAtTop, searchFor);
+        return Objects.GetDistanceToNextObject(this, direction, onlyOnScene, onlyWithCollision, searchFor);
+    }
+    public GameObject? GetNearestObject(Direction direction, Type[] searchFor)
+    {
+        ArgumentNullException.ThrowIfNull(Objects);
+        return Objects.GetNearestObject(this, direction, searchFor);
     }
     public bool IsBordersCollision(out GameObject? collidedGameObject, Type[]? searchFor = null)
     {
@@ -118,7 +132,23 @@ public abstract class GameObject : IComparable<GameObject>
         ArgumentNullException.ThrowIfNull(Objects);
         return Objects.ObjectOnScene(this, searchingDirection);
     }
-    public (double X, double Y) GetVelocity() => (VelocityX, VelocityY);
+    public (double X, double Y) GetVelocity(bool removeDeceleration = false)
+    {
+        if (!removeDeceleration)
+            return (VelocityX, VelocityY);
+        ArgumentNullException.ThrowIfNull(Objects);
+        double vX = 0, vY = 0;
+        if (VelocityX > 0)
+            vX = VelocityX + DefaultDeceleration * Objects.DeltaTime;
+        else if (VelocityX < 0)
+            vX = VelocityX - DefaultDeceleration * Objects.DeltaTime;
+        
+        if (VelocityY > 0)
+            vY = VelocityY + DefaultDeceleration * Objects.DeltaTime;
+        else if (VelocityY < 0)
+            vY = VelocityY - DefaultDeceleration * Objects.DeltaTime;
+        return (vX, vY);
+    }
     public void SetObjectManager(ObjectManager objects) => Objects = objects ?? throw new InvalidOperationException("Sprite manager is not set.");
     public void ChangeVisibility(bool? value = null) => _visible = value ?? !_visible;
     public void StopMovingX() => VelocityX = 0;
@@ -127,24 +157,24 @@ public abstract class GameObject : IComparable<GameObject>
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnObject(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
     public abstract GameObject? Clone(ObjectManager objects);
-    protected virtual bool IsFloorBeneath() => GetDistanceToNextObject(Direction.Down, false, true, false) is 0;
-    protected void TryMoveX(double xAdd)
+    protected virtual bool IsFloorBeneath() => GetDistanceToNextObject(Direction.Down, false, true) is 0;
+    protected bool TryMoveX(double xAdd)
     {
         double xOld = _x;
         _x += xAdd;
         if (!_collision || !IsBordersCollision(out _))
-            return;
-        StopMovingX();
+            return true;
         _x = xOld;
+        return false;
     }
-    protected void TryMoveY(double yAdd)
+    protected bool TryMoveY(double yAdd)
     {
         double yOld = _y;
         _y += yAdd;
         if ((!_collision && !Gravity) || !IsBordersCollision(out _))
-            return;
-        StopMovingY();
+            return true;
         _y = yOld;
+        return false;
     }
     protected void HandleGravity()
     {
