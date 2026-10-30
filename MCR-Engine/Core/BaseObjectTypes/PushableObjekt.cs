@@ -2,41 +2,33 @@
 
 namespace MCR_Engine.Core.BaseObjectTypes;
 
-public class PushableObjekt : GameObject
+public class PushableObjekt : MovingObject
 {
-    private static Direction[] checkDirections = [Direction.Left, Direction.Right];
+    private static readonly Direction[] CheckDirections = [Direction.Left, Direction.Right];
     private readonly RGB?[,] _baseTexture;
-    public PushableObjekt(int x, int y, RGB?[,] texture, int layer) : base(x, y, texture, layer, true, true)
+    public PushableObjekt(int x, int y, RGB?[,] texture, int layer) : base(x, y, layer, true, texture)
     {
         _baseTexture = texture;
     }
     protected internal override void UpdatePosition()
     {
-        (double X, double Y) velocityObj = (0, 0);
-        foreach (Direction direction in checkDirections)
+        double objectVelocityX = 0d;
+        foreach (Direction direction in CheckDirections)
         {
-            int distance = GetDistanceToNextObject(direction, true, true, false, [typeof(MovingObject)]);
-            if (distance > 1)
+            int distance = GetDistanceToNextObject(direction, true, true, [typeof(MovingObject)]);
+            if (distance > 0)
                 continue;
-            GameObject? obj = Objects.GetNearestObject(this, direction, [typeof(MovingObject)]);
-            if (obj == null)
+            GameObject? gameObject = GetNearestObject(direction, [typeof(MovingObject)]);
+            if (gameObject == null || Math.Abs(gameObject.GetVelocity().X) < Math.Abs(objectVelocityX))
                 continue;
-            velocityObj = obj.GetVelocity();
-            break;
+            objectVelocityX = gameObject.GetVelocity().X;
+            if ((direction is Direction.Left && objectVelocityX < 0) || (direction is Direction.Right && objectVelocityX > 0))
+                objectVelocityX = 0;
+                
         }
-        if (Gravity) 
-            HandleGravity();
-        VelocityX = velocityObj.X * 1;
-        double[] velocityStepsX = GetVelocitySteps((VelocityX) * Objects.DeltaTime);
-        double[] velocityStepsY = GetVelocitySteps((VelocityY) * Objects.DeltaTime);
-        for (int i = 0; i < Math.Max(velocityStepsX.Length, velocityStepsY.Length); i++)
-        {
-            if (i < velocityStepsY.Length)
-                TryMoveY(velocityStepsY[i]);
-            if (i < velocityStepsX.Length)
-                TryMoveX(velocityStepsX[i]);
-        }
-        ApplyDeceleration();
+        if (Math.Abs(objectVelocityX) > Math.Abs(VelocityX))
+            VelocityX = objectVelocityX * 0.80;
+        base.UpdatePosition();
     }
     public override GameObject? Clone(ObjectManager objects) => new PushableObjekt(X, Y, _baseTexture, Layer);
 }

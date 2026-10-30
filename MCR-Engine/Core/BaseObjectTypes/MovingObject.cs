@@ -16,29 +16,20 @@ public class MovingObject : GameObject
     }
     protected internal override void UpdatePosition()
     {
-        ArgumentNullException.ThrowIfNull(Objects);
-        (double X, double Y) objVelocity = (0, 0);
-        if (GetDistanceToNextObject(Direction.Down, true, true, false, [typeof(MovingObject)]) < 4)
-        {
-            GameObject? obj = Objects.GetNearestObject(this, Direction.Down, [typeof(MovingObject)]);
-            if (obj is not null)
-            {
-                objVelocity = obj.GetVelocity();
-            }
-        }
+        GameObject? gameObject = null;
+        if (GetDistanceToNextObject(Direction.Down, true, true, [typeof(MovingObject)]) < 1)
+            gameObject = GetNearestObject(Direction.Down, [typeof(MovingObject)]);
         if (Gravity) 
             HandleGravity();
-        if (!Move && objVelocity.X == 0 && objVelocity.Y == 0)
+        if (!Move && (gameObject is null || !gameObject.Move))
             return;
-        double[] velocityStepsX = GetVelocitySteps((VelocityX + objVelocity.X) * Objects.DeltaTime);
-        double[] velocityStepsY = GetVelocitySteps((VelocityY + objVelocity.Y) * Objects.DeltaTime);
-        for (int i = 0; i < Math.Max(velocityStepsX.Length, velocityStepsY.Length); i++)
-        {
-            if (i < velocityStepsY.Length)
-                TryMoveY(velocityStepsY[i]);
-            if (i < velocityStepsX.Length)
-                TryMoveX(velocityStepsX[i]);
-        }
+        double gX = (gameObject is null ? 0d : gameObject.GetVelocity(true).X);
+        double gY = (gameObject is null ? 0d : gameObject.GetVelocity(true).Y);
+        if (Math.Abs(gX) > Math.Abs(VelocityX))
+            VelocityX = gX;
+        if (Math.Abs(gY) > Math.Abs(VelocityY))
+            VelocityY = gY;
+        MoveAndCheckForCollision(VelocityX, VelocityY, false);
         ApplyDeceleration();
     }
     public override GameObject? Clone(ObjectManager objects) => new SolidObject(X, Y, Layer, _baseTexture, _textureExpansion, _amount, Visible);
