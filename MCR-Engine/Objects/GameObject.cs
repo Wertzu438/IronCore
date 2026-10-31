@@ -51,7 +51,7 @@ public abstract class GameObject : IComparable<GameObject>
         MoveAndCheckForCollision(VelocityX, VelocityY, true);
         ApplyDeceleration();
     }
-    protected internal void MoveAndCheckForCollision(double velocityX, double velocityY, bool stopWhenCollision)
+    protected void MoveAndCheckForCollision(double velocityX, double velocityY, bool stopWhenCollision)
     {
         ArgumentNullException.ThrowIfNull(Objects);
         double[] velocityStepsX = GetVelocitySteps(velocityX * Objects.DeltaTime);
