@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using JumpOn.Entities.LivingEntities;
 using JumpOn.Interactables;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
@@ -9,105 +10,46 @@ namespace JumpOn.Entities;
 public abstract class Entity : MovingObject
 {
     private const int DamageTickOffsetMs = 850;
-    protected readonly RGB?[,] DeadTexture;
-    protected EntityData Data;
     private readonly Clock _clock;
     private readonly double _maxHealth;
-    private Interactable? _currentInteractable;
     private double _currentHealth;
     private int _lastFloorY;
     private int _lastDamageTimeMs;
-    protected Entity(int x, int y, Textures textures, int maxHealth, Clock clock) : base(x, y, 1, true, Textures.DebuggingTexture(6, 4))
+    protected Entity(int x, int y, int maxHealth, Clock clock) : base(x, y, 1, true, Textures.DebuggingTexture(6, 4))
     {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;
         _lastDamageTimeMs = int.MinValue;
-        _currentInteractable = null;
         _clock = clock;
         _lastFloorY = 0;
-        DeadTexture = textures.Get("deadEntity");
-        Data = new EntityData();
     }
     public new int Y
     {
         get => base.Y;
         set => base.Y = _lastFloorY = value;
     }
-    public EntityData GameData => Data;
     public bool Alive => _currentHealth > 0;
     public double Health => Alive ? _currentHealth : 0;
-    protected abstract double WalkingSpeed { get; }
-    protected abstract double ClimbingSpeed { get; }
-    protected abstract double HangingSpeed { get; }
-    protected abstract bool IsInteractingWithInteractable { get; }
-    protected override bool Gravity => !IsInteractingWithInteractable;
-    private bool OnLadder => _currentInteractable is Ladder;
-    private bool OnBar => _currentInteractable is Bar;
-    private bool OnTopOfLadder => Ladder.IsEntityOnTopOfLadder(this);
+    protected virtual bool ResetFallDamage => IsFloorBeneath();
     public abstract void Update();
-    public void Damage(double damage, bool critical)
+    public virtual bool Damage(double damage, bool critical)
     {
-        if (damage < 0)
-            throw new ArgumentException("Damage cannot be negative");
         bool getDamage = _lastDamageTimeMs + DamageTickOffsetMs < _clock.PassedMilliSeconds;
         if (!getDamage && !critical)
-            return;
-        Data.AddTakenDamage(damage);
-        _currentHealth -= damage;
+            return false;
+        _currentHealth -= Math.Abs(damage);
         _lastDamageTimeMs = _clock.PassedMilliSeconds;
         if (getDamage && Alive)
             Flash(20);
+        return true;
     }
-    public void Heal(double heal)
+    public virtual void Heal(double heal)
     {
-        if (heal < 0)
-            throw new ArgumentException("Heal cannot be negative");
-        _currentHealth += heal;
+        _currentHealth += Math.Abs(heal);
         if (_currentHealth > _maxHealth)
             _currentHealth = _maxHealth;
     }
-    public void SetInteractable(Interactable? interactable) => _currentInteractable = interactable;
-    public void AddRespawn() => Data.AddRespawn();
-    protected override bool IsFloorBeneath() => base.IsFloorBeneath() || OnTopOfLadder;
-    protected bool Walk(Direction direction)
-    {
-        if (Engine.Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
-            return false;
-        MoveOnX(direction, 229, WalkingSpeed);
-        return true;
-    }
-    protected bool Climb(Direction direction)
-    {
-        if (!OnLadder || Engine.Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
-        {
-            if (!OnLadder || !IsInteractingWithInteractable)
-                return false;
-            if (Engine.Contains(direction, [Direction.Left, Direction.Right]))
-                MoveOnX(direction, 299, ClimbingSpeed);
-            return !IsFloorBeneath();
-        }
-        StopMovingX();
-        ((Ladder)_currentInteractable!).CenterEntity(this);
-        MoveOnY(direction, ClimbingSpeed);
-        return true;
-    }
-    protected bool Hang(Direction direction)
-    {
-        if (!OnBar)
-            return false;
-        StopMovingY();
-        Y = ((Bar)_currentInteractable!).HangOnIt();
-        if (Engine.Contains(direction, [Direction.None, Direction.Up]))
-            return true;
-        if (direction is Direction.Down)
-        {
-            Y += 2;
-            return false;
-        }
-        MoveOnX(direction, 100, HangingSpeed);
-        return true;
-    }
-    protected bool GetFallDamage(out double fallDamage)
+    protected virtual bool GetFallDamage(out double fallDamage)
     {
         int distance = Y - _lastFloorY;
         if (distance > 200)
@@ -115,13 +57,12 @@ public abstract class Entity : MovingObject
             fallDamage = double.MaxValue;
             return true;
         }
-        if (IsFloorBeneath() || OnLadder || OnBar)
+        if (ResetFallDamage)
         {
             if (distance > 20)
             {
                 fallDamage = distance / 20.0;
                 _lastFloorY = Y;
-                Data.AddTakenFallDamage(fallDamage);
                 return true;
             }
             _lastFloorY = Y;
@@ -129,13 +70,13 @@ public abstract class Entity : MovingObject
         fallDamage = 0;
         return false;
     }
-    private void MoveOnX(Direction direction, double acceleration, double maxSpeed)
+    protected void MoveOnX(Direction direction, double acceleration, double maxSpeed)
     {
         if (Engine.Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
             throw new ArgumentException("Invalid direction");
         AddVelocity(direction, acceleration, maxSpeed);
     }
-    private void MoveOnY(Direction direction, double speed)
+    protected void MoveOnY(Direction direction, double speed)
     {
         if (Engine.Contains(direction, [Direction.None, Direction.Left, Direction.Right]))
             throw new ArgumentException("Invalid direction");
@@ -146,7 +87,8 @@ public abstract class Entity : MovingObject
         foreach (Entity entity in entities)
         {
             entity.Update();
-            entity._currentInteractable =  null;
+            if (entity is LivingEntity)
+                ((LivingEntity)entity).SetInteractable(null);
             if (!entity.OnScene(Direction.Right))
             {
                 if (entity.X < 0)

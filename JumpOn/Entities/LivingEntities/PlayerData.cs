@@ -1,12 +1,12 @@
-﻿namespace JumpOn.Entities;
+﻿namespace JumpOn.Entities.LivingEntities;
 
-public struct EntityData
+public struct PlayerData
 {
     //Heal?
     private int _respawns;
     private double _takenDamage;
     private double _takenFallDamage;
-    public EntityData()
+    public PlayerData()
     {
         _respawns = 0;
         _takenDamage = 0;

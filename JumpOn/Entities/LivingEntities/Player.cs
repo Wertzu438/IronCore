@@ -1,11 +1,10 @@
-﻿using JumpOn.Interactables;
-using MCR_Engine.Core;
+﻿using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
 using MCR_Engine.Objects;
 
-namespace JumpOn.Entities;
+namespace JumpOn.Entities.LivingEntities;
 
-public class Player : Entity
+public class Player : LivingEntity
 {
     public enum PlayerAction
     {
@@ -17,9 +16,10 @@ public class Player : Entity
     private readonly RGB?[][,] _walkingTextures;
     private readonly RGB?[][,] _climbingTextures;
     private readonly RGB?[][,] _hangingTextures;
+    private PlayerData _data;
     private (int LastCoordinateChanged, int Index) _textureInfo;
     private PlayerAction _action;
-    public Player(int x, int y, Textures textures, Input input, Clock clock) : base(x, y, textures, 5, clock)
+    public Player(int x, int y, Textures textures, Input input, Clock clock) : base(x, y, 5, clock, textures)
     {
         _movementKeys = [input.Get("A"), input.Get("D"), input.Get("Space"), input.Get("W"), input.Get("S")];
         _standingTextures = [Textures.MirrorLeftRight(textures.Get("playerStand")), textures.Get("playerStand")];
@@ -33,7 +33,9 @@ public class Player : Entity
         _hangingTextures = [textures.Get("playerBar_1"), textures.Get("playerBar_2")];
         _action = PlayerAction.StandRight;
         _textureInfo = (0, 0);
+        _data = new PlayerData();
     }
+    public PlayerData GameData => _data;
     protected override double WalkingSpeed => 40;
     protected override double ClimbingSpeed => 20;
     protected override double HangingSpeed => 20;
@@ -52,7 +54,22 @@ public class Player : Entity
             SetNewVelocity(Direction.Up, 100);
         SetNewTexture(GetNewTexture());
     }
+    public override bool Damage(double damage, bool critical)
+    {
+        if (!base.Damage(damage, critical))
+            return false;
+        _data.AddTakenDamage(damage);
+        return true;
+    }
+    protected override bool GetFallDamage(out double fallDamage)
+    {
+        if (!base.GetFallDamage(out fallDamage))
+            return false;
+        _data.AddTakenFallDamage(fallDamage);
+        return true;
+    }
     public override GameObject? Clone(ObjectManager objects) => null;
+    public void AddRespawn() => _data.AddRespawn();
     private Direction GetDirection()
     {
         if (_movementKeys[0].Pressed)

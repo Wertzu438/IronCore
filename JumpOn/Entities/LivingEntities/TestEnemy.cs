@@ -2,14 +2,14 @@
 using MCR_Engine.Core;
 using MCR_Engine.Objects;
 
-namespace JumpOn.Entities;
+namespace JumpOn.Entities.LivingEntities;
 
-public class TestEnemy : Entity
+public class TestEnemy : LivingEntity
 {
     private PathFinding _pathFinding;
     private Player _player;
     private Player.PlayerAction _action;
-    public TestEnemy(int x, int y, Textures textures, Clock clock, PathFinding pathFinding, Player player) : base(x, y, textures, 10, clock)
+    public TestEnemy(int x, int y, Textures textures, Clock clock, PathFinding pathFinding, Player player) : base(x, y, 10, clock, textures)
     {
         _pathFinding = pathFinding;
         _player = player;
