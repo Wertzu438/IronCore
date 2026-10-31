@@ -42,6 +42,6 @@ public class Box : Entity
     }
     public override void Update()
     {
-        return;
+        //Nothing to update
     }
 }
