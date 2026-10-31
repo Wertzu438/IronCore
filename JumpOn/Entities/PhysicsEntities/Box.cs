@@ -1,16 +1,27 @@
-﻿using MCR_Engine.Objects;
+﻿using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
+using MCR_Engine.Objects;
 
-namespace MCR_Engine.Core.BaseObjectTypes;
+namespace JumpOn.Entities.PhysicsEntities;
 
-public class PushableObjekt : MovingObject
+public class Box : Entity
 {
+    private const string TextureName = "woodBox";
     private static readonly Direction[] CheckDirections = [Direction.Left, Direction.Right];
-    private readonly RGB?[,] _baseTexture;
-    public PushableObjekt(int x, int y, RGB?[,] texture, int layer) : base(x, y, layer, true, texture)
+    private readonly RGB?[,] _texture;
+    public Box(int x, int y, int maxHealth, Clock clock, Textures textures) : base(x, y, maxHealth, clock)
     {
-        _baseTexture = texture;
+        SetNewTexture(_texture = textures.Get(TextureName));
     }
-    protected internal override void UpdatePosition()
+    private Box(int x, int y, double currentHealth, double maxHealth, Clock clock, RGB?[,] texture) : base(x, y, maxHealth, clock)
+    {
+        _texture = texture;
+        if (currentHealth > maxHealth / 2)
+            Health = currentHealth;
+        SetNewTexture(_texture);
+    }
+    public override GameObject? Clone(ObjectManager objects) => new Box(X, Y, Health, MaxHealth, Clock, _texture);
+    protected override void UpdatePosition()
     {
         double objectVelocityX = 0d;
         foreach (Direction direction in CheckDirections)
@@ -24,11 +35,13 @@ public class PushableObjekt : MovingObject
             objectVelocityX = gameObject.GetVelocity().X;
             if ((direction is Direction.Left && objectVelocityX < 0) || (direction is Direction.Right && objectVelocityX > 0))
                 objectVelocityX = 0;
-                
         }
         if (Math.Abs(objectVelocityX) > Math.Abs(VelocityX))
             VelocityX = objectVelocityX * 0.80;
         base.UpdatePosition();
     }
-    public override GameObject? Clone(ObjectManager objects) => new PushableObjekt(X, Y, _baseTexture, Layer);
+    public override void Update()
+    {
+        return;
+    }
 }

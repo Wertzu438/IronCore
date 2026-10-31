@@ -1,6 +1,7 @@
 ﻿using JumpOn.Core;
 using JumpOn.Entities;
 using JumpOn.Entities.LivingEntities;
+using JumpOn.Entities.PhysicsEntities;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
@@ -48,7 +49,7 @@ public class ArrowMachine : Trap
     {
         foreach (TrapChildObject arrow in _arrows)
         {
-            if (arrow.Visible && arrow.OnScene() && arrow.GetDistanceToNextObject(_direction, true, false, [typeof(SolidObject), typeof(DecorationObject), typeof(MovingObject)]) > 0)
+            if (arrow.Visible && arrow.OnScene() && arrow.GetDistanceToNextObject(_direction, true, false, [typeof(SolidObject), typeof(DecorationObject), typeof(Box)]) > 0)
             {
                 arrow.SetNewVelocity(_direction, ArrowSpeed);
                 continue;

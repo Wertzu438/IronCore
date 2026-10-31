@@ -1,6 +1,7 @@
 ﻿using JumpOn.Core;
 using JumpOn.Entities;
 using JumpOn.Entities.LivingEntities;
+using JumpOn.Entities.PhysicsEntities;
 using JumpOn.Interactables;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
@@ -44,10 +45,11 @@ public class Laser : Trap
     protected override double Damage => EntityDamage;
     private int RayX => X + (Width / 2);
     private int RayY => Y + Height;
-    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextObject(Direction.Down, true, false, [typeof(SolidObject), typeof(Ladder), typeof(MovingObject)]) + 1);
+    private RGB?[,] RayTexture => Textures.CreateExpansion(_rayPartTexture, Direction.Down, _laser.GetDistanceToNextObject(Direction.Down, true, false, [typeof(SolidObject), typeof(Ladder), typeof(Box)]) + 1);
     public override GameObject? Clone(ObjectManager objects) => new Laser(X, Y, _onMs, _offMs, _deviceTexture, _rayPartTexture, _clock);
     protected override void Update()
     {
+        ArgumentNullException.ThrowIfNull(Objects);
         if (!Objects.Contains(_laser))
             Objects.Add(_laser);
         if (_lastMsChanged < _clock.PassedMilliSeconds - GetTime())
