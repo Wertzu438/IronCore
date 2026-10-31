@@ -1,4 +1,5 @@
 ﻿using JumpOn.Entities;
+using JumpOn.Entities.LivingEntities;
 using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
@@ -45,9 +46,9 @@ public class Switch : Interactable
         _pulled = false;
     }
     public override GameObject? Clone(ObjectManager objects) => new Switch(X, Y, objects.Get(objects.Count - 1), _interactingKey, _camera, _infoBox, _pulledTexture, _unpulledTexture, _clock);
-    protected override bool IsEntityInteracting(Entity entity)
+    protected override bool IsObjectInteracting(GameObject gameObject)
     {
-        bool playerInteracting = base.IsEntityInteracting(entity) && entity is Player;
+        bool playerInteracting = base.IsObjectInteracting(gameObject) && gameObject is Player;
         UpdateInfoBox(playerInteracting);
         if (!playerInteracting || !_interactingKey.Pressed || _lastMsPulled + WaitingIntervalMs > _clock.PassedMilliSeconds)
             return false;

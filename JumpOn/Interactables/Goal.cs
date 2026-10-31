@@ -1,5 +1,6 @@
 ﻿using JumpOn.Collectables;
 using JumpOn.Entities;
+using JumpOn.Entities.LivingEntities;
 using JumpOn.Interactables;
 using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Core;
@@ -39,9 +40,9 @@ public class Goal : Interactable
     private bool CollectedAllKeys => Collectable.AreAllCollected(Keys);
     private List<GameKey> Keys => _keys ?? throw new NullReferenceException("Keys cannot be null.");
     public override GameObject? Clone(ObjectManager objects) => new Goal(X, Y, _openTexture, _closedTexture, _interactingKey, _infoBox);
-    protected override bool IsEntityInteracting(Entity entity)
+    protected override bool IsObjectInteracting(GameObject gameObject)
     {
-        bool playerInteracting = base.IsEntityInteracting(entity) && entity is Player;
+        bool playerInteracting = base.IsObjectInteracting(gameObject) && gameObject is Player;
         UpdateInfoBox(playerInteracting);
         if (!(playerInteracting && _interactingKey.Pressed && CollectedAllKeys))
             return false;

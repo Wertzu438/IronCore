@@ -24,6 +24,7 @@ public class Ladder : Interactable
         SetNewTexture(CreateTexture());
     }
     public override GameObject? Clone(ObjectManager objects) => new Ladder(X, Y, _baseTexture, _amount);
+    protected override bool IsObjectInteracting(GameObject gameObject) => gameObject is Entity && base.IsObjectInteracting(gameObject);
     public void CenterEntity(Entity entity)
     {
         int offset = (Width - entity.Width) / 2;

@@ -1,4 +1,5 @@
 ﻿using JumpOn.Entities;
+using JumpOn.Entities.LivingEntities;
 using MCR_Engine.Core;
 using MCR_Engine.Objects;
 
@@ -11,19 +12,19 @@ public abstract class Interactable : GameObject
     {
         _ignoreHalfCoverage = ignoreHalfCoverage;
     }
-    protected virtual bool IsEntityInteracting(Entity entity)
+    protected virtual bool IsObjectInteracting(GameObject gameObject)
     {
-        if (!Visible || !IsExactCollision(entity))
+        if (!Visible || !IsExactCollision(gameObject))
             return false;
-        return _ignoreHalfCoverage || EntityCoveringHalf(entity);
+        return _ignoreHalfCoverage || ObjectCoveringHalf(gameObject);
     }
-    private bool EntityCoveringHalf(Entity entity)
+    private bool ObjectCoveringHalf(GameObject gameObject)
     {
         int overlap =
-            Math.Min(entity.X + entity.Width, X + Width) -
-            Math.Max(entity.X, X);
+            Math.Min(gameObject.X + gameObject.Width, X + Width) -
+            Math.Max(gameObject.X, X);
 
-        return overlap >= entity.Width / 1.9;
+        return overlap >= gameObject.Width / 1.9;
     }
     public static void Update(List<Interactable> interactables, List<Entity> entities)
     {
@@ -31,8 +32,10 @@ public abstract class Interactable : GameObject
         {
             foreach (Entity entity in entities)
             {
-                if (interactable.IsEntityInteracting(entity))
-                    entity.SetInteractable(interactable);
+                if (entity is not LivingEntity)
+                    continue;
+                if (interactable.IsObjectInteracting(entity))
+                    ((LivingEntity)entity).SetInteractable(interactable);
             }
         }
             
