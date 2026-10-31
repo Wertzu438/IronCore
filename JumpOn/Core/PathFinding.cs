@@ -2,6 +2,7 @@
 using JumpOn.Interactables;
 using MCR_Engine.Core;
 using MCR_Engine.Objects;
+using SolidObject = MCR_Engine.Core.BaseObjectTypes.SolidObject;
 
 namespace JumpOn.Entities;
 
@@ -19,21 +20,20 @@ public class PathFinding
         FillMap();
     }
     public PathType?[,] Map => _map;
-    public Direction Find(Sprite searcher, Sprite destination)
+    public (Direction, PathType) Find(GameObject searcher, GameObject destination)
     {
         bool reached = false;
         return Step(searcher.X, searcher.Y + searcher.Height - 1, new HashSet<(int x, int y)>(), destination, 0, ref reached);
     }
-    private Direction Step(int x , int y, HashSet<(int x, int y)> visited, Sprite destination, int depth, ref bool reached)
+    private (Direction, PathType) Step(int x , int y, HashSet<(int x, int y)> visited, GameObject destination, int depth, ref bool reached)
     {
         if (!visited.Add((x, y)))
-            return Direction.None;
+            return (Direction.None, PathType.Walk);
         for (int i = 0; i < Directions.Length; i++)
         {
-            
             if (depth > 150 || !_scene.ValidPixelCoordinates(x, y) || _map[x, y] == null)
             {
-                return Directions[i];
+                return (Directions[i], PathType.Walk);
             }
             int newX = x + (Directions[i]) switch
             {
@@ -47,17 +47,17 @@ public class PathFinding
                 Direction.Down => 1,
                 _ => 0,
             };
-            if (destination.CoordinatesOnSprite(newX, newY))
+            if (destination.CoordinatesOnObject(newX, newY))
             {
                 reached = true;
             }
             else Step(newX, newY, visited, destination, depth + 1, ref reached);
             if (reached)
             {
-                return Directions[i];
+                return (Directions[i], (PathType)_map[x, y]);
             }
         }
-        return Direction.None;
+        return (Direction.None, PathType.Walk);
     }
     private void FillMap()
     {
@@ -66,7 +66,7 @@ public class PathFinding
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
                 _map[x, y] = null;
-        foreach (Sprite sprite in _scene.Sprites)
+        foreach (GameObject sprite in _scene.Objects)
         {
             Type spriteType = sprite.GetType();
             if (spriteType != typeof(SolidObject) && spriteType != typeof(Ladder))
@@ -80,18 +80,26 @@ public class PathFinding
                         continue;
                     _map[x, y] = PathType.Walk;
                 }
-                if (!SideBorder(sprite))
-                    continue;
-                for (int yAdd = -1; yAdd < sprite.Height; yAdd++)
+                if (ConnectToLadder(sprite.X + sprite.Width, sprite.Y, 10))
                 {
-                    int x = sprite.X - 1, y = sprite.Y + yAdd;
-                    if (ChangeMapPixel(x, y))
+                    for (int xAdd = 0; xAdd < 4; xAdd++)
                     {
-                        _map[x, y] = PathType.Drop;
+                        _map[sprite.X + sprite.Width + xAdd - 1, sprite.Y - 2] = PathType.Ladder;
                     }
-                    x = sprite.X + sprite.Width;
-                    if (ChangeMapPixel(x, y))
-                        _map[x, y] = PathType.Drop;
+                }
+                else
+                {
+                    for (int yAdd = -1; yAdd < 10; yAdd++)
+                    {
+                        int x = sprite.X - 1, y = sprite.Y + yAdd;
+                        if (ChangeMapPixel(x, y))
+                        {
+                            _map[x, y] = PathType.Drop;
+                        }
+                        x = sprite.X + sprite.Width;
+                        if (ChangeMapPixel(x, y))
+                            _map[x, y] = PathType.Drop;
+                    }
                 }
             }
             else
@@ -100,11 +108,11 @@ public class PathFinding
                 {
                     if (!ChangeMapPixel(sprite.X + 2, sprite.Y + yAdd))
                         continue;
-                    _map[sprite.X + 2, sprite.Y + yAdd] = PathType.Ladder;
+                    _map[sprite.X + 1, sprite.Y + yAdd] = PathType.Ladder;
                 }
                 for (int xAdd = 0; xAdd < sprite.Width; xAdd++)
                 {
-                    _map[sprite.X + xAdd, sprite.Y] = PathType.Ladder;
+                    _map[sprite.X + xAdd, sprite.Y] = PathType.Walk;
                 }
             }
         }
@@ -113,17 +121,24 @@ public class PathFinding
     {
         if (!_scene.ValidPixelCoordinates(x, y))
             return false;
-        Sprite? sprite = _scene.Sprites.GetSpriteMapPixel(x, y);
+        GameObject? sprite = _scene.Objects.GetObjectMapPixel(x, y);
         if (sprite != null && sprite.Collision)
             return false;
         return true;
     }
-    private bool ConnectToLadder(int x, int y)
+    private bool ConnectToLadder(int x, int y, int height)
     {
-        Sprite? sprite = _scene.Sprites.GetSpriteMapPixel(x, y);
-        if (sprite == null)
-            return false;
-        return sprite.GetType() == typeof(Ladder);
+        for (int yAdd = -1; yAdd < height; yAdd++)
+        {
+            if (!_scene.ValidPixelCoordinates(x, y))
+                continue;
+            GameObject? sprite = _scene.Objects.GetObjectMapPixel(x, y);
+            if (sprite == null)
+                continue;
+            if (sprite.GetType() == typeof(Ladder))
+                return true;
+        }
+        return false;
     }
-    private bool SideBorder(Sprite sprite) => sprite.Height < 10;
+    private bool SideBorder(GameObject gameObject) => gameObject.Height < 10;
 }
