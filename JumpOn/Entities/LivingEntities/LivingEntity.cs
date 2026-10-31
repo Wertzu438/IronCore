@@ -20,10 +20,9 @@ public abstract class LivingEntity : Entity
     protected override bool ResetFallDamage => base.ResetFallDamage || OnLadder || OnBar;
     private bool OnLadder => _currentInteractable is Ladder;
     private bool OnBar => _currentInteractable is Bar;
-    private bool OnTopOfLadder => Ladder.IsEntityOnTopOfLadder(this);
     public abstract override void Update();
     public void SetInteractable(Interactable? interactable) => _currentInteractable = interactable;
-    protected override bool IsFloorBeneath() => base.IsFloorBeneath() || OnTopOfLadder;
+    protected override bool IsFloorBeneath() => base.IsFloorBeneath() || Ladder.IsEntityOnTopOfLadder(this);
     protected bool Walk(Direction direction)
     {
         if (Engine.Contains(direction, [Direction.None, Direction.Up, Direction.Down]))

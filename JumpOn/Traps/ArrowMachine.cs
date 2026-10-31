@@ -1,5 +1,6 @@
 ﻿using JumpOn.Core;
 using JumpOn.Entities;
+using JumpOn.Entities.LivingEntities;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
