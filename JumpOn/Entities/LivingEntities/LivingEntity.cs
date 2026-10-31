@@ -61,5 +61,4 @@ public abstract class LivingEntity : Entity
         MoveOnX(direction, 100, HangingSpeed);
         return true;
     }
-
 }

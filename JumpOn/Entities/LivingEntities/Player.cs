@@ -61,6 +61,13 @@ public class Player : LivingEntity
         _data.AddTakenDamage(damage);
         return true;
     }
+    public override void Heal(double heal)
+    {
+        base.Heal(heal);
+        if (heal >= 100)
+            return;
+        _data.AddHealedDamage(heal);
+    }
     protected override bool GetFallDamage(out double fallDamage)
     {
         if (!base.GetFallDamage(out fallDamage))
