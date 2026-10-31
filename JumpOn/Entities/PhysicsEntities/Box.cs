@@ -6,21 +6,28 @@ namespace JumpOn.Entities.PhysicsEntities;
 
 public class Box : Entity
 {
-    private const string TextureName = "woodBox";
+    private const string BoxUndamagedName = "woodBox", BoxDamagedName = "woodBoxDamaged";
     private static readonly Direction[] CheckDirections = [Direction.Left, Direction.Right];
-    private readonly RGB?[,] _texture;
-    public Box(int x, int y, int maxHealth, Clock clock, Textures textures) : base(x, y, maxHealth, clock)
+    private readonly RGB?[,] _undamagedTexture;
+    private readonly RGB?[,] _damagedTexture;
+    private readonly int _xSpawn, _ySpawn;
+    public Box(int x, int y, Clock clock, Textures textures) : base(x, y, 4, clock)
     {
-        SetNewTexture(_texture = textures.Get(TextureName));
+        _xSpawn = x; _ySpawn = y;
+        _undamagedTexture = textures.Get(BoxUndamagedName);
+        _damagedTexture = textures.Get(BoxDamagedName);
+        SetNewTexture(_undamagedTexture);
+        
     }
-    private Box(int x, int y, double currentHealth, double maxHealth, Clock clock, RGB?[,] texture) : base(x, y, maxHealth, clock)
+    private Box(int x, int y, double maxHealth, Clock clock, RGB?[,] undamagedTexture, RGB?[,] damagedTexture) : base(x, y, maxHealth, clock)
     {
-        _texture = texture;
-        if (currentHealth > maxHealth / 2)
-            Health = currentHealth;
-        SetNewTexture(_texture);
+        _xSpawn = x; _ySpawn = y;
+        _undamagedTexture = undamagedTexture;
+        _damagedTexture = damagedTexture;
+        SetNewTexture(_undamagedTexture);
     }
-    public override GameObject? Clone(ObjectManager objects) => new Box(X, Y, Health, MaxHealth, Clock, _texture);
+    private double DamagePerFall => MaxHealth / 2; 
+    public override GameObject? Clone(ObjectManager objects) => new Box(_xSpawn, _ySpawn, MaxHealth, Clock, _undamagedTexture, _damagedTexture);
     protected override void UpdatePosition()
     {
         double objectVelocityX = 0d;
@@ -42,6 +49,14 @@ public class Box : Entity
     }
     public override void Update()
     {
-        //Nothing to update
+        if (GetFallDamage(out _))
+        {
+            Damage(DamagePerFall, true, false);
+            SetNewTexture(_damagedTexture);
+        }
+        if (!Alive)
+        {
+            Objects.Remove(this);
+        }
     }
 }
