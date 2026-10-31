@@ -21,7 +21,7 @@ public abstract class Trap : GameObject
     {
         if (!IsSomeoneInTrap(out Entity? entity))
             return;
-        entity!.Damage(Damage, _criticalDamage);
+        entity!.Damage(Damage, _criticalDamage, true);
     }
     public static void Update(List<Trap> traps)
     {

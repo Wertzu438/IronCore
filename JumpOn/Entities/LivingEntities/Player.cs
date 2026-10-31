@@ -49,15 +49,15 @@ public class Player : LivingEntity
             return;
         }
         if (GetFallDamage(out double fallDamage))
-            Damage(fallDamage, true);
+            Damage(fallDamage, true, true);
         _action = GetAction(GetDirection());
         if (Jump())
             SetNewVelocity(Direction.Up, 100);
         SetNewTexture(GetNewTexture());
     }
-    public override bool Damage(double damage, bool critical)
+    public override bool Damage(double damage, bool critical, bool flash)
     {
-        if (!base.Damage(damage, critical))
+        if (!base.Damage(damage, critical, flash))
             return false;
         _data.AddTakenDamage(damage);
         return true;

@@ -60,6 +60,7 @@ public class ObjectManager : IEnumerable<GameObject>
                     return i;
             return -1;
         }
+        public bool Remove(GameObject gameObject) => _objects.Remove(gameObject);
         public bool ObjectOnScene(GameObject gameObject, Direction? searchingDirection = null)
         {
             if (searchingDirection is null)
@@ -73,13 +74,14 @@ public class ObjectManager : IEnumerable<GameObject>
                        _scene.ValidPixelCoordinates(gameObject.X + gameObject.Width - 1, 0);
             throw new ArgumentException($"Invalid direction {searchingDirection}");
         }
-        public GameObject? GetObjectMapPixel(int x, int y, Type[]? searchFor = null)
+        public GameObject? GetObjectMapPixel(int x, int y, Type[]? searchFor = null, bool onlyWithCollision = false)
         {
             if (!_scene.ValidPixelCoordinates(x, y))
                 throw new ArgumentException($"Invalid pixel coordinates {x},{y}");
             for (int currentLayer = GameObject.MaxLayer - 1; currentLayer >= GameObject.MinLayer; currentLayer--)
             {
-                if (_map[currentLayer][x, y] is null || (searchFor != null && !searchFor.Any(t => t.IsAssignableFrom(_map[currentLayer][x, y]!.GetType()))))
+                GameObject? obj = _map[currentLayer][x, y];
+                if (obj is null || (searchFor != null && !searchFor.Any(t => t.IsAssignableFrom(obj.GetType()))) || (onlyWithCollision && !obj.Collision))
                     continue;
                 return _map[currentLayer][x, y];
             }
@@ -116,11 +118,13 @@ public class ObjectManager : IEnumerable<GameObject>
         }
         public int GetDistanceToNextObject(GameObject gameObject, Direction direction, bool onlyOnScene, bool onlyWithCollision, Type[]? searchFor = null)
         {
-            int xStart = gameObject.X + (direction is Direction.Right ? gameObject.Width - 1 : 0), 
-                yStart = gameObject.Y + (direction is Direction.Down ? gameObject.Height - 1 : 0);
-            int xAdd = 0, yAdd = 0;
-            bool quit = false, upDown = direction is Direction.Up or Direction.Down;
+            if (direction is Direction.None)
+                throw new ArgumentException("Invalid direction.");
+            int x = gameObject.X + (direction is Direction.Right ? gameObject.Width - 1 : 0);
+            int y = gameObject.Y + (direction is Direction.Down ? gameObject.Height - 1 : 0);
+            bool upDown = direction is Direction.Up or Direction.Down;
             int distance = upDown ? gameObject.Width : gameObject.Height;
+            int xAdd = 0, yAdd = 0;
             do
             {
                 switch (direction)
@@ -130,28 +134,23 @@ public class ObjectManager : IEnumerable<GameObject>
                     case Direction.Left: xAdd--; break;
                     case Direction.Right: xAdd++; break;
                 }
-                for (int i = 0; i < distance; i++)
+                for (int add = 0; add < distance; add++)
                 {
-                    int x = xStart + xAdd + (upDown ? i : 0), y = yStart + yAdd+ (!upDown ? i : 0);
-                    if (!_scene.ValidPixelCoordinates(x, y))
+                    int cX = x + xAdd + (upDown ? add : 0);
+                    int cY = y + yAdd + (upDown ? 0 : add);
+                    if (!_scene.ValidPixelCoordinates(cX, cY))
                     {
                         if (onlyOnScene)
-                        {
-                            quit = true;
-                            break;
-                        }
+                            return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
                         return -1;
                     }
-                    GameObject? obj = GetObjectMapPixel(x, y, searchFor);
+                    GameObject? obj = GetObjectMapPixel(cX, cY, searchFor, onlyWithCollision);
                     if (obj is not null && (searchFor is null || searchFor.Any(t => t.IsAssignableFrom(obj!.GetType()))) &&
                     (!onlyWithCollision || obj.Collision))
-                    {
-                        quit = true;
-                        break;
-                    }
+                        return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
                 }
-            } while (!quit);
-            return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
+            } while (true);
+            
         }
         public GameObject? GetNearestObject(GameObject gameObject, Direction direction, Type[] searchFor)
         {
@@ -170,7 +169,7 @@ public class ObjectManager : IEnumerable<GameObject>
                     case Direction.Left: x--; break;
                     case Direction.Right: x++; break;
                 }
-                for (int add = 1; add < distance; add++)
+                for (int add = 0; add < distance; add++)
                 {
                     int cX = x + (upDown ? add : 0);
                     int cY = y + (upDown ? 0 : add);

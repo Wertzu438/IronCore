@@ -48,7 +48,7 @@ public class LevelMenu : Menu
         string[] buttonInfo = [$"-[Up]/[Down] Level wechseln     [G] Level starten     [ENTER] Hauptmenü"];
         if (!stats.LevelStarted)
         {
-            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"🏆 Bester Versuch: -", $"Versuche: 0"], buttonInfo];
+            return [Application.GetGameHeading(), menuHeading, levelInfo, [$"🏆 Bester Versuch: -", $"🔁 Versuche: 0"], buttonInfo];
         }
         if (!stats.LevelFinished)
         {

@@ -29,27 +29,17 @@ public abstract class Entity : MovingObject
         set => base.Y = _lastFloorY = value;
     }
     public bool Alive => _currentHealth > 0;
-
-    public double Health
-    {
-        get => Alive ? _currentHealth : 0;
-        set
-        {
-            if (value < 0 && value >= MaxHealth)
-                throw new ArgumentException("Health cannot be less than 0 or equal to MaxHealth");
-            _currentHealth = value;
-        }
-    }
+    public double Health => Alive ? _currentHealth : 0;
     protected virtual bool ResetFallDamage => IsFloorBeneath();
     public abstract void Update();
-    public virtual bool Damage(double damage, bool critical)
+    public virtual bool Damage(double damage, bool critical, bool flash)
     {
         bool getDamage = _lastDamageTimeMs + DamageTickOffsetMs < Clock.PassedMilliSeconds;
         if (!getDamage && !critical)
             return false;
         _currentHealth -= Math.Abs(damage);
         _lastDamageTimeMs = Clock.PassedMilliSeconds;
-        if (getDamage && Alive)
+        if (getDamage && Alive && flash)
             Flash(20);
         return true;
     }
