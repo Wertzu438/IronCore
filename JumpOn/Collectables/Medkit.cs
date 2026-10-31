@@ -1,4 +1,5 @@
 ﻿using JumpOn.Entities;
+using JumpOn.Entities.LivingEntities;
 using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;

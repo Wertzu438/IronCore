@@ -1,4 +1,5 @@
 ﻿using JumpOn.Entities;
+using JumpOn.Entities.LivingEntities;
 
 namespace JumpOn.Core;
 
@@ -78,7 +79,7 @@ public class Account
         }
         File.WriteAllLines(FileName, lines);
     }
-    public void UpdateLevelStats(int level, int? time, EntityData? data)
+    public void UpdateLevelStats(int level, int? time, PlayerData? data)
     {
         _stats[level].AddTry();
         if (!(time.HasValue && data.HasValue))

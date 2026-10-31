@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using JumpOn.Entities;
+using JumpOn.Entities.LivingEntities;
 using JumpOn.UI.InfoBoxes;
 using JumpOn.UI.Menus;
 using MCR_Engine.Core;
@@ -31,7 +32,7 @@ public class Application : IGameProject
     {
         _engine.UI.Clear();
         Game game = new Game(_engine, _account, _account.CurrentLevel);
-        if (game.Play(out int? passedSeconds, out EntityData? gameData))
+        if (game.Play(out int? passedSeconds, out PlayerData? gameData))
         {
             _account.UpdateLevelStats(_account.CurrentLevel, passedSeconds, gameData);
             if (_account.CurrentLevel == _account.MaxLevel)
