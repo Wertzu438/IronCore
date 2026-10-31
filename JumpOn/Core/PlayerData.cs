@@ -1,8 +1,7 @@
-﻿namespace JumpOn.Entities.LivingEntities;
+﻿namespace JumpOn.Core;
 
 public struct PlayerData
 {
-    //Heal?
     private int _respawns;
     private double _takenDamage;
     private double _takenFallDamage;
@@ -17,6 +16,7 @@ public struct PlayerData
     public int Respawns => _respawns < 0 ? 0 : _respawns;
     public int TakenTrapDamage => (int)(_takenDamage - _takenFallDamage);
     public int TakenFallDamage => (int)_takenFallDamage;
+    public int HealedDamage => (int)_healedDamage;
     public void AddRespawn() => _respawns++;
     public void AddTakenDamage(double amount) => 
         _takenDamage += amount > 0 ? amount : throw new ArgumentOutOfRangeException(nameof(amount));
