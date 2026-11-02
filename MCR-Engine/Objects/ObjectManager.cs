@@ -146,7 +146,7 @@ public class ObjectManager : IEnumerable<GameObject>
                     }
                     GameObject? obj = GetObjectMapPixel(cX, cY, searchFor, onlyWithCollision);
                     if (obj is not null && (searchFor is null || searchFor.Any(t => t.IsAssignableFrom(obj!.GetType()))) &&
-                    (!onlyWithCollision || obj.Collision))
+                    (!onlyWithCollision || obj.Collision) && !gameObject.Equals(obj))
                         return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
                 }
             } while (true);
@@ -176,7 +176,7 @@ public class ObjectManager : IEnumerable<GameObject>
                     if (!_scene.ValidPixelCoordinates(cX, cY))
                         return null;
                     GameObject? obj = GetObjectMapPixel(cX, cY, searchFor);
-                    if (obj is not null && searchFor.Any(t => t.IsAssignableFrom(obj!.GetType())))
+                    if (obj is not null && !gameObject.Equals(obj) && searchFor.Any(t => t.IsAssignableFrom(obj!.GetType())))
                         return obj;
                 }
                 
