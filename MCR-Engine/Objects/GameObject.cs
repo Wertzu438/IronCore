@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
 
 namespace MCR_Engine.Objects;
 
@@ -39,19 +40,22 @@ public abstract class GameObject : IComparable<GameObject>
     }
     public int Layer
     {
-        get => _layer; set => _layer = (value >= MinLayer && value < MaxLayer ? value : throw new ArgumentException($"Value must be equal or greater than 0 and smaller than {MaxLayer}. ({value})"));
+        get => _layer; 
+        set => _layer = (value >= MinLayer && value < MaxLayer ? value : throw new ArgumentException($"Value must be equal or greater than 0 and smaller than {MaxLayer}. ({value})"));
     }
     protected virtual bool Gravity => _gravity;
+    protected virtual bool StopOnCollisionX => true;
+    protected virtual bool StopOnCollisionY => true;
     protected internal virtual void UpdatePosition()
     {
         if (Gravity) 
             HandleGravity();
         if (!Move) 
             return;
-        MoveAndCheckForCollision(VelocityX, VelocityY, true);
+        MoveAndCheckForCollision(VelocityX, VelocityY);
         ApplyDeceleration();
     }
-    protected void MoveAndCheckForCollision(double velocityX, double velocityY, bool stopWhenCollision)
+    protected void MoveAndCheckForCollision(double velocityX, double velocityY)
     {
         ArgumentNullException.ThrowIfNull(Objects);
         double[] velocityStepsX = GetVelocitySteps(velocityX * Objects.DeltaTime);
@@ -60,12 +64,12 @@ public abstract class GameObject : IComparable<GameObject>
         {
             if (i < velocityStepsY.Length)
             {
-                if (!TryMoveY(velocityStepsY[i]) && stopWhenCollision)
+                if (!TryMoveY(velocityStepsY[i]) && StopOnCollisionY)
                     StopMovingY();
             }
             if (i < velocityStepsX.Length)
             {
-                if (!TryMoveX(velocityStepsX[i]) && stopWhenCollision)
+                if (!TryMoveX(velocityStepsX[i]) && StopOnCollisionX)
                     StopMovingX();
             }
         }
@@ -157,25 +161,7 @@ public abstract class GameObject : IComparable<GameObject>
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnObject(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
     public abstract GameObject? Clone(ObjectManager objects);
-    protected virtual bool IsFloorBeneath() => GetDistanceToNextObject(Direction.Down, false, true) is 0;
-    protected bool TryMoveX(double xAdd)
-    {
-        double xOld = _x;
-        _x += xAdd;
-        if (!_collision || !IsBordersCollision(out _))
-            return true;
-        _x = xOld;
-        return false;
-    }
-    protected bool TryMoveY(double yAdd)
-    {
-        double yOld = _y;
-        _y += yAdd;
-        if ((!_collision && !Gravity) || !IsBordersCollision(out _))
-            return true;
-        _y = yOld;
-        return false;
-    }
+    protected virtual bool IsFloorBeneath() => _gravity && GetDistanceToNextObject(Direction.Down, true, true) is 0;
     protected void HandleGravity()
     {
         if (!Gravity)
@@ -203,7 +189,25 @@ public abstract class GameObject : IComparable<GameObject>
         else if (VelocityX < 0)
             VelocityX = Math.Min(VelocityX + (inAir ? DefaultDeceleration / 3 : DefaultDeceleration) * Objects.DeltaTime, 0);
     }
-    protected static double[] GetVelocitySteps(double velocity)
+    private bool TryMoveX(double xAdd)
+    {
+        double xOld = _x;
+        _x += xAdd;
+        if (!_collision || !IsBordersCollision(out _))
+            return true;
+        _x = xOld;
+        return false;
+    }
+    private bool TryMoveY(double yAdd)
+    {
+        double yOld = _y;
+        _y += yAdd;
+        if (!IsBordersCollision(out _))
+            return true;
+        _y = yOld;
+        return false;
+    }
+    private static double[] GetVelocitySteps(double velocity)
     {
         double[] velocitySteps = new double[Math.Abs((int)velocity) + 1];
         double velocityPerStep = velocity / velocitySteps.Length;
