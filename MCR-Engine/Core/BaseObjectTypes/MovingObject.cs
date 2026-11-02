@@ -28,10 +28,10 @@ public class MovingObject : GameObject
             return amount;
         }
     }
-    private MovingObject ObjectBeneath => _objectBeneath;
+    private MovingObject? ObjectBeneath => _objectBeneath;
     protected internal override void UpdatePosition()
     {
-        if (IsFloorBeneath())
+        if (GetDistanceToNextObject(Direction.Down, true, false, [typeof(MovingObject)]) == 0)
         {
             _objectBeneath = GetNearestObject(Direction.Down, [typeof(MovingObject)]) as MovingObject;
         }
@@ -42,5 +42,4 @@ public class MovingObject : GameObject
         ApplyDeceleration();
     }
     public override GameObject? Clone(ObjectManager objects) => new MovingObject(X, Y, Layer, Collision, Gravity, _texture, Visible);
-    protected override bool IsFloorBeneath() => base.IsFloorBeneath() || GetDistanceToNextObject(Direction.Down, true, false, [typeof(MovingObject)]) == 0;
 }

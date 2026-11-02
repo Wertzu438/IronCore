@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using JumpOn.Entities.LivingEntities;
+using JumpOn.Entities.PhysicsEntities;
 using JumpOn.Interactables;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
@@ -70,6 +71,7 @@ public abstract class Entity : MovingObject
         fallDamage = 0;
         return false;
     }
+    protected override bool IsFloorBeneath() => base.IsFloorBeneath() || GetDistanceToNextObject(Direction.Down, true, false, [typeof(MovingPlatform)]) is 0;
     protected void MoveOnX(Direction direction, double acceleration, double maxSpeed)
     {
         if (Engine.Contains(direction, [Direction.None, Direction.Up, Direction.Down]))

@@ -40,9 +40,9 @@ public class MovingPlatform : Entity
             VelocityX *= -1;
             VelocityY *= -1;
         }
-        if (GetDistanceToNextObject(Direction.Up, true, true, [typeof(LivingEntity)]) is 0)
+        if (GetDistanceToNextObject(Direction.Up, true, true, [typeof(Entity)]) is 0)
         {
-            GameObject? obj = GetNearestObject(Direction.Up, [typeof(LivingEntity)]) as LivingEntity;
+            GameObject? obj = GetNearestObject(Direction.Up, [typeof(Entity)]) as Entity;
             if (obj is null)
                 throw new ArgumentException("Object not found.");
             int entityY = obj.Y + obj.Height;

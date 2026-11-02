@@ -38,9 +38,19 @@ public class Box : Entity
             return a + (a > 0 ? 90 * Objects.DeltaTime : 90 * Objects.DeltaTime * -1);
         }
     }
+    protected override double CombinedVelocityY
+    {
+        get
+        {
+            double a = base.CombinedVelocityY;
+            int objBeneath = MovingObjectsBeneath;
+            if (objBeneath != 1 || a == 0)
+                return a;
+            return a + (a > 0 ? 90 * Objects.DeltaTime : 90 * Objects.DeltaTime * -1);
+        }
+    }
     protected override bool StopOnCollisionX => false;
     protected override bool StopOnCollisionY => false;
-    protected override double CombinedVelocityY => base.CombinedVelocityY + (VelocityY == 0 ? 0 : 90 * Objects.DeltaTime);
     private static double DamagePerFall => DefaultMaxHealth / 2; 
     public override GameObject? Clone(ObjectManager objects) => new Box(_xSpawn, _ySpawn, MaxHealth, Clock, _undamagedTexture, _damagedTexture);
     protected override void UpdatePosition()
