@@ -51,15 +51,8 @@ public class Game
         ];
         _clock = new Clock();
         _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
-        _scene.Objects.Add(new Box(20, 0, 10, _clock, Textures));
-        _scene.Objects.Add(new Box(20, 8, 10, _clock, Textures));
-        _scene.Objects.Add(new Box(20, 16, 10, _clock, Textures));
         _player = (Player)_scene.Objects.Add(new Player(0, 0, Textures, Input, _clock));
         _pathFinding = new PathFinding(_scene);
-        //_scene.Sprites.Add(new TestEnemy(120, 0, _engine.Textures, _clock, _pathFinding, _player));
-        //_scene.Objects.Add(new MovingObject(0, 0, 10, false, Textures.Get("brickBlock"), Direction.Right, 3)).SetNewVelocity(Direction.Right, 28);
-        //a = _scene.Objects.Add(new MovingObject(70, 94, 10, false, Textures.Get("metalWall"), Direction.Right, 4));
-        
         LoadContent();
         Camera.SetFollowedObject(_player, 10, 10);
     }
