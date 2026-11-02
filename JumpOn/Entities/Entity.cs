@@ -15,7 +15,7 @@ public abstract class Entity : MovingObject
     private double _currentHealth;
     private int _lastFloorY;
     private int _lastDamageTimeMs;
-    protected Entity(int x, int y, double maxHealth, Clock clock) : base(x, y, 1, true, Textures.DebuggingTexture(6, 4))
+    protected Entity(int x, int y, bool collision, double maxHealth, Clock clock) : base(x, y, 1, collision, true, Textures.DebuggingTexture(6, 4))
     {
         MaxHealth = maxHealth;
         _currentHealth = maxHealth;
