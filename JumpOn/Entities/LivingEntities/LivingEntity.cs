@@ -7,7 +7,7 @@ public abstract class LivingEntity : Entity
 {
     protected readonly RGB?[,] DeadTexture;
     private Interactable? _currentInteractable;
-    protected LivingEntity(int x, int y, int maxHealth, Clock clock, Textures textures) : base(x, y, maxHealth, clock)
+    protected LivingEntity(int x, int y, int maxHealth, Clock clock, Textures textures) : base(x, y, true, maxHealth, clock)
     {
         DeadTexture = textures.Get("deadEntity");
         _currentInteractable = null;
@@ -16,6 +16,7 @@ public abstract class LivingEntity : Entity
     protected abstract double ClimbingSpeed { get; }
     protected abstract double HangingSpeed { get; }
     protected abstract bool IsInteractingWithInteractable { get; }
+    protected override bool StopOnCollisionX => false;
     protected override bool Gravity => !IsInteractingWithInteractable;
     protected override bool ResetFallDamage => base.ResetFallDamage || OnLadder || OnBar;
     private bool OnLadder => _currentInteractable is Ladder;
