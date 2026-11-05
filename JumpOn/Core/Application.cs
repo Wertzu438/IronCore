@@ -21,6 +21,7 @@ public class Application : IGameProject
         engine.Menus.Add(new LevelMenu(_account, engine.Input));
         engine.Menus.Add(new InfoMenu(engine.Input));
         engine.Menus.Add(new AccountMenu(_account, engine.Input, engine.UpdateRenderAction));
+        Console.Title = "JumpOn";
         _menus = engine.Menus;
     }
     public ProgramState OpenEditor()
