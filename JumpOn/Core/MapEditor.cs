@@ -634,7 +634,7 @@ public class MapEditor
     {
         if (o.Main is null || o.Type is not (ObjType.Key or ObjType.Medkit or ObjType.CheckPoint))
             return;
-        int distance = o.Main.GetDistanceToNextObject(Direction.Down, true, true);
+        int distance = o.Main.GetDistanceToNextObject(Direction.Down, true);
         if (distance <= 0)
             return;
         if (o.Y + o.Main.Height + distance >= _level.Height)
@@ -929,7 +929,7 @@ public class MapEditor
                 continue;
             o.Ray.X = o.X + o.Main.Width / 2;
             o.Ray.Y = o.Y + o.Main.Height;
-            int distance = o.Ray.GetDistanceToNextObject(Direction.Down, true, false, blockers);
+            int distance = o.Ray.GetDistanceToNextObject(Direction.Down, false, blockers);
             o.Ray.SetNewTexture(Textures.CreateExpansion(part, Direction.Down, Math.Max(1, distance + 1)));
         }
     }
@@ -1458,7 +1458,7 @@ public class MapEditor
         {
             if (o.Type is ObjType.Key or ObjType.Medkit or ObjType.CheckPoint && o.Main is not null)
             {
-                if (o.Main!.GetDistanceToNextObject(Direction.Down, true, true) > 0)
+                if (o.Main!.GetDistanceToNextObject(Direction.Down, true) > 0)
                     floating.Add(o);
             }
         }
@@ -1823,14 +1823,14 @@ internal enum ObjType
 }
 
 /// <summary>Reines Vorschau-Sprite ohne Spiellogik (keine Kollision, keine Schwerkraft).</summary>
-internal sealed class EditorGameObject : GameObject
+internal sealed class EditorGameObject : NonSolidObject
 {
-    public EditorGameObject(int x, int y, RGB?[,] texture, int layer) : base(x, y, texture, layer, false, false)
+    public EditorGameObject(int x, int y, RGB?[,] texture, int layer) : base(x, y, layer, false, texture)
     {
     }
 
     // Sprite hat jetzt eine abstrakte Clone-Methode; Editor-Sprites werden nie geklont.
-    public override GameObject? Clone(ObjectManager objects) => null;
+    public override GameObject? Clone(Objects objects) => null;
 }
 
 /// <summary>Ein Objekt im Level (nur Daten + die zugehörigen Vorschau-Sprites).</summary>

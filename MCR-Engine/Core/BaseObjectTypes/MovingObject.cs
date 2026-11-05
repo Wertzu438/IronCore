@@ -1,4 +1,5 @@
-﻿using MCR_Engine.Objects;
+﻿
+using MCR_Engine.Objects;
 
 namespace MCR_Engine.Core.BaseObjectTypes;
 
@@ -31,7 +32,7 @@ public class MovingObject : GameObject
     private MovingObject? ObjectBeneath => _objectBeneath;
     protected internal override void UpdatePosition()
     {
-        if (GetDistanceToNextObject(Direction.Down, true, false, [typeof(MovingObject)]) == 0)
+        if (GetDistanceToNextObject(Direction.Down, false, [typeof(MovingObject)]) == 0)
         {
             _objectBeneath = GetNearestObject(Direction.Down, [typeof(MovingObject)]) as MovingObject;
         }
@@ -41,5 +42,5 @@ public class MovingObject : GameObject
         MoveAndCheckForCollision(CombinedVelocityX, CombinedVelocityY);
         ApplyDeceleration();
     }
-    public override GameObject? Clone(ObjectManager objects) => new MovingObject(X, Y, Layer, Collision, Gravity, _texture, Visible);
+    public override GameObject? Clone(Objects.Objects objects) => new MovingObject(X, Y, Layer, Collision, Gravity, _texture, Visible);
 }

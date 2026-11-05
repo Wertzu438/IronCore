@@ -101,10 +101,10 @@ public abstract class GameObject : IComparable<GameObject>
             default: throw new ArgumentException("Invalid direction.");
         }
     }
-    public int GetDistanceToNextObject(Direction direction, bool onlyOnScene, bool onlyWithCollision, Type[]? searchFor = null)
+    public int GetDistanceToNextObject(Direction direction, bool onlyWithCollision, Type[]? searchFor = null)
     {
         ArgumentNullException.ThrowIfNull(Objects);
-        return Objects.GetDistanceToNextObject(this, direction, onlyOnScene, onlyWithCollision, searchFor);
+        return Objects.GetDistanceToNextObject(this, direction, onlyWithCollision, searchFor);
     }
     public GameObject? GetNearestObject(Direction direction, Type[] searchFor)
     {
