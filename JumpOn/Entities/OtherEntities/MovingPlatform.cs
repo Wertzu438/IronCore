@@ -12,7 +12,7 @@ public class MovingPlatform : Entity
     private readonly RGB?[,] _baseTexture;
     private readonly int? _amount;
     public MovingPlatform(int x, int y, double xVelocity, double yVelocity, int distance, Clock clock, Textures textures, int? amount = null) : 
-        base(x, y, false, double.MaxValue, clock)
+        base(x, y, false, double.PositiveInfinity, clock)
     {
         _xSpawn = x; _ySpawn = y;
         VelocityX = _xVelocity = xVelocity; VelocityY = _yVelocity = yVelocity;
