@@ -14,7 +14,7 @@ public class SolidObject : GameObject
         _amount = amount;
         ChangeVisibility(visible);
     }
-    public override GameObject? Clone(ObjectManager objects) => new SolidObject(X, Y, Layer, _baseTexture, _textureExpansion, _amount, Visible);
+    public override GameObject? Clone(Objects.Objects objects) => new SolidObject(X, Y, Layer, _baseTexture, _textureExpansion, _amount, Visible);
     private static RGB?[,] GetTexture(RGB?[,] baseTexture, Direction? textureExpansion, int? amount)
     {
         if (!(textureExpansion.HasValue && amount.HasValue) || amount.Value <= 1)

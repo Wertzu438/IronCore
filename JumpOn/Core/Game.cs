@@ -3,14 +3,11 @@ using JumpOn.CheckPoints;
 using JumpOn.Collectables;
 using JumpOn.Entities;
 using JumpOn.Entities.LivingEntities;
-using JumpOn.Entities.PhysicsEntities;
 using JumpOn.Interactables;
 using JumpOn.Traps;
 using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Core;
-using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.InputSystem;
-using MCR_Engine.Objects;
 using MCR_Engine.Rendering.Output;
 using MCR_Engine.Rendering.UI;
 

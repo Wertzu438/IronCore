@@ -45,7 +45,7 @@ public class Switch : Interactable
         _lastMsPulled = 0;
         _pulled = false;
     }
-    public override GameObject? Clone(ObjectManager objects) => new Switch(X, Y, objects.Get(objects.Count - 1), _interactingKey, _camera, _infoBox, _pulledTexture, _unpulledTexture, _clock);
+    public override GameObject? Clone(Objects objects) => new Switch(X, Y, objects.Get(objects.Count - 1), _interactingKey, _camera, _infoBox, _pulledTexture, _unpulledTexture, _clock);
     protected override bool IsObjectInteracting(GameObject gameObject)
     {
         bool playerInteracting = base.IsObjectInteracting(gameObject) && gameObject is Player;

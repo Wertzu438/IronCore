@@ -1,6 +1,7 @@
 ﻿using JumpOn.Entities;
 using JumpOn.Entities.LivingEntities;
 using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
 
 namespace JumpOn.Interactables;
@@ -40,5 +41,5 @@ public abstract class Interactable : GameObject
         }
             
     }
-    public static List<Interactable> LoadInteractables(ObjectManager objects) => objects.GetAllObjectsOfType<Interactable>();
+    public static List<Interactable> LoadInteractables(Objects objects) => objects.GetAllObjectsOfType<Interactable>();
 }

@@ -8,14 +8,14 @@ public abstract class GameObject : IComparable<GameObject>
 {
     public const int MinLayer = 0, MaxLayer = 8;
     private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
-    protected ObjectManager? Objects;
+    protected Objects? Objects;
     protected double VelocityX, VelocityY;
     private readonly bool _collision, _gravity;
     private bool _visible;
     private int _layer;
     private double _x,  _y;
     private RGB?[,] _texture;
-    protected GameObject(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
+    internal GameObject(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
     {
         X  = x; Y = y;
         _texture = texture;
@@ -153,15 +153,15 @@ public abstract class GameObject : IComparable<GameObject>
             vY = VelocityY - DefaultDeceleration * Objects.DeltaTime;
         return (vX, vY);
     }
-    public void SetObjectManager(ObjectManager objects) => Objects = objects ?? throw new InvalidOperationException("Sprite manager is not set.");
+    public void SetObjectManager(Objects objects) => Objects = objects ?? throw new InvalidOperationException("Sprite manager is not set.");
     public void ChangeVisibility(bool? value = null) => _visible = value ?? !_visible;
     public void StopMovingX() => VelocityX = 0;
     public void StopMovingY() => VelocityY = 0;
     public RGB? GetColor(int x, int y) => _texture[x, y];
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnObject(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
-    public abstract GameObject? Clone(ObjectManager objects);
-    protected virtual bool IsFloorBeneath() => _gravity && GetDistanceToNextObject(Direction.Down, true, true) is 0;
+    public abstract GameObject? Clone(Objects objects);
+    protected virtual bool IsFloorBeneath() => _gravity && GetDistanceToNextObject(Direction.Down, true) is 0;
     protected void HandleGravity()
     {
         if (!Gravity)

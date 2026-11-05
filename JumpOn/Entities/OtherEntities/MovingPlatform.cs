@@ -2,7 +2,7 @@
 using MCR_Engine.Core;
 using MCR_Engine.Objects;
 
-namespace JumpOn.Entities.PhysicsEntities;
+namespace JumpOn.Entities.OtherEntities;
 
 public class MovingPlatform : Entity
 {
@@ -40,7 +40,7 @@ public class MovingPlatform : Entity
             VelocityX *= -1;
             VelocityY *= -1;
         }
-        if (GetDistanceToNextObject(Direction.Up, true, true, [typeof(Entity)]) is 0)
+        if (GetDistanceToNextObject(Direction.Up, true, [typeof(Entity)]) is 0)
         {
             GameObject? obj = GetNearestObject(Direction.Up, [typeof(Entity)]) as Entity;
             if (obj is null)
@@ -53,7 +53,7 @@ public class MovingPlatform : Entity
             }
         }
     }
-    public override GameObject? Clone(ObjectManager objects) => new MovingPlatform(_xSpawn, _ySpawn, _xVelocity, _yVelocity, _distance, Clock, _baseTexture, _amount);
+    public override GameObject? Clone(Objects objects) => new MovingPlatform(_xSpawn, _ySpawn, _xVelocity, _yVelocity, _distance, Clock, _baseTexture, _amount);
     protected override void UpdatePosition() => MoveAndCheckForCollision(VelocityX, VelocityY);
     private static RGB?[,] GetTexture(RGB?[,] baseTexture, Direction? textureExpansion, int? amount)
     {

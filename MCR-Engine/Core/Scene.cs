@@ -15,7 +15,7 @@ public class Scene
     private readonly Pixel[,] _pixels;
     private readonly RGB[,] _backgroundTexture;
     private readonly Camera _camera;
-    private ObjectManager _objects;
+    private Objects.Objects _objects;
     public Scene(Camera camera, int width, int height, RGB[,] backgroundTexture)
     {
         if (height % 2 != 0)
@@ -24,10 +24,10 @@ public class Scene
         _width = width;
         _height = height;
         _backgroundTexture = backgroundTexture;
-        _objects = new ObjectManager(this);
+        _objects = new Objects.Objects(this);
         _pixels = Create();
     }
-    public ObjectManager Objects => _objects;
+    public Objects.Objects Objects => _objects;
     public int Width => _width;
     public int Height => _height;
     private int BackgroundWidth => _backgroundTexture.GetLength(0);
@@ -57,7 +57,7 @@ public class Scene
             }
         }
     }
-    public void SetSpriteSnapshot(ObjectManager objects)
+    public void SetSpriteSnapshot(Objects.Objects objects)
     {
         if (ReferenceEquals(objects, _objects))
             throw new ArgumentException("Sprites cannot be the same.");

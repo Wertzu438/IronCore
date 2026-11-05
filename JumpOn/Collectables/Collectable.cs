@@ -2,6 +2,7 @@
 using JumpOn.Entities.LivingEntities;
 using JumpOn.Traps;
 using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
 
 namespace JumpOn.Collectables;
@@ -46,5 +47,5 @@ public abstract class Collectable : GameObject
         return sum;
     }
     public static bool AreAllCollected<T>(List<T> collectables) where T : Collectable => CollectedAmount(collectables) == collectables.Count;
-    public static List<Collectable> LoadCollectables(ObjectManager objects) => objects.GetAllObjectsOfType<Collectable>();
+    public static List<Collectable> LoadCollectables(Objects objects) => objects.GetAllObjectsOfType<Collectable>();
 }

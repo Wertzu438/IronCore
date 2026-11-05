@@ -18,7 +18,7 @@ public class CheckPointManager
     private readonly Scene _scene;
     private readonly Clock _clock;
     private int _lastSecondSaved;
-    private ObjectManager _checkPointSnapShot;
+    private Objects _checkPointSnapShot;
     public CheckPointManager(Scene scene, Clock clock, CenteredInfoBox centeredInfoBox, UIElement infoBox)
     {
         _scene = scene;
@@ -31,7 +31,7 @@ public class CheckPointManager
         _clock = clock;
         _lastSecondSaved = int.MinValue;
     }
-    public ObjectManager SnapShot => _checkPointSnapShot;
+    public Objects SnapShot => _checkPointSnapShot;
     private bool OneCollected => Collectable.CollectedAmount(_checkPoints) != 0;
     public void ResetPlayerToCheckPoint(Player player)
     {

@@ -23,7 +23,7 @@ public class Ladder : Interactable
         _amount = amount;
         SetNewTexture(CreateTexture());
     }
-    public override GameObject? Clone(ObjectManager objects) => new Ladder(X, Y, _baseTexture, _amount);
+    public override GameObject? Clone(Objects objects) => new Ladder(X, Y, _baseTexture, _amount);
     protected override bool IsObjectInteracting(GameObject gameObject) => gameObject is Entity && base.IsObjectInteracting(gameObject);
     public void CenterEntity(Entity entity)
     {

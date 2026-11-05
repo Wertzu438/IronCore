@@ -28,7 +28,7 @@ public class Spike : Trap
         SetNewTexture(CreateTexture());
     }
     protected override double Damage => EntityDamage;
-    public override GameObject? Clone(ObjectManager objects) => new Spike(X, Y, _baseTexture, _amount);
+    public override GameObject? Clone(Objects objects) => new Spike(X, Y, _baseTexture, _amount);
     protected override bool IsSomeoneInTrap(out Entity? entity)
     {
         entity = null;

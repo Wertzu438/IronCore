@@ -76,7 +76,7 @@ public class Player : LivingEntity
         _data.AddTakenFallDamage(fallDamage);
         return true;
     }
-    public override GameObject? Clone(ObjectManager objects) => null;
+    public override GameObject? Clone(Objects objects) => null;
     public void AddRespawn() => _data.AddRespawn();
     private Direction GetDirection()
     {

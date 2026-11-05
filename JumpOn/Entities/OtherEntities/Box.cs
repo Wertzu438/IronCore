@@ -2,7 +2,7 @@
 using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
 
-namespace JumpOn.Entities.PhysicsEntities;
+namespace JumpOn.Entities.OtherEntities;
 
 public class Box : Entity
 {
@@ -52,14 +52,14 @@ public class Box : Entity
     protected override bool StopOnCollisionX => false;
     protected override bool StopOnCollisionY => false;
     private static double DamagePerFall => DefaultMaxHealth / 2; 
-    public override GameObject? Clone(ObjectManager objects) => new Box(_xSpawn, _ySpawn, MaxHealth, Clock, _undamagedTexture, _damagedTexture);
+    public override GameObject? Clone(Objects objects) => new Box(_xSpawn, _ySpawn, MaxHealth, Clock, _undamagedTexture, _damagedTexture);
     protected override void UpdatePosition()
     {
         bool isBox = false;
         double objectVelocityX = 0d;
         foreach (Direction direction in CheckDirections)
         {
-            int distance = GetDistanceToNextObject(direction, true, true, [typeof(MovingObject)]);
+            int distance = GetDistanceToNextObject(direction, true, [typeof(MovingObject)]);
             if (distance > 0)
                 continue;
             GameObject? gameObject = GetNearestObject(direction, [typeof(MovingObject)]);

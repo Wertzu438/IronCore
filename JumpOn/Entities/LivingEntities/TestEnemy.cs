@@ -18,7 +18,7 @@ public class TestEnemy : LivingEntity
     protected override double ClimbingSpeed => 15;
     protected override double HangingSpeed => 40;
     protected override bool IsInteractingWithInteractable => _action is Player.PlayerAction.Climb;
-    public override GameObject? Clone(ObjectManager objects) => null;
+    public override GameObject? Clone(Objects objects) => null;
     public override void Update()
     {
         (Direction d, PathType p) = _pathFinding.Find(this, _player);

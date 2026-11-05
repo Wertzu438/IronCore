@@ -2,11 +2,11 @@
 
 namespace MCR_Engine.Objects;
 
-public class ObjectManagerEnumerator : IEnumerator<GameObject>
+public class ObjectsEnumerator : IEnumerator<GameObject>
 {
     private readonly List<GameObject> _objects;
     private int _index;
-    public ObjectManagerEnumerator(List<GameObject> objects)
+    public ObjectsEnumerator(List<GameObject> objects)
     {
         _objects = objects;
         Reset();

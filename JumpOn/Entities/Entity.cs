@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using JumpOn.Entities.LivingEntities;
-using JumpOn.Entities.PhysicsEntities;
-using JumpOn.Interactables;
+﻿using JumpOn.Entities.LivingEntities;
+using JumpOn.Entities.OtherEntities;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
@@ -101,5 +99,5 @@ public abstract class Entity : MovingObject
             entity.StopMovingX();
         }
     }
-    public static List<Entity> LoadEntities(ObjectManager objects) => objects.GetAllObjectsOfType<Entity>();
+    public static List<Entity> LoadEntities(Objects objects) => objects.GetAllObjectsOfType<Entity>();
 }

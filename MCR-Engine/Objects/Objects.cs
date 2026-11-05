@@ -3,13 +3,13 @@ using MCR_Engine.Core;
 
 namespace MCR_Engine.Objects;
 
-public class ObjectManager : IEnumerable<GameObject>
+public class Objects : IEnumerable<GameObject>
     {
         private readonly List<GameObject> _objects;
         private readonly Scene _scene;
         private readonly GameObject?[][,] _map;
         private float _deltaTime;
-        internal ObjectManager(Scene scene)
+        internal Objects(Scene scene)
         {
             _objects = [];
             _scene = scene;
@@ -17,7 +17,7 @@ public class ObjectManager : IEnumerable<GameObject>
             for (int i = GameObject.MinLayer; i < GameObject.MaxLayer; i++)
                 _map[i] = new GameObject?[_scene.Width, _scene.Height];
         }
-        private ObjectManager(Scene scene, bool clone)
+        private Objects(Scene scene, bool clone)
         {
             _objects = [];
             _scene = scene;
@@ -116,7 +116,7 @@ public class ObjectManager : IEnumerable<GameObject>
                 return true;
             return false;
         }
-        public int GetDistanceToNextObject(GameObject gameObject, Direction direction, bool onlyOnScene, bool onlyWithCollision, Type[]? searchFor = null)
+        public int GetDistanceToNextObject(GameObject gameObject, Direction direction, bool onlyWithCollision, Type[]? searchFor = null)
         {
             if (direction is Direction.None)
                 throw new ArgumentException("Invalid direction.");
@@ -140,7 +140,7 @@ public class ObjectManager : IEnumerable<GameObject>
                     int cY = y + yAdd + (upDown ? 0 : add);
                     if (!_scene.ValidPixelCoordinates(cX, cY))
                     {
-                        if (onlyOnScene)
+                        if (searchFor.Contains(typeof(Scene)))
                             return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
                         return -1;
                     }
@@ -183,7 +183,7 @@ public class ObjectManager : IEnumerable<GameObject>
             } while (true);
         }
         public bool ObjectBordersTouching(GameObject o1, GameObject o2) => o1.X + o1.Width > o2.X && o1.Y + o1.Height > o2.Y && o1.X < o2.X + o2.Width && o1.Y < o2.Y + o2.Height;
-        public ObjectManager Clone() => new ObjectManager(_scene, true);
+        public Objects Clone() => new Objects(_scene, true);
         public bool Contains(GameObject gameObject) => _objects.Contains(gameObject);
         public List<T> GetAllObjectsOfType<T>() => _objects.OfType<T>().ToList();
         private void MoveObjects()
@@ -229,6 +229,6 @@ public class ObjectManager : IEnumerable<GameObject>
             }
             return false;
         }
-        public IEnumerator<GameObject> GetEnumerator() => new ObjectManagerEnumerator(_objects);
+        public IEnumerator<GameObject> GetEnumerator() => new ObjectsEnumerator(_objects);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

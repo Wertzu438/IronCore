@@ -1,5 +1,6 @@
 ﻿using JumpOn.Entities;
 using MCR_Engine.Core;
+using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.Objects;
 
 namespace JumpOn.Traps;
@@ -28,5 +29,5 @@ public abstract class Trap : GameObject
         foreach (Trap trap in traps)
             trap.Update();
     }
-    public static List<Trap> LoadTraps(ObjectManager objects) => objects.GetAllObjectsOfType<Trap>();
+    public static List<Trap> LoadTraps(Objects objects) => objects.GetAllObjectsOfType<Trap>();
 }
