@@ -5,10 +5,10 @@ using MCR_Engine.Objects;
 
 namespace JumpOn.Traps;
 
-public abstract class Trap : GameObject
+public abstract class Trap : NonSolidObject
 {
     private readonly bool _criticalDamage;
-    protected Trap(int x, int y, RGB?[,] texture, bool criticalDamage) : base(x, y, texture, 1, false, false)
+    protected Trap(int x, int y, RGB?[,] texture, bool criticalDamage) : base(x, y, 1, false, texture)
     {
         _criticalDamage = criticalDamage;
     }

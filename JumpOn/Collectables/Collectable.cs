@@ -7,10 +7,10 @@ using MCR_Engine.Objects;
 
 namespace JumpOn.Collectables;
 
-public abstract class Collectable : GameObject
+public abstract class Collectable : NonSolidObject
 {
     protected bool Collected;
-    protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, texture, 3, false, true)
+    protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, 3, true, texture)
     {
     }
     public virtual bool IsCollected
