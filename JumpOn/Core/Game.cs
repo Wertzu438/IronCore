@@ -40,6 +40,7 @@ public class Game
         _mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
         _otherInfoBoxes = [
             UI.Add(new UIElement(0, 0, 0, 0, true)),
+            UI.Add(new UIElement(20, 4, 2, 23, true)),
         ];
         _sideBar = [
             UI.Add(new UIElement(20, 6, 2, 1, true)), 
@@ -116,5 +117,6 @@ public class Game
         _sideBar[0].UpdateContent([["!SPIELINFO"], [$"🎯 Level: {_account.CurrentLevel+1}", $"🔐 Schlüssel: {_goal.CollectedKeysAmount}/{_goal.KeysAmount} "]]);
         _sideBar[1].UpdateContent([["!SPIELER"], [$"👤 Name: {_account.Name}", $"❤️ Leben: {Math.Round(_player.Health, 2)}/{Player.MaxHealth}"]]);
         _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{PauseKeyName}] ⏸️ Pause", $"[{RespawnKeyName}] 🔄 Respawnen", $"[{LeaveKeyName}] 🏠 Verlassen"]]);
+        _otherInfoBoxes[1].UpdateContent([[$"DT: {_scene.Objects.DeltaTime}", $"FPS: {_engine.FramesPerSecond}"]]);
     }
 }

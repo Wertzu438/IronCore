@@ -21,6 +21,7 @@ public class Engine
         FileManager.LoadKeys(_input);
         FileManager.LoadTextures(_textures);
     }
+    public int FramesPerSecond => _renderer.FramesPerSecond;
     public Input Input => _input;
     public Textures Textures => _textures;
     public MenuManager Menus => _menus;
