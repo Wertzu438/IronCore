@@ -99,6 +99,16 @@ public class Game
         } while (!_goal.EndGame);
         passedSeconds = _clock.PassedSeconds;
         gameData = _player.GameData;
+        _centeredInfoBox.Show(
+            29, 9, 
+            [
+                ["!🏆 LEVEL GESCHAFFT 🏆"], 
+                [$"⏱️ Zeit: {passedSeconds} Sekunden", $"💀 Verbrauchte Respawns: {gameData.Value.Respawns}", $"🤕 Erlittener Schaden: {gameData.Value.TakenDamage}"], 
+                [$"-Fortzufahren mit {CenteredInfoBox.ConfirmKeyName}"]
+            ], 
+            true
+        );
+
         return true;
     }
     private void LoadContent()

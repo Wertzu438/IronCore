@@ -16,6 +16,7 @@ public struct PlayerData
     public int Respawns => _respawns < 0 ? 0 : _respawns;
     public int TakenTrapDamage => (int)(_takenDamage - _takenFallDamage);
     public int TakenFallDamage => (int)_takenFallDamage;
+    public int TakenDamage => TakenFallDamage + TakenTrapDamage;
     public int HealedDamage => (int)_healedDamage;
     public void AddRespawn() => _respawns++;
     public void AddTakenDamage(double amount) => 
