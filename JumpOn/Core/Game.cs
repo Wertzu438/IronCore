@@ -40,12 +40,12 @@ public class Game
         _mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
         _otherInfoBoxes = [
             UI.Add(new UIElement(0, 0, 0, 0, true)),
-            UI.Add(new UIElement(20, 4, 2, 23, true)),
         ];
         _sideBar = [
             UI.Add(new UIElement(20, 6, 2, 1, true)), 
             UI.Add(new UIElement(20, 6, 2, 8, true)), 
-            UI.Add(new UIElement(20, 7, 2, 15, true))
+            UI.Add(new UIElement(20, 7, 2, 15, true)),
+            UI.Add(new UIElement(20, 4, 2, 23, true)),
         ];
         _clock = new Clock();
         _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
@@ -127,6 +127,6 @@ public class Game
         _sideBar[0].UpdateContent([["!SPIELINFO"], [$"🎯 Level: {_account.CurrentLevel+1}", $"🔐 Schlüssel: {_goal.CollectedKeysAmount}/{_goal.KeysAmount} "]]);
         _sideBar[1].UpdateContent([["!SPIELER"], [$"👤 Name: {_account.Name}", $"❤️ Leben: {Math.Round(_player.Health, 2)}/{Player.MaxHealth}"]]);
         _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{PauseKeyName}] ⏸️ Pause", $"[{RespawnKeyName}] 🔄 Respawnen", $"[{LeaveKeyName}] 🏠 Verlassen"]]);
-        _otherInfoBoxes[1].UpdateContent([[$"DT: {_scene.Objects.DeltaTime}", $"FPS: {_engine.FramesPerSecond}"]]);
+        _sideBar[3].UpdateContent([[$"📺 FPS: {(Math.Round(_engine.FramesPerSecond / 10.0) * 10)}", $"🔄 DT: {Math.Round(_scene.Objects.DeltaTime, 4)}"]]);
     }
 }
