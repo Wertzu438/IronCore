@@ -9,6 +9,7 @@ internal class Renderer
 {
     private readonly StringBuilder _output;
     private readonly StreamWriter _writer;
+    private readonly Stopwatch _stopwatch;
     private readonly Thread _thread;
     private readonly UIManager _ui;
     private readonly Camera _camera;
@@ -17,9 +18,11 @@ internal class Renderer
     private RGB _currentBackgroundColor;
     private ProcessAction? _action;
     private ProcessState _state;
+    private float _lastDeltaTime;
     public Renderer()
     {
         _output = new StringBuilder();
+        _stopwatch = new Stopwatch();
         _writer =  new StreamWriter(Console.OpenStandardOutput());
         _thread = new Thread(Loop);
         _camera = new Camera(this);
@@ -30,11 +33,13 @@ internal class Renderer
         _pairs = null;
         _action = null;
         _thread.Priority = ThreadPriority.AboveNormal;
+        _lastDeltaTime = 0;
     }
     public UIManager UI => _ui;
     public Camera Camera => _camera;
     public int PixelPairWidth => (_pairs is null ? Console.WindowWidth : _pairs.GetLength(0));
     public int PixelPairHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1));
+    public int FramesPerSecond => (int)(1 / _lastDeltaTime); 
     public Scene SetScene
     {
         set
@@ -66,10 +71,10 @@ internal class Renderer
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
     private void Loop()
     {
-        int frames = 0;
-        Stopwatch fpsWatch = Stopwatch.StartNew();
         while (_action is not ProcessAction.Stop)
         {
+            _lastDeltaTime = (float)_stopwatch.ElapsedTicks / Stopwatch.Frequency;
+            _stopwatch.Restart();
             while (_action is ProcessAction.Pause || _pairs is null)
             {
                 _state = ProcessState.Paused;
@@ -92,15 +97,6 @@ internal class Renderer
                     _output.AppendLine();
             }
             RenderStringBuilder();
-            frames++;
-            if (fpsWatch.ElapsedMilliseconds >= 1000)
-            {
-
-                Console.Title = $"FPS: {frames}";
-                frames = 0;
-
-                fpsWatch.Restart();
-            }
         }
         _state = ProcessState.Stopped;
     }
