@@ -17,6 +17,7 @@ namespace JumpOn.Core;
 /// Map-Editor: bearbeitet Scenes/levelN.txt im Format des LevelLoaders.
 /// Aufruf unverändert über new MapEditor(engine).Run(); Run() kehrt zurück, wenn der Editor beendet wird.
 /// Benötigt Camera.SetOffset(int x, int y) (siehe Hinweis in der Antwort).
+/// Neu: Holzkiste (Box) und bewegliche Plattform (MovingPlatform). Zeilenformat siehe EditorLevel.Line.
 /// </summary>
 public class MapEditor
 {
@@ -30,13 +31,14 @@ public class MapEditor
     private static readonly HashSet<string> ReservedTextures = new()
     {
         "ladderPart", "barPart", "laserDevice", "laserPart", "arrowDevice", "arrow", "spike", "switch",
-        "goalOpen", "goalClosed", "key", "medkit", "checkPoint_1", "checkPoint_2"
+        "goalOpen", "goalClosed", "key", "medkit", "checkPoint_1", "checkPoint_2", "woodBox", "woodBoxDamaged"
     };
 
     private static readonly ObjType[] TypeOrder =
     [
         ObjType.Solid, ObjType.Decoration, ObjType.Ladder, ObjType.Bar, ObjType.Spike, ObjType.Laser,
-        ObjType.Arrow, ObjType.Switch, ObjType.Key, ObjType.Medkit, ObjType.CheckPoint, ObjType.Goal
+        ObjType.Arrow, ObjType.Switch, ObjType.Key, ObjType.Medkit, ObjType.CheckPoint, ObjType.Goal,
+        ObjType.Box, ObjType.MovingPlatform
     ];
 
     // Eigene Tasten (Windows Virtual-Key-Codes), damit der Editor nicht von deinen Input-Dateien abhängt.
@@ -128,7 +130,7 @@ public class MapEditor
     private EditorObject _brush = new();
     private EditorObject? _held, _linkSwitch;
     private Scene? _scene;
-    private GameObject? _cursor, _ghost, _outline, _partner, _spawnPreview;
+    private GameObject? _cursor, _ghost, _outline, _partner, _spawnPreview, _pathA, _pathB;
     private RGB?[,]? _playerTexture;
     private Modal? _modal;
     private string _message = "H = Hilfe, Esc = Menü";
@@ -445,6 +447,8 @@ public class MapEditor
         if (Hit("EdR")) edited |= ChangeDir(cur);
         if (Hit("EdPgUp")) edited |= ChangeLayer(cur, 1);
         if (Hit("EdPgDn")) edited |= ChangeLayer(cur, -1);
+        if (Rep("EdPgUp")) edited |= ChangeDistance(cur, shift ? 16 : 4);     // Plattform: Weg länger
+        if (Rep("EdPgDn")) edited |= ChangeDistance(cur, shift ? -16 : -4);   // Plattform: Weg kürzer
         if (Rep("EdU")) edited |= ChangeParam(cur, 0, 1, shift);
         if (Rep("EdJ")) edited |= ChangeParam(cur, 0, -1, shift);
         if (Rep("EdI")) edited |= ChangeParam(cur, 1, 1, shift);
@@ -629,10 +633,10 @@ public class MapEditor
         _dirty = true;
     }
 
-    /// <summary>Sammelobjekte haben im Spiel Schwerkraft, deshalb werden sie auf den Boden gesetzt.</summary>
+    /// <summary>Sammelobjekte und Kisten haben im Spiel Schwerkraft, deshalb werden sie auf den Boden gesetzt.</summary>
     private void DropToFloor(EditorObject o)
     {
-        if (o.Main is null || o.Type is not (ObjType.Key or ObjType.Medkit or ObjType.CheckPoint))
+        if (o.Main is null || o.Type is not (ObjType.Key or ObjType.Medkit or ObjType.CheckPoint or ObjType.Box))
             return;
         int distance = o.Main.GetDistanceToNextObject(Direction.Down, true);
         if (distance <= 0)
@@ -656,6 +660,13 @@ public class MapEditor
             o.Texture = _solidTextures[0];
         if (type == ObjType.Arrow)
             o.Dir = Direction.Right;
+        if (type == ObjType.MovingPlatform)
+        {
+            o.Amount = 4;
+            o.VelX = 20;
+            o.VelY = 0;
+            o.Distance = 40;
+        }
         return o;
     }
 
@@ -729,6 +740,7 @@ public class MapEditor
         return true;
     }
 
+    /// <summary>Parameter A (U/J) und B (I/K): Laser Ein/Aus, Pfeilwerfer Takt, Plattform Tempo X/Y.</summary>
     private static bool ChangeParam(EditorObject o, int which, int d, bool big)
     {
         int step = big ? 1000 : 100;
@@ -745,7 +757,28 @@ public class MapEditor
             o.IntervalMs = Math.Clamp(o.IntervalMs + d * step, 200, 30000);
             return true;
         }
+        if (o.Type == ObjType.MovingPlatform)
+        {
+            double speedStep = big ? 20 : 5;
+            if (which == 0)
+                o.VelX = Math.Clamp(o.VelX + d * speedStep, -200, 200);
+            else
+                o.VelY = Math.Clamp(o.VelY + d * speedStep, -200, 200);
+            return true;
+        }
         return false;
+    }
+
+    /// <summary>Bild auf/ab bei der Plattform: Strecke (Abstand vom Startpunkt, in px).</summary>
+    private static bool ChangeDistance(EditorObject o, int d)
+    {
+        if (o.Type != ObjType.MovingPlatform)
+            return false;
+        int n = Math.Clamp(o.Distance + d, 0, 400);
+        if (n == o.Distance)
+            return false;
+        o.Distance = n;
+        return true;
     }
 
     private void AfterBrushChange(EditorObject cur)
@@ -770,7 +803,7 @@ public class MapEditor
     }
 
     private static bool IsTiled(ObjType t) => t is ObjType.Solid or ObjType.Decoration;
-    private static bool UsesAmount(ObjType t) => t is ObjType.Solid or ObjType.Decoration or ObjType.Ladder or ObjType.Bar or ObjType.Spike;
+    private static bool UsesAmount(ObjType t) => t is ObjType.Solid or ObjType.Decoration or ObjType.Ladder or ObjType.Bar or ObjType.Spike or ObjType.MovingPlatform;
 
     // ------------------------------------------------------------------ Objekte und Sprites
 
@@ -808,6 +841,7 @@ public class MapEditor
     {
         RGB?[,] texture = TextureFor(o);
         // SolidObject und Ladder sind die echten Spielklassen, weil der Laser-Strahl nach genau diesen Typen sucht.
+        // Box und Plattform sind im Editor nur Vorschau-Objekte: die echten Klassen würden in der Editor-Szene physikalisch laufen.
         GameObject gameObject = o.Type switch
         {
             ObjType.Solid => new SolidObject(o.X, o.Y, o.Layer, texture),
@@ -866,6 +900,11 @@ public class MapEditor
                 return Tex("goalClosed");
             case ObjType.CheckPoint:
                 return Tex(IsSpawn(o) ? "checkPoint_2" : "checkPoint_1");
+            case ObjType.Box:
+                return Tex("woodBox");
+            case ObjType.MovingPlatform:
+                // wie im Konstruktor von MovingPlatform: metalWall, nach rechts erweitert
+                return Expand(Tex("metalWall"), Direction.Right, Math.Max(1, o.Amount));
             default:
                 throw new InvalidOperationException($"Unbekannter Typ {o.Type}");
         }
@@ -900,11 +939,11 @@ public class MapEditor
         }
     }
 
-    /// <summary>Gleiche Layer wie im Spiel: Interactables und Traps 0, Collectables 1, Block/Deko aus der Datei.</summary>
+    /// <summary>Gleiche Layer wie im Spiel: Interactables und Traps 0, Collectables/Entities 1, Block/Deko aus der Datei.</summary>
     private static int DrawLayer(EditorObject o) => o.Type switch
     {
         ObjType.Solid or ObjType.Decoration => o.Layer,
-        ObjType.Key or ObjType.Medkit or ObjType.CheckPoint => 1,
+        ObjType.Key or ObjType.Medkit or ObjType.CheckPoint or ObjType.Box or ObjType.MovingPlatform => 1,
         _ => 0
     };
 
@@ -979,6 +1018,8 @@ public class MapEditor
         _ghost = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer));
         _outline = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer));
         _partner = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer));
+        _pathA = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer));
+        _pathB = scene.Objects.Add(new EditorGameObject(0, 0, new RGB?[1, 1], _maxLayer));
         _cursor = scene.Objects.Add(new EditorGameObject(0, 0, CursorTexture(), _maxLayer));
         _ghostDirty = true;
         _raysDirty = true;
@@ -997,7 +1038,7 @@ public class MapEditor
 
     private void UpdateOverlays()
     {
-        if (_cursor is null || _ghost is null || _outline is null || _partner is null || _spawnPreview is null)
+        if (_cursor is null || _ghost is null || _outline is null || _partner is null || _spawnPreview is null || _pathA is null || _pathB is null)
             return;
 
         _cursor.X = _cx - 1;
@@ -1024,6 +1065,7 @@ public class MapEditor
                 : _level.Alive.FirstOrDefault(s => s.Type == ObjType.Switch && ReferenceEquals(s.Target, hover));
         }
         ShowOutline(_partner, partner, Rgb(255, 150, 0));
+        UpdatePathPreview(hover);
 
         EditorObject? spawn = Spawn();
         if (spawn is null || _playerTexture is null)
@@ -1038,6 +1080,45 @@ public class MapEditor
         }
     }
 
+    /// <summary>
+    /// Zeigt bei einer beweglichen Plattform (unter dem Cursor, gegriffen oder als Pinsel) die beiden Endlagen ihrer Strecke.
+    /// Die Plattform pendelt wie in MovingPlatform.Update: ±Weg um den Startpunkt, in Richtung des Tempo-Vektors.
+    /// </summary>
+    private void UpdatePathPreview(EditorObject? hover)
+    {
+        if (_pathA is null || _pathB is null || _ghost is null)
+            return;
+        EditorObject? p = null;
+        GameObject? source = null;
+        int px = 0, py = 0;
+        if (hover is { Type: ObjType.MovingPlatform, Main: not null })
+        {
+            p = hover;
+            source = hover.Main;
+            px = hover.X;
+            py = hover.Y;
+        }
+        else if (_held is null && _linkSwitch is null && _modal is null && _brush.Type == ObjType.MovingPlatform)
+        {
+            p = _brush;
+            source = _ghost;
+            px = _cx;
+            py = _cy;
+        }
+        double length = p is null ? 0 : Math.Sqrt(p.VelX * p.VelX + p.VelY * p.VelY);
+        if (p is null || source is null || length < 0.0001 || p.Distance <= 0)
+        {
+            _pathA.ChangeVisibility(false);
+            _pathB.ChangeVisibility(false);
+            return;
+        }
+        int dx = (int)Math.Round(p.Distance * p.VelX / length);
+        int dy = (int)Math.Round(p.Distance * p.VelY / length);
+        RGB color = Rgb(120, 200, 255);
+        ShowRect(_pathA, px - dx, py - dy, source.Width, source.Height, color);
+        ShowRect(_pathB, px + dx, py + dy, source.Width, source.Height, color);
+    }
+
     private void HideOverlays()
     {
         _cursor?.ChangeVisibility(false);
@@ -1045,6 +1126,8 @@ public class MapEditor
         _outline?.ChangeVisibility(false);
         _partner?.ChangeVisibility(false);
         _spawnPreview?.ChangeVisibility(false);
+        _pathA?.ChangeVisibility(false);
+        _pathB?.ChangeVisibility(false);
     }
 
     private static void ShowOutline(GameObject outline, EditorObject? o, RGB color)
@@ -1054,11 +1137,17 @@ public class MapEditor
             outline.ChangeVisibility(false);
             return;
         }
-        int w = o.Main.Width + 2, h = o.Main.Height + 2;
-        if (outline.Width != w || outline.Height != h)
-            outline.SetNewTexture(MakeOutline(w, h, color));
-        outline.X = o.X - 1;
-        outline.Y = o.Y - 1;
+        ShowRect(outline, o.X, o.Y, o.Main.Width, o.Main.Height, color);
+    }
+
+    /// <summary>Zeichnet einen 1 px starken Rahmen um das Rechteck (x, y, w, h).</summary>
+    private static void ShowRect(GameObject outline, int x, int y, int w, int h, RGB color)
+    {
+        int tw = w + 2, th = h + 2;
+        if (outline.Width != tw || outline.Height != th)
+            outline.SetNewTexture(MakeOutline(tw, th, color));
+        outline.X = x - 1;
+        outline.Y = y - 1;
         outline.ChangeVisibility(true);
     }
 
@@ -1327,6 +1416,8 @@ public class MapEditor
             case "Medkit": type = ObjType.Medkit; break;
             case "CheckPoint": type = ObjType.CheckPoint; break;
             case "Goal": type = ObjType.Goal; break;
+            case "Box": type = ObjType.Box; break;
+            case "MovingPlatform": type = ObjType.MovingPlatform; break;
             default:
                 error = $"Unbekannter Typ '{p[0]}'.";
                 return null;
@@ -1395,6 +1486,17 @@ public class MapEditor
                 o.Dir = arrowDir;
                 o.IntervalMs = Math.Max(1, interval);
                 break;
+            case ObjType.MovingPlatform:
+                if (p.Length < 7 || !TryDouble(p, 3, out double velX) || !TryDouble(p, 4, out double velY) || !TryInt(p, 5, out int dist) || !TryInt(p, 6, out int platformAmount))
+                {
+                    error = "Erwartet: MovingPlatform,x,y,TempoX,TempoY,Weg,Anzahl";
+                    return null;
+                }
+                o.VelX = velX;
+                o.VelY = velY;
+                o.Distance = Math.Max(0, dist);
+                o.Amount = Math.Max(1, platformAmount);
+                break;
             case ObjType.Switch:
                 if (level.Objects.Count == 0)
                 {
@@ -1411,6 +1513,12 @@ public class MapEditor
     {
         value = 0;
         return index < p.Length && int.TryParse(p[index], NumberStyles.Integer, CultureInfo.InvariantCulture, out value);
+    }
+
+    private static bool TryDouble(string[] p, int index, out double value)
+    {
+        value = 0;
+        return index < p.Length && double.TryParse(p[index], NumberStyles.Float, CultureInfo.InvariantCulture, out value);
     }
 
     private bool Save()
@@ -1456,15 +1564,53 @@ public class MapEditor
         var floating = new List<EditorObject>();
         foreach (EditorObject o in _level.Alive)
         {
-            if (o.Type is ObjType.Key or ObjType.Medkit or ObjType.CheckPoint && o.Main is not null)
+            if (o.Type is ObjType.Key or ObjType.Medkit or ObjType.CheckPoint or ObjType.Box && o.Main is not null)
             {
                 if (o.Main!.GetDistanceToNextObject(Direction.Down, true) > 0)
                     floating.Add(o);
             }
         }
         if (floating.Count > 0)
-            result.Add($"{floating.Count} Sammelobjekt(e) schweben und fallen im Spiel, z. B. {TypeName(floating[0].Type)} bei {floating[0].X},{floating[0].Y}.");
+            result.Add($"{floating.Count} Sammelobjekt(e)/Kiste(n) schweben und fallen im Spiel, z. B. {TypeName(floating[0].Type)} bei {floating[0].X},{floating[0].Y}.");
+
+        foreach (EditorObject o in _level.Alive.Where(x => x.Type == ObjType.MovingPlatform))
+        {
+            double length = Math.Sqrt(o.VelX * o.VelX + o.VelY * o.VelY);
+            if (length < 0.0001 || o.Distance <= 0)
+                result.Add($"Plattform bei {o.X},{o.Y} bewegt sich nicht (Tempo oder Weg ist 0).");
+            else if (PlatformPathBlocked(o, out int blockedX, out int blockedY))
+                result.Add($"Plattform bei {o.X},{o.Y} stößt auf ihrer Strecke gegen einen Block (bei {blockedX},{blockedY}).");
+        }
         return result;
+    }
+
+    /// <summary>Prüft in 17 Schritten entlang der Strecke (±Weg), ob die Plattform einen Block überlappt.</summary>
+    private bool PlatformPathBlocked(EditorObject p, out int atX, out int atY)
+    {
+        atX = atY = 0;
+        if (p.Main is null)
+            return false;
+        double length = Math.Sqrt(p.VelX * p.VelX + p.VelY * p.VelY);
+        if (length < 0.0001 || p.Distance <= 0)
+            return false;
+        int w = p.Main.Width, h = p.Main.Height;
+        for (int i = -8; i <= 8; i++)
+        {
+            int x = p.X + (int)Math.Round(p.Distance * p.VelX / length * i / 8.0);
+            int y = p.Y + (int)Math.Round(p.Distance * p.VelY / length * i / 8.0);
+            foreach (EditorObject o in _level.Alive)
+            {
+                if (o.Type != ObjType.Solid || o.Main is null)
+                    continue;
+                if (x < o.X + o.Main.Width && o.X < x + w && y < o.Y + o.Main.Height && o.Y < y + h)
+                {
+                    atX = x;
+                    atY = y;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     // ------------------------------------------------------------------ Menüs
@@ -1653,13 +1799,13 @@ public class MapEditor
             "Enter         Objekt greifen / ablegen",
             "Entf, X       Objekt unter dem Cursor löschen",
             "Tab           Objekt aufnehmen (Pipette)",
-            "Q / E         Objekttyp wechseln",
+            "Q / E         Objekttyp wechseln (auch Kiste, Plattform)",
             "A / D         Textur wechseln (Block, Deko)",
-            "W / S         Größe +1 / -1 (Shift 8)",
+            "W / S         Größe +1 / -1 (Shift 8), auch Plattform-Breite",
             "R             Richtung drehen",
-            "Bild auf/ab   Layer +1 / -1 (Block, Deko)",
-            "U J           Laser Ein-Zeit / Pfeilwerfer Takt (+ / -)",
-            "I K           Laser Aus-Zeit (+ / -)",
+            "Bild auf/ab   Layer (Block, Deko) / Plattform-Weg +/-",
+            "U J           Laser Ein-Zeit / Takt / Plattform Tempo X",
+            "I K           Laser Aus-Zeit / Plattform Tempo Y",
             "Y             Schalter neu mit Ziel verbinden",
             "N             Checkpoint als Spieler-Start setzen",
             "Strg+Z / +Y   Rückgängig / Wiederholen",
@@ -1733,6 +1879,13 @@ public class MapEditor
             case ObjType.Goal:
                 lines.Add("Genau 1 pro Level");
                 break;
+            case ObjType.Box:
+                lines.Add("Schiebbar, fällt auf den Boden");
+                break;
+            case ObjType.MovingPlatform:
+                lines.Add($"Tempo X {c.VelX:0.##}  Y {c.VelY:0.##}");
+                lines.Add($"Weg ±{c.Distance} px   Breite {c.Amount}");
+                break;
         }
         EditorObject? hover = _modal is null ? ObjectAt(_cx, _cy, _linkSwitch) : null;
         lines.Add(hover is null ? "Unter Cursor: nichts" : $"Unter Cursor: {TypeName(hover.Type)}");
@@ -1763,6 +1916,8 @@ public class MapEditor
         ObjType.Medkit => "Medkit",
         ObjType.CheckPoint => "Checkpoint",
         ObjType.Goal => "Ziel",
+        ObjType.Box => "Holzkiste (Box)",
+        ObjType.MovingPlatform => "Bewegl. Plattform",
         _ => t.ToString()
     };
 
@@ -1819,13 +1974,14 @@ public class MapEditor
 /// <summary>Alle Objekttypen, die der LevelLoader kennt.</summary>
 internal enum ObjType
 {
-    Solid, Decoration, Ladder, Bar, Spike, Laser, Arrow, Switch, Key, Medkit, CheckPoint, Goal
+    Solid, Decoration, Ladder, Bar, Spike, Laser, Arrow, Switch, Key, Medkit, CheckPoint, Goal,
+    Box, MovingPlatform
 }
 
 /// <summary>Reines Vorschau-Sprite ohne Spiellogik (keine Kollision, keine Schwerkraft).</summary>
 internal sealed class EditorGameObject : NonSolidObject
 {
-    public EditorGameObject(int x, int y, RGB?[,] texture, int layer) : base(x, y, layer, false, texture)
+    public EditorGameObject(int x, int y, RGB?[,] texture, int layer) : base(x, y, layer, false,texture)
     {
     }
 
@@ -1841,9 +1997,11 @@ internal sealed class EditorObject
     public int Layer;                          // nur Block / Deko
     public string Texture = "";                // nur Block / Deko
     public Direction Dir = Direction.None;     // Block/Deko: None|Right|Down, Pfeilwerfer: Left|Right
-    public int Amount = 1;                     // Erweiterung bei Block/Deko, Teile bei Leiter/Stange/Stacheln
+    public int Amount = 1;                     // Erweiterung bei Block/Deko/Plattform, Teile bei Leiter/Stange/Stacheln
     public int OnMs = 1000, OffMs = 1000;     // Laser
     public int IntervalMs = 1500;              // Pfeilwerfer
+    public double VelX = 20, VelY;             // bewegliche Plattform: Tempo-Vektor
+    public int Distance = 40;                  // bewegliche Plattform: Weg (±) um den Startpunkt
     public EditorObject? Target;               // nur Schalter: das verbundene Objekt
     public bool Deleted;
     public GameObject? Main, Ray;
@@ -1852,7 +2010,7 @@ internal sealed class EditorObject
     public EditorObject Copy() => new()
     {
         Type = Type, X = X, Y = Y, Layer = Layer, Texture = Texture, Dir = Dir, Amount = Amount,
-        OnMs = OnMs, OffMs = OffMs, IntervalMs = IntervalMs
+        OnMs = OnMs, OffMs = OffMs, IntervalMs = IntervalMs, VelX = VelX, VelY = VelY, Distance = Distance
     };
 }
 
@@ -1922,6 +2080,11 @@ internal sealed class EditorLevel
         }
     }
 
+    /// <summary>
+    /// Zeilenformat (neu):
+    ///   Box,x,y
+    ///   MovingPlatform,x,y,TempoX,TempoY,Weg,Anzahl
+    /// </summary>
     private static string Line(EditorObject o) => o.Type switch
     {
         ObjType.Solid => FormattableString.Invariant($"SolidObj,{o.X},{o.Y},{o.Layer},{o.Texture},{o.Dir},{o.Amount}"),
@@ -1936,6 +2099,8 @@ internal sealed class EditorLevel
         ObjType.Medkit => FormattableString.Invariant($"Medkit,{o.X},{o.Y}"),
         ObjType.CheckPoint => FormattableString.Invariant($"CheckPoint,{o.X},{o.Y}"),
         ObjType.Goal => FormattableString.Invariant($"Goal,{o.X},{o.Y}"),
+        ObjType.Box => FormattableString.Invariant($"Box,{o.X},{o.Y}"),
+        ObjType.MovingPlatform => FormattableString.Invariant($"MovingPlatform,{o.X},{o.Y},{o.VelX},{o.VelY},{o.Distance},{o.Amount}"),
         _ => throw new InvalidOperationException($"Unbekannter Typ {o.Type}")
     };
 }

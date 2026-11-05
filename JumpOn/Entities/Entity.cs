@@ -18,9 +18,9 @@ public abstract class Entity : MovingObject
     {
         MaxHealth = maxHealth;
         _currentHealth = maxHealth;
-        _lastDamageTimeMs = int.MinValue;
         Clock = clock;
-        _lastFloorY = 0;
+        _lastDamageTimeMs = Clock.PassedMilliSeconds;
+        _lastFloorY = y;
     }
     public new int Y
     {
