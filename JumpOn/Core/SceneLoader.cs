@@ -1,6 +1,7 @@
 ﻿using JumpOn.CheckPoints;
 using JumpOn.Collectables;
 using JumpOn.Entities;
+using JumpOn.Entities.OtherEntities;
 using JumpOn.Interactables;
 using JumpOn.Traps;
 using JumpOn.UI.InfoBoxes;
@@ -46,6 +47,8 @@ public static class SceneLoader
                     "Key" => new GameKey(x, y, engine.Textures),
                     "Medkit" => new Medkit(x, y, engine.Textures, engine.Input, mobileInfoBox),
                     "CheckPoint" => new CheckPoint(x, y, engine.Textures),
+                    "Box" => new Box(x, y, clock, engine.Textures),
+                    "MovingPlatform" => new MovingPlatform(x, y, double.Parse(line[3]), double.Parse(line[4]), int.Parse(line[5]), clock, engine.Textures),
                     _ => throw new ArgumentException("invalide format"),
                 };
                 scene.Objects.Add(gameObject);
