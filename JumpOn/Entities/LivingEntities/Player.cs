@@ -69,6 +69,7 @@ public class Player : LivingEntity
             return;
         _data.AddHealedDamage(heal);
     }
+    public void SetLastFloorY(int y) => LastFloorY = y;
     protected override bool GetFallDamage(out double fallDamage)
     {
         if (!base.GetFallDamage(out fallDamage))
