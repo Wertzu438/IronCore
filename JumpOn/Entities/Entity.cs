@@ -11,8 +11,8 @@ public abstract class Entity : MovingObject
     private const int DamageTickOffsetMs = 850;
     protected readonly Clock Clock;
     protected readonly double MaxHealth;
+    protected int LastFloorY;
     private double _currentHealth;
-    private int _lastFloorY;
     private int _lastDamageTimeMs;
     protected Entity(int x, int y, bool collision, double maxHealth, Clock clock) : base(x, y, 1, collision, true, Textures.DebuggingTexture(6, 4))
     {
@@ -20,12 +20,12 @@ public abstract class Entity : MovingObject
         _currentHealth = maxHealth;
         Clock = clock;
         _lastDamageTimeMs = Clock.PassedMilliSeconds;
-        _lastFloorY = y;
+        LastFloorY = y;
     }
     public new int Y
     {
         get => base.Y;
-        set => base.Y = _lastFloorY = value;
+        set => base.Y = LastFloorY = value;
     }
     public bool Alive => _currentHealth > 0;
     public double Health => Alive ? _currentHealth : 0;
@@ -50,10 +50,10 @@ public abstract class Entity : MovingObject
     }
     protected virtual bool GetFallDamage(out double fallDamage)
     {
-        int distance = Y - _lastFloorY;
-        if (distance > 200)
+        int distance = Y - LastFloorY;
+        if (distance > 100)
         {
-            fallDamage = double.MaxValue;
+            fallDamage = double.MaxValue / 2;
             return true;
         }
         if (ResetFallDamage)
@@ -61,10 +61,10 @@ public abstract class Entity : MovingObject
             if (distance > 20)
             {
                 fallDamage = distance / 20.0;
-                _lastFloorY = Y;
+                LastFloorY = Y;
                 return true;
             }
-            _lastFloorY = Y;
+            LastFloorY = Y;
         }
         fallDamage = 0;
         return false;
