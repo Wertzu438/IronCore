@@ -26,6 +26,7 @@ public class Game
     private readonly MobileInfoBox _mobileInfoBox;
     private readonly UIElement[] _otherInfoBoxes;
     private readonly PathFinding _pathFinding;
+    private int _lastUpdatedPerformanceMs;
     private List<Interactable> _interactables;
     private List<Trap> _traps;
     private List<Collectable> _collectables;
@@ -40,18 +41,19 @@ public class Game
         _mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
         _otherInfoBoxes = [
             UI.Add(new UIElement(0, 0, 0, 0, true)),
+            UI.Add(new UIElement(20, 4, 2, 1, true, dontFlipX: true)),
         ];
         _sideBar = [
             UI.Add(new UIElement(20, 6, 2, 1, true)), 
             UI.Add(new UIElement(20, 6, 2, 8, true)), 
             UI.Add(new UIElement(20, 7, 2, 15, true)),
-            UI.Add(new UIElement(20, 4, 2, 23, true)),
         ];
         _clock = new Clock();
         _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _player = (Player)_scene.Objects.Add(new Player(0, 0, Textures, Input, _clock));
         _pathFinding = new PathFinding(_scene);
-        LoadContent();
+        _lastUpdatedPerformanceMs = int.MinValue;
+        LoadContent(true);
         Camera.SetFollowedObject(_player, 10, 10);
     }
     private Input Input => _engine.Input;
@@ -79,10 +81,10 @@ public class Game
             {
                 _scene.Update(0.2f, true);
                 if (!respawnPressed)
-                    _checkPoints.ShowInfoBox();
+                    _checkPoints.ShowRespawnInfo();
                 _scene.SetSpriteSnapshot(_checkPoints.SnapShot);
                 _scene.Objects.Add(_player);
-                LoadContent();
+                LoadContent(false);
                 _scene.Update(0, true);
                 if (respawnPressed)
                     Thread.Sleep(400);
@@ -100,18 +102,22 @@ public class Game
         passedSeconds = _clock.PassedSeconds;
         gameData = _player.GameData;
         _centeredInfoBox.Show(
-            29, 9, 
+            35, 
+            9, 
             [
                 ["!🏆 LEVEL GESCHAFFT 🏆"], 
-                [$"-⏱️ Zeit: {passedSeconds} Sekunden", $"-💀 Verbrauchte Respawns: {gameData.Value.Respawns}", $"-🤕 Erlittener Schaden: {gameData.Value.TakenDamage}"], 
-                [$"-Fortzufahren mit {CenteredInfoBox.ConfirmKeyName}"]
+                [
+                    $"-⏱️ Benötigte Sekunden: {passedSeconds}", 
+                    $"-💀 Verbrauchte Respawns: {gameData.Value.Respawns}", 
+                    $"-🤕 Erlittener Schaden: {gameData.Value.TakenDamage}"
+                ], 
+                [$"-Fortfahren mit {CenteredInfoBox.ConfirmKeyName}"]
             ], 
             true
         );
-
         return true;
     }
-    private void LoadContent()
+    private void LoadContent(bool firstLoad)
     {
         _mobileInfoBox.Visible = false;
         _interactables = Interactable.LoadInteractables(_scene.Objects);
@@ -119,7 +125,14 @@ public class Game
         _traps = Trap.LoadTraps(_scene.Objects);
         _entities = Entity.LoadEntities(_scene.Objects);
         _goal = Goal.LoadGoal(_scene.Objects);
-        _checkPoints = new CheckPointManager(_scene, _clock, _centeredInfoBox, _otherInfoBoxes[0]);
+        if (firstLoad)
+        {
+            _checkPoints = new CheckPointManager(_scene, _clock, _centeredInfoBox, _otherInfoBoxes[0]);
+        }
+        else
+        {
+            _checkPoints = new CheckPointManager(_checkPoints);
+        }
         _checkPoints.ResetPlayerToCheckPoint(_player);
     }
     private void UpdateSideBar()
@@ -127,6 +140,9 @@ public class Game
         _sideBar[0].UpdateContent([["!SPIELINFO"], [$"🎯 Level: {_account.CurrentLevel+1}", $"🔐 Schlüssel: {_goal.CollectedKeysAmount}/{_goal.KeysAmount} "]]);
         _sideBar[1].UpdateContent([["!SPIELER"], [$"👤 Name: {_account.Name}", $"❤️ Leben: {Math.Round(_player.Health, 2)}/{Player.MaxHealth}"]]);
         _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{PauseKeyName}] ⏸️ Pause", $"[{RespawnKeyName}] 🔄 Respawnen", $"[{LeaveKeyName}] 🏠 Verlassen"]]);
-        _sideBar[3].UpdateContent([[$"📺 FPS: {(Math.Round(_engine.FramesPerSecond / 10.0) * 10)}", $"🔄 DT: {Math.Round(_scene.Objects.DeltaTime, 4)}"]]);
+        if (_lastUpdatedPerformanceMs + 100 > _clock.PassedMilliSeconds)
+            return;
+        _lastUpdatedPerformanceMs = _clock.PassedMilliSeconds;
+        _otherInfoBoxes[1].UpdateContent([[$"📺 FPS: {_engine.FramesPerSecond}", $"🔄 DT: {Math.Round(_scene.Objects.DeltaTime, 4)}"]]);
     }
 }
