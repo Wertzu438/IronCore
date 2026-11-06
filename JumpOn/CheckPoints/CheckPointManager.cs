@@ -18,6 +18,7 @@ public class CheckPointManager
     private readonly Scene _scene;
     private readonly Clock _clock;
     private int _lastSecondSaved;
+    private int _lastCheckPointIndex;
     private Objects _checkPointSnapShot;
     public CheckPointManager(Scene scene, Clock clock, CenteredInfoBox centeredInfoBox, UIElement infoBox)
     {
@@ -26,10 +27,26 @@ public class CheckPointManager
         _checkPoints = _scene.Objects.GetAllObjectsOfType<CheckPoint>();
         foreach (CheckPoint checkPoint in _checkPoints)
             checkPoint.CheckPoints = this;
-        _checkPointSnapShot = _scene.Objects.Clone();
         _centeredInfoBox = centeredInfoBox;
         _clock = clock;
         _lastSecondSaved = int.MinValue;
+        _infoBox.Visible = false;
+        _lastCheckPointIndex = 0;
+        _checkPointSnapShot = _scene.Objects.Clone();
+    }
+    public CheckPointManager(CheckPointManager manager)
+    {
+        _scene = manager._scene;
+        _checkPoints = _scene.Objects.GetAllObjectsOfType<CheckPoint>();
+        _infoBox = manager._infoBox;
+        foreach (CheckPoint checkPoint in _checkPoints)
+            checkPoint.CheckPoints = this;
+        _centeredInfoBox = manager._centeredInfoBox;
+        _clock = manager._clock;
+        _lastSecondSaved = int.MinValue;
+        _infoBox.Visible = false;
+        _checkPointSnapShot = _scene.Objects.Clone();
+        _lastCheckPointIndex = manager._lastCheckPointIndex;
     }
     public Objects SnapShot => _checkPointSnapShot;
     private bool OneCollected => Collectable.CollectedAmount(_checkPoints) != 0;
@@ -37,43 +54,22 @@ public class CheckPointManager
     {
         if (_checkPoints.Count <= 0)
             throw new ArgumentException("No player spawn points found");
-        if (OneCollected)
-        {
-            player.AddRespawn();
-        }
-        else _checkPoints[0].IsCollected = true;
-        CheckPoint nearestCheckPoint = GetNearestUnlockedCheckPoint(player.X, player.Y);
         player.StopMovingX(); player.StopMovingY();
-        player.X = nearestCheckPoint.X;
-        player.Y = nearestCheckPoint.Y;
+        player.X = _checkPoints[_lastCheckPointIndex].X;
+        player.Y = _checkPoints[_lastCheckPointIndex].Y;
+        player.SetLastFloorY(player.Y);
         player.Heal(double.MaxValue);
     }
-    public void ShowInfoBox() => _centeredInfoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
-    private CheckPoint GetNearestUnlockedCheckPoint(int x, int y)
+    public void ShowRespawnInfo() => _centeredInfoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
+    private CheckPoint UnlockFirstCheckPoint()
     {
-        CheckPoint? nearestCheckPoint = null;
-        int distance = int.MaxValue;
-        foreach (var checkPoint in _checkPoints)
-        {
-            if (!checkPoint.IsCollected)
-                continue;
-            int currentDistance = Math.Abs(checkPoint.X - x) + Math.Abs(checkPoint.Y - y) * 3;
-            if (currentDistance < distance)
-            {
-                nearestCheckPoint = checkPoint;
-                distance = currentDistance;
-            }
-        }
-        if (nearestCheckPoint == null)
-            throw new ArgumentException("No player spawn point found");
-        return nearestCheckPoint;
+        _checkPoints[0].IsCollected = true;
+        return _checkPoints[0];
     }
-    public async Task MakeSnapshot()
+    private async Task ShowSavedInfo()
     {
-        if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
+        if (_infoBox.Visible)
             return;
-        _checkPointSnapShot = _scene.Objects.Clone();
-        _lastSecondSaved = _clock.PassedSeconds;
         _infoBox.UpdateSize(25, 3);
         _infoBox.X = 2;
         _infoBox.Y = Console.WindowHeight - 2 - _infoBox.Height;
@@ -81,5 +77,19 @@ public class CheckPointManager
         _infoBox.Visible = true;
         await Task.Delay(SavingOffsetSeconds * 1000);
         _infoBox.Visible = false;
+    }
+    public async Task MakeSnapshot(CheckPoint checkPoint)
+    {
+        if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
+            return;
+        for (int i = 0; i < _checkPoints.Count; i++)
+        {
+            if (_checkPoints[i] != checkPoint)
+                continue;
+            _lastCheckPointIndex = i;
+        }
+        _checkPointSnapShot = _scene.Objects.Clone();
+        _lastSecondSaved = _clock.PassedSeconds;
+        ShowSavedInfo();
     }
 }
