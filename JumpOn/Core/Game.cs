@@ -103,7 +103,7 @@ public class Game
             29, 9, 
             [
                 ["!🏆 LEVEL GESCHAFFT 🏆"], 
-                [$"⏱️ Zeit: {passedSeconds} Sekunden", $"💀 Verbrauchte Respawns: {gameData.Value.Respawns}", $"🤕 Erlittener Schaden: {gameData.Value.TakenDamage}"], 
+                [$"-⏱️ Zeit: {passedSeconds} Sekunden", $"-💀 Verbrauchte Respawns: {gameData.Value.Respawns}", $"-🤕 Erlittener Schaden: {gameData.Value.TakenDamage}"], 
                 [$"-Fortzufahren mit {CenteredInfoBox.ConfirmKeyName}"]
             ], 
             true
