@@ -1,5 +1,6 @@
 ﻿using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
+using MCR_Engine.Objects;
 
 namespace JumpOn.Core;
 
@@ -9,4 +10,5 @@ public class DecorationObject : NonSolidObject
     {
         
     }
+    public override GameObject? Clone(Objects objects) => new DecorationObject(X, Y, Layer, BaseTexture, TextureExpansion, Amount);
 }
