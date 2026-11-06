@@ -6,15 +6,17 @@ public class UIElement
         private const char CenterChar = '-', SpecialTextAndCenterChar = '!';
         public const int Border = 1;
         private readonly bool _staticBox;
+        private readonly bool _dontFlipX;
         private int _width, _height;
         private string[][] _content;
         private int _x, _y;
         private bool _visible;
-        public UIElement(int width, int height, int x, int y, bool staticBox, bool visible = true)
+        public UIElement(int width, int height, int x, int y, bool staticBox, bool visible = true, bool dontFlipX = false)
         {
             _content = [];
             _staticBox = staticBox;
             _visible = visible;
+            _dontFlipX = dontFlipX;
             Width = width;
             Height = height;
             X = x;
@@ -23,7 +25,7 @@ public class UIElement
         public bool StaticBox => _staticBox;
         public int X
         {
-            get => (StaticBox ? Console.WindowWidth - _width - _x : _x);
+            get => (StaticBox && !_dontFlipX ? Console.WindowWidth - _width - _x : _x);
             set => _x = (value < 0 ? 0 : value);
         }
         public int Y
