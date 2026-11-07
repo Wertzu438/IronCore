@@ -6,6 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+    <PropertyGroup>
+        <Company>Abbas GmbH</Company>
+        <Authors>Simon Straubinger</Authors>
+        <Product>JumpOn</Product>
+        <Copyright>Copyright © 2026 Simon Straubinger.</Copyright>
+    </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\MCR-Engine\MCR-Engine.csproj" />
