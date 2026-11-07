@@ -102,9 +102,11 @@ internal class Renderer
     }
     private void RenderStringBuilder()
     {
-        Console.SetCursorPosition(0, 0);
+        _output.Append("\x1b[H");
+        _output.Append("\u001b[3J");
         _writer.Write(_output.ToString());
         _writer.Flush();
+        
     }
     private void AppendPair(PixelPair pair)
     {
