@@ -47,8 +47,9 @@ public static class SceneLoader
                     "Key" => new GameKey(x, y, engine.Textures),
                     "Medkit" => new Medkit(x, y, engine.Textures, engine.Input, mobileInfoBox),
                     "CheckPoint" => new CheckPoint(x, y, engine.Textures),
+                    //ENTITIES
                     "Box" => new Box(x, y, clock, engine.Textures),
-                    "MovingPlatform" => new MovingPlatform(x, y, double.Parse(line[3]), double.Parse(line[4]), int.Parse(line[5]), clock, engine.Textures),
+                    "MovingPlatform" => new MovingPlatform(x, y, double.Parse(line[3]), double.Parse(line[4]), int.Parse(line[5]), clock, engine.Textures, int.Parse(line[6])),
                     _ => throw new ArgumentException("invalide format"),
                 };
                 scene.Objects.Add(gameObject);
