@@ -47,7 +47,7 @@ Key,157,60
 Laser,77,106,700,1400
 Laser,44,106,700,1800
 Medkit,143,128
-SolidObj,252,67,2,brickBlock,Right,8
+SolidObj,252,67,2,brickBlock,Right,10
 SolidObj,310,75,1,metalWall,Down,9
 Switch,9,55
 SolidObj,72,66,2,metalPlatform,Right,2
@@ -55,3 +55,12 @@ CheckPoint,2,78
 CheckPoint,108,121
 CheckPoint,238,88
 Box,74,82
+MovingPlatform,218,64,20,0,20,4
+SolidObj,292,51,0,brickBlock,Down,2
+Spike,270,64,1
+Key,279,61
+Decoration,300,59,0,dirtBlock,Right,3
+SolidObj,324,59,0,brickBlock,None,1
+Decoration,300,52,0,flowers,Right,2
+Decoration,316,45,0,tree1,Right,1
+Decoration,292,48,0,metalWall,Right,2
