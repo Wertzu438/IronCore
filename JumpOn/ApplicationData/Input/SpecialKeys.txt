@@ -1,0 +1,10 @@
+Space,20
+Enter,0D
+Escape,1B
+Tab,09
+Backspace,08
+CapsLock,14
+NumLock,90
+ScrollLock,91
+Pause,13
+PrintScreen,2C

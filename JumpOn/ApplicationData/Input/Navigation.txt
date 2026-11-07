@@ -1,0 +1,6 @@
+Home,24
+End,23
+PageUp,21
+PageDown,22
+Insert,2D
+Delete,2E

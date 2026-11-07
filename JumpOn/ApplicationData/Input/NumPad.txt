@@ -1,0 +1,15 @@
+Num0,60
+Num1,61
+Num2,62
+Num3,63
+Num4,64
+Num5,65
+Num6,66
+Num7,67
+Num8,68
+Num9,69
+Plus,6B
+Minus,6D
+Mult,6A
+Divide,6F
+Decimal,6E
