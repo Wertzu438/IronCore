@@ -37,7 +37,10 @@ public class Application : IGameProject
         {
             _account.UpdateLevelStats(_account.CurrentLevel, passedSeconds, gameData);
             if (_account.CurrentLevel == _account.MaxLevel)
+            {
+                _account.SaveAccount();
                 return ProgramState.Menu;
+            }
             _account.CurrentLevel++;
             _account.SaveAccount();
             return ProgramState.Game;
