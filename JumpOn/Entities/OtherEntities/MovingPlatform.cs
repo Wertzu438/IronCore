@@ -16,36 +16,36 @@ public class MovingPlatform : Entity
     {
         _xSpawn = x; _ySpawn = y;
         VelocityX = _xVelocity = xVelocity; VelocityY = _yVelocity = yVelocity;
-        _distance = distance;
         SetNewTexture(GetTexture(_baseTexture = textures.Get("metalWall"), Direction.Right, _amount = amount));
+        _distance = distance;
     }
     private MovingPlatform(int x, int y, double xVelocity, double yVelocity, int distance, Clock clock, RGB?[,] baseTexture, int? amount = null) : 
         base(x, y, false, double.MaxValue, clock)
     {
         _xSpawn = x; _ySpawn = y;
         VelocityX = _xVelocity = xVelocity; VelocityY = _yVelocity = yVelocity;
-        _distance = distance; 
         SetNewTexture(GetTexture(_baseTexture = baseTexture, Direction.Right, _amount = amount));
+        _distance = distance; 
     }
     public override void Update()
     {
-        double nextX = X + VelocityX;
-        double nextY = Y + VelocityY;
+        double dx = X - _xSpawn;
+        double dy = Y - _ySpawn;
 
-        double dx = nextX - _xSpawn;
-        double dy = nextY - _ySpawn;
-
-        if (dx * dx + dy * dy > _distance * _distance)
+        if (dx * dx + dy * dy >= _distance * _distance)
         {
             VelocityX *= -1;
             VelocityY *= -1;
         }
+
         if (GetDistanceToNextObject(Direction.Up, true, [typeof(Entity)]) is 0)
         {
             GameObject? obj = GetNearestObject(Direction.Up, [typeof(Entity)]) as Entity;
             if (obj is null)
                 throw new ArgumentException("Object not found.");
+
             int entityY = obj.Y + obj.Height;
+
             if (entityY >= Y && entityY < Y + obj.Height / 2)
             {
                 obj.Y = Y - obj.Height;
