@@ -15,7 +15,7 @@ namespace JumpOn.Core;
 
 public class Game
 {
-    private const string PauseKeyName = "P", LeaveKeyName = "L", RespawnKeyName = "R";
+    private const string PauseKeyName = "P", LeaveKeyName = "L", RespawnKeyName = "R", SideBarVisiblityKeyName = "U";
     private readonly Engine _engine;
     private readonly Scene _scene;
     private readonly Account _account;
@@ -27,6 +27,7 @@ public class Game
     private readonly UIElement[] _otherInfoBoxes;
     private readonly PathFinding _pathFinding;
     private int _lastUpdatedPerformanceMs;
+    private int _lastChangedSideBarVisibilityMs;
     private List<Interactable> _interactables;
     private List<Trap> _traps;
     private List<Collectable> _collectables;
@@ -46,13 +47,14 @@ public class Game
         _sideBar = [
             UI.Add(new UIElement(20, 6, 2, 1, true)), 
             UI.Add(new UIElement(20, 6, 2, 8, true)), 
-            UI.Add(new UIElement(20, 7, 2, 15, true)),
+            UI.Add(new UIElement(20, 8, 2, 15, true)),
         ];
         _clock = new Clock();
         _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _player = (Player)_scene.Objects.Add(new Player(0, 0, Textures, Input, _clock));
         _pathFinding = new PathFinding(_scene);
         _lastUpdatedPerformanceMs = int.MinValue;
+        _lastChangedSideBarVisibilityMs = int.MinValue;
         LoadContent(true);
         Camera.SetFollowedObject(_player, 10, 10);
     }
@@ -95,8 +97,14 @@ public class Game
             }
             else if (Input.Get(PauseKeyName).Pressed)
             {
+                ChangeSideBarVisibility(true);
                 _centeredInfoBox.Show(24, 5, [["!⏸️ PAUSIERT"], [$"-Fortfahren mit {CenteredInfoBox.ConfirmKeyName}"]], true);
                 stopwatch.Restart();
+            }
+            else if (Input.Get(SideBarVisiblityKeyName).Pressed && _lastChangedSideBarVisibilityMs + 500 < _clock.PassedMilliSeconds)
+            {
+                ChangeSideBarVisibility();
+                _lastChangedSideBarVisibilityMs = _clock.PassedMilliSeconds;
             }
         } while (!_goal.EndGame);
         passedSeconds = _clock.PassedSeconds;
@@ -139,10 +147,15 @@ public class Game
     {
         _sideBar[0].UpdateContent([["!SPIELINFO"], [$"🎯 Level: {_account.CurrentLevel+1}", $"🔐 Schlüssel: {_goal.CollectedKeysAmount}/{_goal.KeysAmount} "]]);
         _sideBar[1].UpdateContent([["!SPIELER"], [$"👤 Name: {_account.Name}", $"❤️ Leben: {Math.Round(_player.Health, 2)}/{Player.MaxHealth}"]]);
-        _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{PauseKeyName}] ⏸️ Pause", $"[{RespawnKeyName}] 🔄 Respawnen", $"[{LeaveKeyName}] 🏠 Verlassen"]]);
+        _sideBar[2].UpdateContent([["!TASTENINFO"], [$"[{PauseKeyName}] ⏸️ Pause", $"[{RespawnKeyName}] 🔄 Respawnen", $"[{LeaveKeyName}] 🏠 Verlassen", $"[{SideBarVisiblityKeyName}] 🙈 UI verst."]]);
         if (_lastUpdatedPerformanceMs + 100 > _clock.PassedMilliSeconds)
             return;
         _lastUpdatedPerformanceMs = _clock.PassedMilliSeconds;
         _otherInfoBoxes[1].UpdateContent([[$"📺 FPS: {_engine.FramesPerSecond}", $"🔄 DT: {Math.Round(_scene.Objects.DeltaTime, 4)}"]]);
+    }
+    private void ChangeSideBarVisibility(bool? value = null)
+    {
+        foreach (UIElement sideBar in _sideBar)
+            sideBar.Visible = value ?? !sideBar.Visible;
     }
 }
