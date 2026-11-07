@@ -142,5 +142,5 @@ public class Player : LivingEntity
         _textureInfo.LastCoordinateChanged = coordinate;
         return true;
     }
-    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && IsFloorBeneath()) && !IsInteractingWithInteractable;
+    private bool Jump() => (Input.IsOnePressed([_movementKeys[2]]) && IsFloorBeneath()) && !IsInteractingWithInteractable && VelocityY >= 0;
 }
