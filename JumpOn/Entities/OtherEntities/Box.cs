@@ -59,7 +59,7 @@ public class Box : Entity
         foreach (Direction direction in CheckDirections)
         {
             int distance = GetDistanceToNextObject(direction, true, [typeof(MovingObject)]);
-            if (distance > 0)
+            if (distance != 0)
                 continue;
             GameObject? gameObject = GetNearestObject(direction, [typeof(MovingObject)]);
             if (gameObject == null || Math.Abs(gameObject.GetVelocity().X) < Math.Abs(objectVelocityX))
