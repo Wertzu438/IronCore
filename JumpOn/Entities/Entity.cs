@@ -53,7 +53,7 @@ public abstract class Entity : MovingObject
         int distance = Y - LastFloorY;
         if (distance > 100)
         {
-            fallDamage = double.MaxValue / 2;
+            fallDamage = MaxHealth;
             return true;
         }
         if (ResetFallDamage)
