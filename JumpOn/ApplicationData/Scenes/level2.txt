@@ -60,8 +60,6 @@ Decoration,209,49,1,tree1,Down,1
 Decoration,227,56,1,flowers,Down,1
 SolidObj,-7,63,2,brickBlock,Right,5
 SolidObj,-3,55,2,brickBlock,Down,1
-SolidObj,0,116,2,metalPlatform,Right,3
-ArrowMachine,22,116,Right,1500
 Laser,322,116,1100,1600
 Laser,351,116,1600,1100
 Laser,337,96,1200,1200
@@ -78,7 +76,6 @@ Laser,223,21,700,1200
 ArrowMachine,252,12,Left,1800
 Laser,237,48,1200,700
 Laser,96,67,1000,1400
-Spike,54,117,2
 Decoration,26,15,1,flowers,Right,6
 SolidObj,24,22,2,dirtBlock,Right,14
 Decoration,104,8,1,tree1,Down,1
@@ -87,7 +84,7 @@ SolidObj,0,-2,2,brickBlock,Down,4
 SolidObj,8,-2,2,brickBlock,Down,4
 SolidObj,16,-2,2,brickBlock,Down,4
 SolidObj,24,-2,2,brickBlock,Right,2
-CheckPoint,1,104
+CheckPoint,11,108
 CheckPoint,301,131
 CheckPoint,277,28
 Key,200,10
@@ -100,4 +97,10 @@ Medkit,282,83
 Medkit,151,64
 Decoration,170,113,0,flowers,Right,3
 SolidObj,208,112,0,brickBlock,Down,2
-Laser,20,71,1000,1000
+Laser,2,71,900,2000
+Ladder,0,93,7
+SolidObj,9,94,0,metalPlatform,Right,2
+Box,17,86
+Box,27,112
+SolidObj,56,96,3,brickBlock,Down,3
+ArrowMachine,62,116,Right,2000

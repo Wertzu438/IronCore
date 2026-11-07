@@ -37,7 +37,7 @@ SolidObj,224,68,2,brickBlock,Down,3
 SolidObj,248,92,2,dirtBlock,Right,8
 Decoration,277,78,4,tree1,Down,1
 Laser,250,68,900,1500
-ArrowMachine,230,87,Right,1500
+ArrowMachine,284,89,Left,1500
 Laser,192,68,800,1200
 Laser,205,68,1200,800
 Key,213,84
@@ -104,7 +104,7 @@ Key,50,136
 Laser,61,116,800,800
 Laser,81,116,800,800
 Medkit,92,137
-Key,240,84
+Key,235,86
 CheckPoint,1,28
 CheckPoint,224,22
 CheckPoint,239,131
@@ -112,4 +112,5 @@ SolidObj,231,143,2,metalPlatform,Right,3
 CheckPoint,7,69
 SolidObj,7,81,2,metalPlatform,Right,1
 Decoration,300,85,0,flowers,Right,1
-Decoration,256,60,0,brickBlock,Right,1
+Box,248,84
+Box,15,135

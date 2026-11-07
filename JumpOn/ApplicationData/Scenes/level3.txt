@@ -63,8 +63,8 @@ SolidObj,465,93,2,dirtBlock,Right,5
 Decoration,465,79,4,tree1,Down,1
 Decoration,487,86,1,flowers,Down,1
 Decoration,325,117,4,tree1,Down,1
-SolidObj,248,127,2,metalPlatform,Right,2
-ArrowMachine,262,127,Right,1500
+SolidObj,248,127,2,metalPlatform,Right,3
+ArrowMachine,270,127,Right,1500
 Laser,349,109,1000,1000
 Laser,426,109,1300,800
 Laser,404,109,700,1400
@@ -107,11 +107,13 @@ Spike,78,120,1
 Spike,48,120,1
 Decoration,41,135,1,flowers,Right,6
 ArrowMachine,23,120,Right,1800
-CheckPoint,157,79
 SolidObj,25,117,1,metalWall,Right,3
 Key,26,111
 Key,156,49
 Key,400,32
 Key,484,126
 Key,335,78
-Decoration,333,41,1,flowers,Down,1
+Box,340,40
+Box,215,83
+CheckPoint,159,79
+CheckPoint,260,115
