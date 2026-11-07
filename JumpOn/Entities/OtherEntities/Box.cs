@@ -18,9 +18,8 @@ public class Box : Entity
         _undamagedTexture = textures.Get(BoxUndamagedName);
         _damagedTexture = textures.Get(BoxDamagedName);
         SetNewTexture(_undamagedTexture);
-        
     }
-    private Box(int x, int y, double maxHealth, Clock clock, RGB?[,] undamagedTexture, RGB?[,] damagedTexture) : base(x, y, true, maxHealth, clock)
+    private Box(int x, int y, Clock clock, RGB?[,] undamagedTexture, RGB?[,] damagedTexture) : base(x, y, true, DefaultMaxHealth, clock)
     {
         _xSpawn = x; _ySpawn = y;
         _undamagedTexture = undamagedTexture;
@@ -52,7 +51,7 @@ public class Box : Entity
     protected override bool StopOnCollisionX => false;
     protected override bool StopOnCollisionY => false;
     private static double DamagePerFall => DefaultMaxHealth / 2; 
-    public override GameObject? Clone(Objects objects) => new Box(_xSpawn, _ySpawn, MaxHealth, Clock, _undamagedTexture, _damagedTexture);
+    public override GameObject? Clone(Objects objects) => new Box(_xSpawn, _ySpawn, Clock, _undamagedTexture, _damagedTexture);
     protected override void UpdatePosition()
     {
         bool isBox = false;
