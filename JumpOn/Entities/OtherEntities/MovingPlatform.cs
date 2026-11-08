@@ -27,17 +27,31 @@ public class MovingPlatform : Entity
         SetNewTexture(GetTexture(_baseTexture = baseTexture, Direction.Right, _amount = amount));
         _distance = distance; 
     }
+    private int DistanceX => (int)(_distance * (Math.Abs(VelocityX) / (Math.Sqrt(Math.Pow(VelocityX, 2) + Math.Pow(VelocityY, 2)))));
+    private int DistanceY => (int)(_distance * (Math.Abs(VelocityY) / (Math.Sqrt(Math.Pow(VelocityX, 2) + Math.Pow(VelocityY, 2)))));
     public override void Update()
     {
-        double dx = X - _xSpawn;
-        double dy = Y - _ySpawn;
-
-        if (dx * dx + dy * dy >= _distance * _distance)
+        if (X > _xSpawn + DistanceX)
         {
+            X = _xSpawn + DistanceX;
             VelocityX *= -1;
-            VelocityY *= -1;
+        }
+        else if (X < _xSpawn - DistanceX)
+        {
+            X = _xSpawn - DistanceX;
+            VelocityX *= -1;
         }
 
+        if (Y > _ySpawn + DistanceY)
+        {
+            Y = _ySpawn + DistanceY;
+            VelocityY *= -1;
+        }
+        else if (Y < _ySpawn - DistanceY)
+        {
+            Y = _ySpawn - DistanceY;
+            VelocityY *= -1;
+        }
         if (GetDistanceToNextObject(Direction.Up, true, [typeof(Entity)]) is 0)
         {
             GameObject? obj = GetNearestObject(Direction.Up, [typeof(Entity)]) as Entity;
