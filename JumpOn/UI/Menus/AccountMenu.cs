@@ -25,15 +25,15 @@ public class AccountMenu : Menu
     {
         if (_account.ValidName)
             return;
-        Thread.Sleep(1200);
+        Thread.Sleep(1000);
         _renderAction(ProcessAction.Pause);
         while (Console.KeyAvailable)
             Console.ReadKey(true);
-        Thread.Sleep(200);
         Console.SetCursorPosition(infoBox.X + 10, infoBox.Y + 11);
         Console.ResetColor(); Console.ForegroundColor = ConsoleColor.DarkRed;
         _account.Name = Console.ReadLine();
         _renderAction(ProcessAction.Start);
+        Keys[0].PressVirtual(100);
     }
     protected override ProgramState OpenNewWindow(Key key, out Type? nextScreen)
     {
