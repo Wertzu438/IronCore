@@ -32,7 +32,7 @@ public abstract class Menu
                 if (key.Pressed)
                     return key;
             }
-            Thread.Sleep(30);
+            Thread.Sleep(70);
         }
         return null;
     }
