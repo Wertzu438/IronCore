@@ -47,7 +47,6 @@ internal class Renderer
             if (_state is ProcessState.Running)
             {
                 ChangeAction(ProcessAction.Pause);
-                WaitForProcessState(ProcessState.Paused);
                 ChangeAction(ProcessAction.Start);
             }
             _camera.ResetOffset();
@@ -91,7 +90,7 @@ internal class Renderer
             while (_action is ProcessAction.Pause || _pairs is null)
             {
                 _state = ProcessState.Paused;
-                Thread.Sleep(1000);
+                Thread.Sleep(100);
             }
             _state = ProcessState.Running;
             _output.Clear();
@@ -141,7 +140,7 @@ internal class Renderer
         while (_state != state && ticks < 400)
         {
             ticks++;
-            Thread.Sleep(1);
+            Task.Delay(1).Wait();
         }
         if (ticks >= 400)
             throw new Exception("Process state timed out");
