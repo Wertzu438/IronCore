@@ -40,6 +40,8 @@ public class Game
         _account = account;
         _centeredInfoBox = (CenteredInfoBox)UI.Add(new CenteredInfoBox(Input));
         _mobileInfoBox = (MobileInfoBox)UI.Add(new MobileInfoBox());
+        _clock = new Clock();
+        _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _otherInfoBoxes = [
             UI.Add(new UIElement(0, 0, 0, 0, true)),
             UI.Add(new UIElement(20, 4, 2, 1, true, dontFlipX: true)),
@@ -49,8 +51,6 @@ public class Game
             UI.Add(new UIElement(20, 6, 2, 8, true)), 
             UI.Add(new UIElement(20, 8, 2, 15, true)),
         ];
-        _clock = new Clock();
-        _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _player = (Player)_scene.Objects.Add(new Player(0, 0, Textures, Input, _clock));
         _pathFinding = new PathFinding(_scene);
         _lastUpdatedPerformanceMs = int.MinValue;
