@@ -10,13 +10,13 @@ public abstract class Entity : MovingObject
 {
     private const int DamageTickOffsetMs = 850;
     protected readonly Clock Clock;
-    protected readonly double MaxHealth;
     protected int LastFloorY;
+    private readonly double _maxHealth;
     private double _currentHealth;
     private int _lastDamageTimeMs;
     protected Entity(int x, int y, bool collision, double maxHealth, Clock clock) : base(x, y, 1, collision, true, Textures.DebuggingTexture(6, 4))
     {
-        MaxHealth = maxHealth;
+        _maxHealth = maxHealth;
         _currentHealth = maxHealth;
         Clock = clock;
         _lastDamageTimeMs = Clock.PassedMilliSeconds;
@@ -45,15 +45,15 @@ public abstract class Entity : MovingObject
     public virtual void Heal(double heal)
     {
         _currentHealth += Math.Abs(heal);
-        if (_currentHealth > MaxHealth)
-            _currentHealth = MaxHealth;
+        if (_currentHealth > _maxHealth)
+            _currentHealth = _maxHealth;
     }
     protected virtual bool GetFallDamage(out double fallDamage)
     {
         int distance = Y - LastFloorY;
         if (distance > 100)
         {
-            fallDamage = MaxHealth;
+            fallDamage = _maxHealth;
             return true;
         }
         if (ResetFallDamage)
@@ -87,8 +87,8 @@ public abstract class Entity : MovingObject
         foreach (Entity entity in entities)
         {
             entity.Update();
-            if (entity is LivingEntity)
-                ((LivingEntity)entity).SetInteractable(null);
+            if (entity is LivingEntity livingEntity)
+                livingEntity.SetInteractable(null);
             if (entity.OnScene(Direction.Right)) 
                 continue;
             if (entity.X < 0)
