@@ -44,6 +44,12 @@ internal class Renderer
     {
         set
         {
+            if (_state is ProcessState.Running)
+            {
+                ChangeAction(ProcessAction.Pause);
+                WaitForProcessState(ProcessState.Paused);
+                ChangeAction(ProcessAction.Start);
+            }
             _camera.ResetOffset();
             _pairs = CreatePairs(value);
         }
@@ -55,10 +61,17 @@ internal class Renderer
             _action = newAction;
             if (_state is not ProcessState.Paused)
                 StartLoop();
+            else WaitForProcessState(ProcessState.Running);
         }
-        else if ((newAction is ProcessAction.Stop && _state is ProcessState.Running or ProcessState.Paused) || (newAction is ProcessAction.Pause && _state is ProcessState.Running))
+        else if (newAction is ProcessAction.Pause && _state is ProcessState.Running)
         {
             _action = newAction;
+            WaitForProcessState(ProcessState.Paused);
+        }
+        else if (newAction is ProcessAction.Stop && _state is ProcessState.Running or ProcessState.Paused)
+        {
+            _action = newAction;
+            WaitForProcessState(ProcessState.Stopped);
         }
         else throw new ArgumentException("Invalid action");
     }
@@ -102,11 +115,9 @@ internal class Renderer
     }
     private void RenderStringBuilder()
     {
-        _output.Append("\x1b[H");
-        _output.Append("\u001b[3J");
+        _output.Append("\e[H\e[3J");
         _writer.Write(_output.ToString());
         _writer.Flush();
-        
     }
     private void AppendPair(PixelPair pair)
     {
@@ -123,6 +134,17 @@ internal class Renderer
             _currentBackgroundColor = rgb;
         }
         _output.Append(pair.Output);
+    }
+    private void WaitForProcessState(ProcessState state)
+    {
+        int ticks = 0;
+        while (_state != state && ticks < 400)
+        {
+            ticks++;
+            Thread.Sleep(1);
+        }
+        if (ticks >= 400)
+            throw new Exception("Process state timed out");
     }
     private void StartLoop() => _thread.Start();
     private static PixelPair[,] CreatePairs(Scene scene)
