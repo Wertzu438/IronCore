@@ -51,7 +51,7 @@ public class Application : IGameProject
     }
     public ProgramState OpenMenu()
     {
-        _engine.SetRenderScene(SceneLoader.Read("level0", _engine, new MobileInfoBox(), new Clock()));
+        _engine.SetRenderScene(SceneLoader.Read("startScene", _engine, new MobileInfoBox(), new Clock()));
         return _menus.Launch(_engine.UI, (_account.ValidName ? typeof(MainMenu) : typeof(AccountMenu)));
     }
     public static void Main(string[] args)
