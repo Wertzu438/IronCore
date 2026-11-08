@@ -141,7 +141,7 @@ public class Game
         {
             _checkPoints = new CheckPointManager(_checkPoints);
         }
-        _checkPoints.ResetPlayerToCheckPoint(_player);
+        _checkPoints.ResetPlayerToCheckPoint(_player, firstLoad);
     }
     private void UpdateSideBar()
     {

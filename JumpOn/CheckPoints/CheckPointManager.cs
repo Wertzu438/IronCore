@@ -50,7 +50,7 @@ public class CheckPointManager
     }
     public Objects SnapShot => _checkPointSnapShot;
     private bool OneCollected => Collectable.CollectedAmount(_checkPoints) != 0;
-    public void ResetPlayerToCheckPoint(Player player)
+    public void ResetPlayerToCheckPoint(Player player, bool firstLoad)
     {
         if (_checkPoints.Count <= 0)
             throw new ArgumentException("No player spawn points found");
@@ -59,13 +59,11 @@ public class CheckPointManager
         player.Y = _checkPoints[_lastCheckPointIndex].Y;
         player.SetLastFloorY(player.Y);
         player.Heal(double.MaxValue);
+        if (firstLoad)
+            return;
+        player.AddRespawn();
     }
     public void ShowRespawnInfo() => _centeredInfoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
-    private CheckPoint UnlockFirstCheckPoint()
-    {
-        _checkPoints[0].IsCollected = true;
-        return _checkPoints[0];
-    }
     private async Task ShowSavedInfo()
     {
         if (_infoBox.Visible)
