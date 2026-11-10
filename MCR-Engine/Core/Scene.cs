@@ -37,7 +37,6 @@ public class Scene
         int xStart, yStart, xEnd, yEnd;
         lock (_camera)
         {
-            _camera.RecalculateOffset(deltaTime);
             (xStart, xEnd, yStart, yEnd) = GetVisibleArea(renderAll);
         }
         Objects.Update(deltaTime);

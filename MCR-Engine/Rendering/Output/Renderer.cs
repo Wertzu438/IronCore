@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using MCR_Engine.Core;
+using MCR_Engine.InputSystem;
 using MCR_Engine.Rendering.UI;
 
 namespace MCR_Engine.Rendering.Output;
@@ -19,13 +20,13 @@ internal class Renderer
     private ProcessAction? _action;
     private ProcessState _state;
     private float _lastDeltaTime;
-    public Renderer()
+    public Renderer(Input input)
     {
         _output = new StringBuilder();
         _stopwatch = new Stopwatch();
         _writer =  new StreamWriter(Console.OpenStandardOutput());
         _thread = new Thread(Loop);
-        _camera = new Camera(this);
+        _camera = new Camera(this, input);
         _ui = new UIManager(this);
         _currentBackgroundColor = default;
         _currentForegroundColor = default;
@@ -93,6 +94,7 @@ internal class Renderer
                 Thread.Sleep(100);
             }
             _state = ProcessState.Running;
+            _camera.RecalculateOffset(_lastDeltaTime);
             _output.Clear();
             int startX, startY, maxX, maxY;
             lock (_camera)
