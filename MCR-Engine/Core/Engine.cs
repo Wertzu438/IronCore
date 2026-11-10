@@ -14,11 +14,11 @@ public class Engine
     private readonly MenuManager _menus;
     public Engine()
     {
-        _renderer = new Renderer();
         _input = new Input();
+        FileManager.LoadKeys(_input);
+        _renderer = new Renderer(_input);
         _textures = new Textures();
         _menus = new MenuManager();
-        FileManager.LoadKeys(_input);
         FileManager.LoadTextures(_textures);
     }
     public int FramesPerSecond => _renderer.FramesPerSecond;
