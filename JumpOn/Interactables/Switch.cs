@@ -73,14 +73,13 @@ public class Switch : Interactable
     private async Task SwipeCameraOnConnectedObject()
     {
         if (_camera.CinematicCamera)
-            return;
-        GameObject lastGameObject = _camera.FollowedObject;
-        await _camera.SetFollowedObject(_connectedGameObject, 0, 0);
-        _camera.CinematicCamera = true;
-        await Task.Delay(300); 
-        _connectedGameObject.ChangeVisibility(); 
-        await Task.Delay(300); 
-        _camera.CinematicCamera = false;
-        await _camera.SetFollowedObject(lastGameObject, 0, 0);
+            throw new ArgumentException("Cinematic camera not supported");
+        await Task.Delay(1);
+        _camera.GoToCoordinates(_connectedGameObject.X + _connectedGameObject.Width / 2, _connectedGameObject.Y + _connectedGameObject.Height / 2);
+        _camera.StopMoving = true;
+        await Task.Delay(700);
+        _connectedGameObject.ChangeVisibility();
+        await Task.Delay(300);
+        _camera.StopMoving = false;
     }
 }
