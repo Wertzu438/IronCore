@@ -31,11 +31,13 @@ public class LevelMenu : Menu
         if (key == Keys[2])
         {
             _account.CurrentLevel--;
+            Thread.Sleep(100);
             return ProgramState.Menu;
         }
         if (key == Keys[3])
         {
             _account.CurrentLevel++;
+            Thread.Sleep(100);
             return ProgramState.Menu;
         }
         throw new NotImplementedException("no action for key set");
