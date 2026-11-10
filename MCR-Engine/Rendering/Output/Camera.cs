@@ -6,7 +6,10 @@ namespace MCR_Engine.Rendering.Output;
 
 public class Camera
 {
-    private const double MinMaxVelocityX = 20, MinMaxVelocityY = 10;
+    private const double CameraDeadZoneLeft = 0.34, CameraDeadZoneRight = 0.34;
+    private const double CameraDeadZoneTop = 0.35, CameraDeadZoneBottom = 0.30;
+    private const double CinematicSpeedX = 80, CinematicSpeedY = CinematicSpeedX / 2;
+    private const double MinMaxVelocityX = 20, MinMaxVelocityY = MinMaxVelocityX / 2;
     private const string UpKey = "Up", DownKey = "Down", LeftKey = "Left", RightKey = "Right";
     private readonly Renderer _render;
     private readonly Key[] _movementKeys;
@@ -29,11 +32,29 @@ public class Camera
     public int XOffset => (int)Math.Round(_xOffset);
     public int YOffset => (int)Math.Round(_yOffset);
     public bool CinematicCamera => _moveToX is  not null || _moveToY is not null;
+    private int ObjX
+    {
+        get
+        {
+            if (FollowedObject is null)
+                return 0;
+            return FollowedObject.X + FollowedObject.Width / 2;
+        }
+    }
+    private int ObjY
+    {
+        get
+        {
+            if (FollowedObject is null)
+                return 0;
+            return (FollowedObject.Y + FollowedObject.Height / 2) / 2;
+        }
+    }
     public void RecalculateOffset(float deltaTime)
     {
         if (FollowedObject is null || StopMoving)
             return;
-        int x = FollowedObject.X + FollowedObject.Width / 2, y = (FollowedObject.Y + FollowedObject.Height / 2) / 2;
+        int x = ObjX, y = ObjY;
         int width = Console.WindowWidth, height = Console.WindowHeight;
         MoveCameraWithInput();
         (Direction leftRight, Direction upDown) = GetCameraMoveDirections(_moveToX ?? x, _moveToY ?? y, width, height);
@@ -112,34 +133,29 @@ public class Camera
         
         return (leftRight, upDown);
     }
-    private bool InDeadZone(int x, int y)
-    {
-        var directions = GetCameraMoveDirections(x, y, Console.WindowWidth, Console.WindowHeight);
-        return directions.LeftRight is Direction.None && directions.UpDown is Direction.None;
-    }
     private int GetDeadZoneBorder(Direction direction, int width, int height)
     {
         return (direction) switch
         {
-            Direction.Left => (int)(_xOffset + width * 0.34),
-            Direction.Right => (int)(_xOffset + width - width * 0.34),
-            Direction.Up => (int)(_yOffset + height * 0.35),
-            Direction.Down => (int)(_yOffset + height - height * 0.3),
+            Direction.Left => (int)(_xOffset + width * CameraDeadZoneLeft),
+            Direction.Right => (int)(_xOffset + width - width * CameraDeadZoneRight),
+            Direction.Up => (int)(_yOffset + height * CameraDeadZoneTop),
+            Direction.Down => (int)(_yOffset + height - height * CameraDeadZoneBottom),
             _ => throw new ArgumentException($"Invalid direction: {direction}"),
         };
     }
     private double GetMaxVelocityX(double deltaTime)
     {
-        if (CinematicCamera || InView(FollowedObject.X, FollowedObject.Y))
-            return 75;
+        if (CinematicCamera || !InView(ObjX, ObjY))
+            return CinematicSpeedX;
         if (_currentMaxVelocityX < MinMaxVelocityX)
             return MinMaxVelocityX;
         return _currentMaxVelocityX + (Math.Abs(FollowedObject.GetVelocity().X) - _currentMaxVelocityX) * 3 * deltaTime;
     }
     private double GetMaxVelocityY(double deltaTime)
     {
-        if (CinematicCamera || InView(FollowedObject.X, FollowedObject.Y))
-            return 37.5;
+        if (CinematicCamera || !InView(ObjX, ObjY))
+            return CinematicSpeedY;
         if (_currentMaxVelocityY < MinMaxVelocityY)
             return MinMaxVelocityY;
         return _currentMaxVelocityY + (Math.Abs(FollowedObject.GetVelocity().Y / 2) - _currentMaxVelocityY) * 3 * deltaTime;
