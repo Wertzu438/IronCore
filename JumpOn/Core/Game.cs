@@ -56,7 +56,8 @@ public class Game
         _lastUpdatedPerformanceMs = int.MinValue;
         _lastChangedSideBarVisibilityMs = int.MinValue;
         LoadContent(true);
-        Camera.SetFollowedObject(_player, 10, 10);
+        Camera.SetFollowedObject(_player);
+        //Camera.GoToCoordinates(_player.X, _player.Y);
     }
     private Input Input => _engine.Input;
     private UIManager UI => _engine.UI;
@@ -155,7 +156,9 @@ public class Game
     }
     private void ChangeSideBarVisibility(bool? value = null)
     {
-        foreach (UIElement sideBar in _sideBar)
-            sideBar.Visible = value ?? !sideBar.Visible;
+        foreach (UIElement uiElement in _sideBar)
+            uiElement.Visible = value ?? !uiElement.Visible;
+        foreach (UIElement uiElement in _otherInfoBoxes)
+            uiElement.Visible = value ?? !uiElement.Visible;
     }
 }
