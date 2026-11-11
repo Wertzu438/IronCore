@@ -6,8 +6,9 @@ namespace MCR_Engine.Rendering.Output;
 
 public class Camera
 {
-    private const double CameraDeadZoneLeft = 0.34, CameraDeadZoneRight = 0.34;
-    private const double CameraDeadZoneTop = 0.35, CameraDeadZoneBottom = 0.30;
+    private const double CameraInputSpeedX = 90, CameraInputSpeedY = 70;
+    private const double CameraDeadZoneLeft = 0.23, CameraDeadZoneRight = 0.30;
+    private const double CameraDeadZoneTop = 0.31, CameraDeadZoneBottom = 0.20;
     private const double CinematicSpeedX = 80, CinematicSpeedY = CinematicSpeedX / 2;
     private const double MinMaxVelocityX = 20, MinMaxVelocityY = MinMaxVelocityX / 2;
     private const string UpKey = "Up", DownKey = "Down", LeftKey = "Left", RightKey = "Right";
@@ -56,7 +57,7 @@ public class Camera
             return;
         int x = ObjX, y = ObjY;
         int width = Console.WindowWidth, height = Console.WindowHeight;
-        MoveCameraWithInput();
+        MoveCameraWithInput(deltaTime);
         (Direction leftRight, Direction upDown) = GetCameraMoveDirections(_moveToX ?? x, _moveToY ?? y, width, height);
         
         _currentMaxVelocityX = GetMaxVelocityX(deltaTime);
@@ -93,17 +94,17 @@ public class Camera
     public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
     public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth, xOffset + Console.WindowWidth);
     public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight, yOffset + Console.WindowHeight);
-    private void MoveCameraWithInput()
+    private void MoveCameraWithInput(float deltaTime)
     {
         if (_movementKeys[0].Pressed)
-            _yVelocity -= 2;
+            _yVelocity -= CameraInputSpeedY * deltaTime;
         else if (_movementKeys[1].Pressed)
-            _yVelocity += 2;
+            _yVelocity += CameraInputSpeedY * deltaTime;
 
         if (_movementKeys[2].Pressed)
-            _xVelocity -= 2;
+            _xVelocity -= CameraInputSpeedX * deltaTime;
         else if (_movementKeys[3].Pressed)
-            _xVelocity += 2;
+            _xVelocity += CameraInputSpeedX * deltaTime;
     }
     private bool CanCameraMoveInDirection(Direction direction, int width, int height)
     {
