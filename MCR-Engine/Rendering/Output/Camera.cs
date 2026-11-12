@@ -211,18 +211,13 @@ public class Camera
     {
         if (!CinematicCamera)
             return;
-
         var directions = GetCameraMoveDirections(_moveToX ?? 0, _moveToY ?? 0, width, height);
-        
-        bool reachedX = directions.LeftRight == Direction.None;
-        bool reachedY = directions.UpDown == Direction.None;
+        bool reachedX = directions.LeftRight == Direction.None, reachedY = directions.UpDown == Direction.None;
 
         if (reachedX)
             _xVelocity = 0;
-
         if (reachedY)
             _yVelocity = 0;
-
         if (reachedX && reachedY)
         {
             _moveToX = _moveToY = null;
