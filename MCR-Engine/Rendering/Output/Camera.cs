@@ -8,12 +8,13 @@ public class Camera
 {
     private const double CameraInputSpeedX = 90, CameraInputSpeedY = 70;
     private const double CameraDeadZoneLeft = 0.23, CameraDeadZoneRight = 0.30;
-    private const double CameraDeadZoneTop = 0.31, CameraDeadZoneBottom = 0.20;
+    private const double CameraDeadZoneTop = 0.25, CameraDeadZoneBottom = 0.20;
     private const double CinematicSpeedX = 80, CinematicSpeedY = CinematicSpeedX / 2;
     private const double MinMaxVelocityX = 20, MinMaxVelocityY = MinMaxVelocityX / 2;
     private const string UpKey = "Up", DownKey = "Down", LeftKey = "Left", RightKey = "Right";
     private readonly Renderer _render;
     private readonly Key[] _movementKeys;
+    private GameObject? _followedObject;
     private double _xVelocity, _yVelocity;
     private double _xOffset, _yOffset;
     private double _currentMaxVelocityX, _currentMaxVelocityY;
@@ -26,10 +27,10 @@ public class Camera
         _render = render;
         _movementKeys = [input.Get(UpKey), input.Get(DownKey), input.Get(LeftKey), input.Get(RightKey)];
         _moveToX = _moveToY = null;
-        StopMoving = false;
+        _followedObject = null;
+        LockPosition = false;
     }
-    public bool StopMoving { private get; set; }
-    public GameObject? FollowedObject { get; private set; }
+    public bool LockPosition { private get; set; }
     public int XOffset => (int)Math.Round(_xOffset);
     public int YOffset => (int)Math.Round(_yOffset);
     public bool CinematicCamera => _moveToX is  not null || _moveToY is not null;
@@ -37,23 +38,23 @@ public class Camera
     {
         get
         {
-            if (FollowedObject is null)
+            if (_followedObject is null)
                 return 0;
-            return FollowedObject.X + FollowedObject.Width / 2;
+            return _followedObject.X + _followedObject.Width / 2;
         }
     }
     private int ObjY
     {
         get
         {
-            if (FollowedObject is null)
+            if (_followedObject is null)
                 return 0;
-            return (FollowedObject.Y + FollowedObject.Height / 2) / 2;
+            return (_followedObject.Y + _followedObject.Height / 2) / 2;
         }
     }
     public void RecalculateOffset(float deltaTime)
     {
-        if (FollowedObject is null || StopMoving)
+        if (_followedObject is null || LockPosition)
             return;
         int x = ObjX, y = ObjY;
         int width = Console.WindowWidth, height = Console.WindowHeight;
@@ -83,7 +84,7 @@ public class Camera
     public void SetFollowedObject(GameObject followedObject)
     {
         ResetOffset();
-        FollowedObject = followedObject;
+        _followedObject = followedObject;
     }
     public void SetOffset(int x, int y)
     {
@@ -151,7 +152,7 @@ public class Camera
             return CinematicSpeedX;
         if (_currentMaxVelocityX < MinMaxVelocityX)
             return MinMaxVelocityX;
-        return _currentMaxVelocityX + (Math.Abs(FollowedObject.GetVelocity().X) - _currentMaxVelocityX) * 3 * deltaTime;
+        return _currentMaxVelocityX + (Math.Abs(_followedObject.GetVelocity().X) - _currentMaxVelocityX) * 3 * deltaTime;
     }
     private double GetMaxVelocityY(double deltaTime)
     {
@@ -159,30 +160,32 @@ public class Camera
             return CinematicSpeedY;
         if (_currentMaxVelocityY < MinMaxVelocityY)
             return MinMaxVelocityY;
-        return _currentMaxVelocityY + (Math.Abs(FollowedObject.GetVelocity().Y / 2) - _currentMaxVelocityY) * 3 * deltaTime;
+        return _currentMaxVelocityY + (Math.Abs(_followedObject.GetVelocity().Y / 2) - _currentMaxVelocityY) * 3 * deltaTime;
     }
     private double ReduceCameraSpeed(double velocity, double reduction, double deltaTime)
     {
+        if (reduction < 0)
+            throw new ArgumentException("Reduction cannot be negative");
         double result = velocity * Math.Exp(-reduction * deltaTime);
-        return Math.Abs(result) < 0.01 ? 0 : result;
+        return Math.Abs(result) < 0.2 ? 0 : result;
     }
     private double GetUpdatedVelocityX(Direction leftRight, double deltaTime)
     {
-        if (leftRight == Direction.Left)
-            return _currentMaxVelocityX * -1;
-        if (leftRight == Direction.Right)
-            return _currentMaxVelocityX;
-        return ReduceCameraSpeed(_xVelocity, 2.5, deltaTime);
+        return leftRight switch
+        {
+            Direction.Left => _xVelocity > 0 ? 0 : _currentMaxVelocityX * -1,
+            Direction.Right => _xVelocity < 0 ? 0 : _currentMaxVelocityX,
+            _ => ReduceCameraSpeed(_xVelocity, 2.5, deltaTime)
+        };
     }
     private double GetUpdatedVelocityY(Direction upDown, double deltaTime)
     {
-        if (upDown == Direction.Up)
-            return _currentMaxVelocityY * -1;
-
-        if (upDown == Direction.Down)
-            return _currentMaxVelocityY;
-        
-        return ReduceCameraSpeed(_yVelocity, 5, deltaTime);
+        return (upDown) switch
+        {
+            Direction.Up => _yVelocity > 0 ? 0 : _currentMaxVelocityY * -1,
+            Direction.Down => _yVelocity < 0 ? 0 : _currentMaxVelocityY,
+            _ => ReduceCameraSpeed(_yVelocity, 2.5, deltaTime)
+        };
     }
     private void MoveOnX(float deltaTime, int windowWidth)
     {

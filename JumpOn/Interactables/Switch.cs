@@ -76,10 +76,10 @@ public class Switch : Interactable
             throw new ArgumentException("Cinematic camera not supported");
         await Task.Delay(1);
         _camera.GoToCoordinates(_connectedGameObject.X + _connectedGameObject.Width / 2, _connectedGameObject.Y + _connectedGameObject.Height / 2);
-        _camera.StopMoving = true;
+        _camera.LockPosition = true;
         await Task.Delay(700);
         _connectedGameObject.ChangeVisibility();
         await Task.Delay(300);
-        _camera.StopMoving = false;
+        _camera.LockPosition = false;
     }
 }
