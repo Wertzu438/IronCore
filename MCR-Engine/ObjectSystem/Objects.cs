@@ -16,14 +16,8 @@ public class Objects : IEnumerable<GameObject>
             _map = new GameObject[GameObject.MaxLayer][,];
             for (int i = GameObject.MinLayer; i < GameObject.MaxLayer; i++)
                 _map[i] = new GameObject?[_scene.Width, _scene.Height];
-        }
-        private Objects(Scene scene, bool clone)
-        {
-            _objects = [];
-            _scene = scene;
-            _map = new GameObject[GameObject.MaxLayer][,];
-            for (int i = GameObject.MinLayer; i < GameObject.MaxLayer; i++)
-                _map[i] = new GameObject?[_scene.Width, _scene.Height];
+            if (scene.Objects is null)
+                return;
             foreach (var gameObject in scene.Objects)
             {
                 GameObject? s = gameObject.Clone(this);
@@ -181,7 +175,7 @@ public class Objects : IEnumerable<GameObject>
         }
         public bool ObjectBordersTouching(GameObject o1, GameObject o2) 
             => o1.X + o1.Width > o2.X && o1.Y + o1.Height > o2.Y && o1.X < o2.X + o2.Width && o1.Y < o2.Y + o2.Height;
-        public Objects Clone() => new Objects(_scene, true);
+        public Objects Clone() => new Objects(_scene);
         public bool Contains(GameObject gameObject) => _objects.Contains(gameObject);
         public T[] GetAllObjectsOfType<T>() => _objects.OfType<T>().ToArray();
         private void MoveObjects()
