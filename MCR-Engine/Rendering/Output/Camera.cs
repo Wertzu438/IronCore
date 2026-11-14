@@ -81,7 +81,7 @@ public class Camera
             Thread.Sleep(10);
         }
     }
-    public void SetFollowedObject(GameObject followedObject)
+    public void SetFollowedObject(GameObject? followedObject)
     {
         ResetOffset();
         _followedObject = followedObject;
@@ -152,7 +152,7 @@ public class Camera
             return CinematicSpeedX;
         if (_currentMaxVelocityX < MinMaxVelocityX)
             return MinMaxVelocityX;
-        return _currentMaxVelocityX + (Math.Abs(_followedObject.GetVelocity().X) - _currentMaxVelocityX) * 3 * deltaTime;
+        return _currentMaxVelocityX + (Math.Abs(_followedObject.GetVelocity(true).X) - _currentMaxVelocityX) * 3 * deltaTime;
     }
     private double GetMaxVelocityY(double deltaTime)
     {
@@ -160,7 +160,7 @@ public class Camera
             return CinematicSpeedY;
         if (_currentMaxVelocityY < MinMaxVelocityY)
             return MinMaxVelocityY;
-        return _currentMaxVelocityY + (Math.Abs(_followedObject.GetVelocity().Y / 2) - _currentMaxVelocityY) * 3 * deltaTime;
+        return _currentMaxVelocityY + (Math.Abs(_followedObject.GetVelocity(true).Y / 2) - _currentMaxVelocityY) * 3 * deltaTime;
     }
     private double ReduceCameraSpeed(double velocity, double reduction, double deltaTime)
     {

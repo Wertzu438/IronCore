@@ -28,6 +28,23 @@ public class MovingObject : GameObject
             return amount;
         }
     }
+    public override (double X, double Y) GetVelocity(bool removeDeceleration = false)
+    {
+        if (!removeDeceleration)
+            return (CombinedVelocityX, CombinedVelocityY);
+        ArgumentNullException.ThrowIfNull(Objects);
+        double vX = 0, vY = 0;
+        if (CombinedVelocityX > 0)
+            vX = CombinedVelocityX + DefaultDeceleration * Objects.DeltaTime;
+        else if (CombinedVelocityX < 0)
+            vX = CombinedVelocityX - DefaultDeceleration * Objects.DeltaTime;
+        
+        if (CombinedVelocityY > 0)
+            vY = CombinedVelocityY + DefaultDeceleration * Objects.DeltaTime;
+        else if (CombinedVelocityY < 0)
+            vY = CombinedVelocityY - DefaultDeceleration * Objects.DeltaTime;
+        return (vX, vY);
+    }
     private MovingObject? ObjectBeneath => _objectBeneath;
     protected internal override void UpdatePosition()
     {

@@ -5,7 +5,8 @@ namespace MCR_Engine.ObjectSystem;
 public abstract class GameObject : IComparable<GameObject>
 {
     public const int MinLayer = 0, MaxLayer = 8;
-    private const double DefaultGravity = 330, DefaultDeceleration = 90, MaxGravity = 150;
+    protected const double DefaultDeceleration = 90;
+    private const double DefaultGravity = 330, MaxGravity = 150;
     protected Objects? Objects;
     protected double VelocityX, VelocityY;
     private readonly bool _collision, _gravity;
@@ -134,7 +135,7 @@ public abstract class GameObject : IComparable<GameObject>
         ArgumentNullException.ThrowIfNull(Objects);
         return Objects.ObjectOnScene(this, searchingDirection);
     }
-    public (double X, double Y) GetVelocity(bool removeDeceleration = false)
+    public virtual (double X, double Y) GetVelocity(bool removeDeceleration = false)
     {
         if (!removeDeceleration)
             return (VelocityX, VelocityY);
