@@ -19,7 +19,7 @@ namespace JumpOn.Core;
 /// Benötigt Camera.SetOffset(int x, int y) (siehe Hinweis in der Antwort).
 /// Neu: Holzkiste (Box) und bewegliche Plattform (MovingPlatform). Zeilenformat siehe EditorLevel.Line.
 /// </summary>
-public class MapEditor
+public class SceneEditor
 {
     private const string ScenesFolder = "Scenes", TexturesFolder = "Textures";
     private const int PanelWidth = 34, PanelMargin = 2;
@@ -137,7 +137,7 @@ public class MapEditor
     private int _cx, _cy, _grid = 1, _camX, _camY, _maxLayer = 7;
     private bool _panels = true, _help, _dirty, _dirtyBeforeGrab, _changed = true, _raysDirty, _ghostDirty = true, _exit;
 
-    public MapEditor(Engine engine)
+    public SceneEditor(Engine engine)
     {
         _engine = engine;
         _textures = engine.Textures;
