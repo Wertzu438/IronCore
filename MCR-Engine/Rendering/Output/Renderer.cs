@@ -41,12 +41,7 @@ internal class Renderer : ProcessTemplate
     {
         set
         {
-            if (State is ProcessState.Running)
-            {
-                ChangeAction(ProcessAction.Pause);
-                ChangeAction(ProcessAction.Start);
-            }
-            _camera.ResetOffset();
+            Camera.SetFollowedObject(null);
             _pairs = CreatePairs(value);
         }
     }
