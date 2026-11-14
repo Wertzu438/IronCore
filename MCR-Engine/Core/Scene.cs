@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using MCR_Engine.Objects;
+﻿using MCR_Engine.ObjectSystem;
 using MCR_Engine.Rendering.Output;
-using MCR_Engine.Core;
 
 namespace MCR_Engine.Core;
 
@@ -11,25 +9,22 @@ public enum PathType
 }
 public class Scene
 {
-    private readonly int _width, _height;
     private readonly Pixel[,] _pixels;
     private readonly RGB[,] _backgroundTexture;
     private readonly Camera _camera;
-    private Objects.Objects _objects;
+    private Objects _objects;
     public Scene(Camera camera, int width, int height, RGB[,] backgroundTexture)
     {
         if (height % 2 != 0)
             throw new ArgumentException("Height must be dividable by 2.");
         _camera = camera;
-        _width = width;
-        _height = height;
         _backgroundTexture = backgroundTexture;
-        _objects = new Objects.Objects(this);
-        _pixels = Create();
+        _pixels = Create(width, height);
+        _objects = new Objects(this);
     }
-    public Objects.Objects Objects => _objects;
-    public int Width => _width;
-    public int Height => _height;
+    public Objects Objects => _objects;
+    public int Width => _pixels.GetLength(0);
+    public int Height => _pixels.GetLength(1);
     private int BackgroundWidth => _backgroundTexture.GetLength(0);
     private int BackgroundHeight => _backgroundTexture.GetLength(1);
     public void Update(float deltaTime, bool renderAll = false)
@@ -56,24 +51,24 @@ public class Scene
             }
         }
     }
-    public void SetSpriteSnapshot(Objects.Objects objects)
+    public void SetSpriteSnapshot(Objects objects)
     {
         if (ReferenceEquals(objects, _objects))
             throw new ArgumentException("Sprites cannot be the same.");
         _objects = objects;
     }
-    public bool ValidPixelCoordinates(int x, int y) => x >= 0 && y >= 0 && x < _width && y < _height;
+    public bool ValidPixelCoordinates(int x, int y) => x >= 0 && y >= 0 && x < Width && y < Height;
     internal Pixel GetPixel(int x, int y)
     {
         if (!ValidPixelCoordinates(x, y))
             throw new InvalidDataException("X or Y invalide");
         return _pixels[x, y];
     }
-    private Pixel[,] Create()
+    private Pixel[,] Create(int width, int height)
     {
-        Pixel[,] newMap = new Pixel[_width, _height];
-        for (int y = 0; y < _height; y++)
-            for (int x = 0; x < _width; x++)
+        Pixel[,] newMap = new Pixel[width, height];
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
                 newMap[x, y] = new Pixel(_backgroundTexture[x % BackgroundWidth, y % BackgroundHeight]);
         return newMap;
     }
