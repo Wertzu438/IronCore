@@ -4,7 +4,7 @@ public enum ProcessAction
 {
     Start, Pause, Stop
 }
-internal enum ProcessState
+public enum ProcessState
 {
     Ready, Running, Paused, Stopped
 }
