@@ -4,7 +4,7 @@ public abstract class ProcessTemplate
 {
     protected ProcessAction? Action;
     protected ProcessState State;
-    protected ProcessTemplate()
+    internal ProcessTemplate()
     {
         Action = null;
         State = ProcessState.Ready;

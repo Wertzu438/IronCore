@@ -70,6 +70,8 @@ public class UIManager
             for (int y = 0; y < ui.Height - UIElement.Border * 2; y++)
             {
                 string line = ui.GetLine(y, out bool specialText);
+                if (line.Length == 0)
+                    continue;
                 int yMap = uiY + y + UIElement.Border;
                 for (int x = 0; x < ui.Width - UIElement.Border * 2; x++)
                 {
