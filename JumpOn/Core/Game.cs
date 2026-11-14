@@ -57,7 +57,6 @@ public class Game
         _lastChangedSideBarVisibilityMs = int.MinValue;
         LoadContent(true);
         Camera.SetFollowedObject(_player);
-        //Camera.GoToCoordinates(_player.X, _player.Y);
     }
     private Input Input => _engine.Input;
     private UIManager UI => _engine.UI;
