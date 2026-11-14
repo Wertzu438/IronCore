@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using MCR_Engine.Core;
 
-namespace MCR_Engine.Objects;
+namespace MCR_Engine.ObjectSystem;
 
 public class Objects : IEnumerable<GameObject>
     {
@@ -112,9 +112,7 @@ public class Objects : IEnumerable<GameObject>
                 return false;
             if (!ObjectBordersTouching(searchingGameObject, searchFor))
                 return false;
-            if (!searchExact || ObjectsOverlap(searchingGameObject, searchFor))
-                return true;
-            return false;
+            return !searchExact || ObjectsOverlap(searchingGameObject, searchFor);
         }
         public int GetDistanceToNextObject(GameObject gameObject, Direction direction, bool onlyWithCollision, Type[]? searchFor = null)
         {
@@ -176,16 +174,16 @@ public class Objects : IEnumerable<GameObject>
                     if (!_scene.ValidPixelCoordinates(cX, cY))
                         return null;
                     GameObject? obj = GetObjectMapPixel(cX, cY, searchFor);
-                    if (obj is not null && !gameObject.Equals(obj) && searchFor.Any(t => t.IsAssignableFrom(obj!.GetType())))
+                    if (obj is not null && !gameObject.Equals(obj) && searchFor.Any(type => type.IsAssignableFrom(obj!.GetType())))
                         return obj;
                 }
-                
             } while (true);
         }
-        public bool ObjectBordersTouching(GameObject o1, GameObject o2) => o1.X + o1.Width > o2.X && o1.Y + o1.Height > o2.Y && o1.X < o2.X + o2.Width && o1.Y < o2.Y + o2.Height;
+        public bool ObjectBordersTouching(GameObject o1, GameObject o2) 
+            => o1.X + o1.Width > o2.X && o1.Y + o1.Height > o2.Y && o1.X < o2.X + o2.Width && o1.Y < o2.Y + o2.Height;
         public Objects Clone() => new Objects(_scene, true);
         public bool Contains(GameObject gameObject) => _objects.Contains(gameObject);
-        public List<T> GetAllObjectsOfType<T>() => _objects.OfType<T>().ToList();
+        public T[] GetAllObjectsOfType<T>() => _objects.OfType<T>().ToArray();
         private void MoveObjects()
         {
             foreach (GameObject gameObject in _objects)

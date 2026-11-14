@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using MCR_Engine.Core;
-using MCR_Engine.Core.BaseObjectTypes;
+﻿using MCR_Engine.Core;
 
-namespace MCR_Engine.Objects;
+namespace MCR_Engine.ObjectSystem;
 
 public abstract class GameObject : IComparable<GameObject>
 {

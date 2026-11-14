@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace MCR_Engine.Objects;
+namespace MCR_Engine.ObjectSystem;
 
 public class ObjectsEnumerator : IEnumerator<GameObject>
 {
@@ -17,9 +17,6 @@ public class ObjectsEnumerator : IEnumerator<GameObject>
     {
         return ++_index < _objects.Count;
     }
-    public void Dispose()
-    {
-        return;
-    }
+    public void Dispose() { }
     public void Reset() => _index = -1;
 }
