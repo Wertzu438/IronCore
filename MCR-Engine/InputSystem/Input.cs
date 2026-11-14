@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using MCR_Engine.Core;
+using System.Diagnostics;
 
 namespace MCR_Engine.InputSystem;
 
@@ -35,7 +36,7 @@ public class Input : ProcessTemplate
     {
         while (Action is not ProcessAction.Stop)
         {
-            while (Action is ProcessAction.Pause)
+            while (Action is ProcessAction.Pause || !Engine.TerminalInForeground)
             {
                 State = ProcessState.Paused;
                 Thread.Sleep(1000);
@@ -69,6 +70,5 @@ public class Input : ProcessTemplate
         return false;
     }
     private static bool IsKeyPressed(Key key) => (GetAsyncKeyState(key.Code) & 0x8000) != 0;
-    [DllImport("user32.dll")]
-    private static extern short GetAsyncKeyState(int keyCode);
+    [DllImport("user32.dll")] private static extern short GetAsyncKeyState(int keyCode);
 }

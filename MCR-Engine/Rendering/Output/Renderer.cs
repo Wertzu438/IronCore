@@ -59,7 +59,7 @@ internal class Renderer : ProcessTemplate
         {
             _lastDeltaTime = (float)_stopwatch.ElapsedTicks / Stopwatch.Frequency;
             _stopwatch.Restart();
-            while (Action is ProcessAction.Pause || _pairs is null)
+            while (Action is ProcessAction.Pause || _pairs is null || !Engine.TerminalInForeground)
             {
                 State = ProcessState.Paused;
                 Thread.Sleep(100);

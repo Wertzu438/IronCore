@@ -95,7 +95,7 @@ public class Game
             {
                 return false;
             }
-            else if (Input.Get(PauseKeyName).Pressed)
+            else if (Input.Get(PauseKeyName).Pressed || !Engine.TerminalInForeground)
             {
                 ChangeSideBarVisibility(true);
                 _centeredInfoBox.Show(24, 5, [["!⏸️ PAUSIERT"], [$"-Fortfahren mit {CenteredInfoBox.ConfirmKeyName}"]], true);

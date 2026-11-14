@@ -1,4 +1,6 @@
-﻿using MCR_Engine.InputSystem;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using MCR_Engine.InputSystem;
 using MCR_Engine.Menus;
 using MCR_Engine.Rendering.Output;
 using MCR_Engine.Rendering.UI;
@@ -20,6 +22,7 @@ public class Engine
         _menus = new MenuManager();
         FileManager.LoadTextures(_textures);
     }
+    public static bool TerminalInForeground => IsTerminalInForeground();
     public int FramesPerSecond => _renderer.FramesPerSecond;
     public Input Input => _input;
     public Textures Textures => _textures;
@@ -54,4 +57,11 @@ public class Engine
     public void UpdateInputAction(ProcessAction newAction) => _input.ChangeAction(newAction);
     public static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);
     public static void Main() => throw new ArgumentException("Should never be called => Start with game project");
+    [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId( IntPtr hWnd, out uint processId);
+    static bool IsTerminalInForeground()
+    {
+        GetWindowThreadProcessId(GetForegroundWindow(), out uint pid);
+        return Process.GetProcessById((int)pid).ProcessName.Equals("WindowsTerminal");
+    }
 }
