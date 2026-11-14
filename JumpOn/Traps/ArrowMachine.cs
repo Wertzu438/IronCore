@@ -3,9 +3,8 @@ using JumpOn.Entities;
 using JumpOn.Entities.LivingEntities;
 using JumpOn.Entities.OtherEntities;
 using MCR_Engine.Core;
-using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.ObjectSystem;
-using SolidObject = MCR_Engine.Core.BaseObjectTypes.SolidObject;
+using SolidObject = MCR_Engine.ObjectSystem.BaseObjectTypes.SolidObject;
 
 namespace JumpOn.Traps;
 

@@ -2,8 +2,8 @@
 using JumpOn.Entities.LivingEntities;
 using JumpOn.Traps;
 using MCR_Engine.Core;
-using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.ObjectSystem;
+using MCR_Engine.ObjectSystem.BaseObjectTypes;
 
 namespace JumpOn.Collectables;
 

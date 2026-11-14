@@ -1,6 +1,6 @@
-﻿using MCR_Engine.ObjectSystem;
+﻿using MCR_Engine.Core;
 
-namespace MCR_Engine.Core.BaseObjectTypes;
+namespace MCR_Engine.ObjectSystem.BaseObjectTypes;
 
 public class MovingObject : GameObject
 {

@@ -6,8 +6,8 @@ using JumpOn.Interactables;
 using JumpOn.Traps;
 using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Core;
-using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.ObjectSystem;
+using MCR_Engine.ObjectSystem.BaseObjectTypes;
 
 namespace JumpOn.Core;
 
