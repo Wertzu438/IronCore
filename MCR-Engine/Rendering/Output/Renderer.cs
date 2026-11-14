@@ -1,12 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using JumpOn.Core;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
 using MCR_Engine.Rendering.UI;
 
 namespace MCR_Engine.Rendering.Output;
 
-internal class Renderer
+internal class Renderer : ProcessTemplate
 {
     private readonly StringBuilder _output;
     private readonly StreamWriter _writer;
@@ -17,8 +18,6 @@ internal class Renderer
     private PixelPair[,]? _pairs;
     private RGB _currentForegroundColor;
     private RGB _currentBackgroundColor;
-    private ProcessAction? _action;
-    private ProcessState _state;
     private float _lastDeltaTime;
     public Renderer(Input input)
     {
@@ -30,9 +29,7 @@ internal class Renderer
         _ui = new UIManager(this);
         _currentBackgroundColor = default;
         _currentForegroundColor = default;
-        _state = ProcessState.Ready;
         _pairs = null;
-        _action = null;
         _thread.Priority = ThreadPriority.AboveNormal;
         _lastDeltaTime = 0;
     }
@@ -45,7 +42,7 @@ internal class Renderer
     {
         set
         {
-            if (_state is ProcessState.Running)
+            if (State is ProcessState.Running)
             {
                 ChangeAction(ProcessAction.Pause);
                 ChangeAction(ProcessAction.Start);
@@ -54,27 +51,6 @@ internal class Renderer
             _pairs = CreatePairs(value);
         }
     }
-    public void ChangeAction(ProcessAction newAction)
-    {
-        if (newAction is ProcessAction.Start && _state is ProcessState.Ready or ProcessState.Paused)
-        {
-            _action = newAction;
-            if (_state is not ProcessState.Paused)
-                StartLoop();
-            else WaitForProcessState(ProcessState.Running);
-        }
-        else if (newAction is ProcessAction.Pause && _state is ProcessState.Running)
-        {
-            _action = newAction;
-            WaitForProcessState(ProcessState.Paused);
-        }
-        else if (newAction is ProcessAction.Stop && _state is ProcessState.Running or ProcessState.Paused)
-        {
-            _action = newAction;
-            WaitForProcessState(ProcessState.Stopped);
-        }
-        else throw new ArgumentException("Invalid action");
-    }
     public PixelPair GetPixelPair(int x, int y)
     {
         if (_pairs is null || !ValidPairCoordinates(x, y))
@@ -82,18 +58,19 @@ internal class Renderer
         return _pairs[x, y];
     }
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
+    protected override void StartLoop() => _thread.Start();
     private void Loop()
     {
-        while (_action is not ProcessAction.Stop)
+        while (Action is not ProcessAction.Stop)
         {
             _lastDeltaTime = (float)_stopwatch.ElapsedTicks / Stopwatch.Frequency;
             _stopwatch.Restart();
-            while (_action is ProcessAction.Pause || _pairs is null)
+            while (Action is ProcessAction.Pause || _pairs is null)
             {
-                _state = ProcessState.Paused;
+                State = ProcessState.Paused;
                 Thread.Sleep(100);
             }
-            _state = ProcessState.Running;
+            State = ProcessState.Running;
             _camera.RecalculateOffset(_lastDeltaTime);
             _output.Clear();
             int startX, startY, maxX, maxY;
@@ -112,7 +89,7 @@ internal class Renderer
             }
             RenderStringBuilder();
         }
-        _state = ProcessState.Stopped;
+        State = ProcessState.Stopped;
     }
     private void RenderStringBuilder()
     {
@@ -139,7 +116,7 @@ internal class Renderer
     private void WaitForProcessState(ProcessState state)
     {
         int ticks = 0;
-        while (_state != state && ticks < 400)
+        while (State != state && ticks < 400)
         {
             ticks++;
             Task.Delay(1).Wait();
@@ -147,7 +124,6 @@ internal class Renderer
         if (ticks >= 400)
             throw new Exception("Process state timed out");
     }
-    private void StartLoop() => _thread.Start();
     private static PixelPair[,] CreatePairs(Scene scene)
     {
         int height = scene.Height / 2 + scene.Height % 2;

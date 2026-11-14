@@ -26,7 +26,7 @@ public class Application : IGameProject
     }
     public ProgramState OpenEditor()
     {
-        new MapEditor(_engine).Run();
+        new SceneEditor(_engine).Run();
         return ProgramState.Menu;
     }
     public ProgramState PlayGame()
