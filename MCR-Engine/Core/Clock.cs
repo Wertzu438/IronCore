@@ -5,7 +5,7 @@ public class Clock
     private float _seconds;
     public Clock()
     {
-        _seconds = 0;
+        Reset();
     }
     public int PassedSeconds => (int)_seconds;
     public int PassedMilliSeconds => (int)(_seconds * 1000);
