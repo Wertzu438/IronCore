@@ -7,7 +7,7 @@ using JumpOn.Interactables;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
 using MCR_Engine.InputSystem;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 using MCR_Engine.Rendering.Output;
 using MCR_Engine.Rendering.UI;
 

@@ -1,5 +1,5 @@
 ﻿using MCR_Engine.Core;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 
 namespace JumpOn.Collectables;
 

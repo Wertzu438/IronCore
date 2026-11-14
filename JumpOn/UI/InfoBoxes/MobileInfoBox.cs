@@ -1,4 +1,4 @@
-﻿using MCR_Engine.Objects;
+﻿using MCR_Engine.ObjectSystem;
 using MCR_Engine.Rendering.UI;
 
 namespace JumpOn.UI.InfoBoxes;

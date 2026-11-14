@@ -28,10 +28,10 @@ public class Game
     private readonly PathFinding _pathFinding;
     private int _lastUpdatedPerformanceMs;
     private int _lastChangedSideBarVisibilityMs;
-    private List<Interactable> _interactables;
-    private List<Trap> _traps;
-    private List<Collectable> _collectables;
-    private List<Entity> _entities;
+    private Interactable[] _interactables;
+    private Trap[] _traps;
+    private Collectable[] _collectables;
+    private Entity[] _entities;
     private CheckPointManager _checkPoints;
     private Goal _goal;
     public Game(Engine engine, Account account, int level)

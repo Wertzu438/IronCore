@@ -3,7 +3,7 @@ using JumpOn.Entities;
 using JumpOn.Entities.LivingEntities;
 using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Core;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 using MCR_Engine.Rendering.Output;
 using MCR_Engine.Rendering.UI;
 
@@ -12,7 +12,7 @@ namespace JumpOn.CheckPoints;
 public class CheckPointManager
 {
     private const int SavingOffsetSeconds = 3;
-    private readonly List<CheckPoint> _checkPoints;
+    private readonly CheckPoint[] _checkPoints;
     private readonly CenteredInfoBox _centeredInfoBox;
     private readonly UIElement _infoBox;
     private readonly Scene _scene;
@@ -52,7 +52,7 @@ public class CheckPointManager
     private bool OneCollected => Collectable.CollectedAmount(_checkPoints) != 0;
     public void ResetPlayerToCheckPoint(Player player, bool firstLoad)
     {
-        if (_checkPoints.Count <= 0)
+        if (_checkPoints.Length <= 0)
             throw new ArgumentException("No player spawn points found");
         player.StopMovingX(); player.StopMovingY();
         player.X = _checkPoints[_lastCheckPointIndex].X;
@@ -80,7 +80,7 @@ public class CheckPointManager
     {
         if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
             return;
-        for (int i = 0; i < _checkPoints.Count; i++)
+        for (int i = 0; i < _checkPoints.Length; i++)
         {
             if (_checkPoints[i] != checkPoint)
                 continue;

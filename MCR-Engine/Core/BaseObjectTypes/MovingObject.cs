@@ -1,5 +1,4 @@
-﻿
-using MCR_Engine.Objects;
+﻿using MCR_Engine.ObjectSystem;
 
 namespace MCR_Engine.Core.BaseObjectTypes;
 
@@ -42,5 +41,5 @@ public class MovingObject : GameObject
         MoveAndCheckForCollision(CombinedVelocityX, CombinedVelocityY);
         ApplyDeceleration();
     }
-    public override GameObject? Clone(Objects.Objects objects) => new MovingObject(X, Y, Layer, Collision, Gravity, _texture, Visible);
+    public override GameObject? Clone(ObjectSystem.Objects objects) => new MovingObject(X, Y, Layer, Collision, Gravity, _texture, Visible);
 }

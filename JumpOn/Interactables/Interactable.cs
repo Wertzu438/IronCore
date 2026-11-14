@@ -2,7 +2,7 @@
 using JumpOn.Entities.LivingEntities;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 
 namespace JumpOn.Interactables;
 
@@ -27,7 +27,7 @@ public abstract class Interactable : NonSolidObject
 
         return overlap >= gameObject.Width / 1.9;
     }
-    public static void Update(List<Interactable> interactables, List<Entity> entities)
+    public static void Update(Interactable[] interactables, Entity[] entities)
     {
         foreach (Interactable interactable in interactables)
         {
@@ -41,5 +41,5 @@ public abstract class Interactable : NonSolidObject
         }
             
     }
-    public static List<Interactable> LoadInteractables(Objects objects) => objects.GetAllObjectsOfType<Interactable>();
+    public static Interactable[] LoadInteractables(Objects objects) => objects.GetAllObjectsOfType<Interactable>();
 }

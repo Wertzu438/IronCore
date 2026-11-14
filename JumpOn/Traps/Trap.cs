@@ -1,7 +1,7 @@
 ﻿using JumpOn.Entities;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 
 namespace JumpOn.Traps;
 
@@ -24,10 +24,10 @@ public abstract class Trap : NonSolidObject
             return;
         entity!.Damage(Damage, _criticalDamage, true);
     }
-    public static void Update(List<Trap> traps)
+    public static void Update(Trap[] traps)
     {
         foreach (Trap trap in traps)
             trap.Update();
     }
-    public static List<Trap> LoadTraps(Objects objects) => objects.GetAllObjectsOfType<Trap>();
+    public static Trap[] LoadTraps(Objects objects) => objects.GetAllObjectsOfType<Trap>();
 }

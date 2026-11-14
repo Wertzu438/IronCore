@@ -1,7 +1,7 @@
 ﻿using JumpOn.Core;
 using JumpOn.Interactables;
 using MCR_Engine.Core;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 using SolidObject = MCR_Engine.Core.BaseObjectTypes.SolidObject;
 
 namespace JumpOn.Entities;

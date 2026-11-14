@@ -2,7 +2,7 @@
 using JumpOn.Entities.OtherEntities;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 
 namespace JumpOn.Entities;
 
@@ -82,7 +82,7 @@ public abstract class Entity : MovingObject
             throw new ArgumentException("Invalid direction");
         SetNewVelocity(direction, speed);
     }
-    public static void Update(List<Entity> entities, Scene scene)
+    public static void Update(Entity[] entities, Scene scene)
     {
         foreach (Entity entity in entities)
         {
@@ -99,5 +99,5 @@ public abstract class Entity : MovingObject
             entity.StopMovingX();
         }
     }
-    public static List<Entity> LoadEntities(Objects objects) => objects.GetAllObjectsOfType<Entity>();
+    public static Entity[] LoadEntities(Objects objects) => objects.GetAllObjectsOfType<Entity>();
 }

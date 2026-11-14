@@ -1,7 +1,7 @@
 ﻿using JumpOn.Core;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 
 namespace JumpOn.Entities.LivingEntities;
 

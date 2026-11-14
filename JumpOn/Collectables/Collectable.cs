@@ -3,7 +3,7 @@ using JumpOn.Entities.LivingEntities;
 using JumpOn.Traps;
 using MCR_Engine.Core;
 using MCR_Engine.Core.BaseObjectTypes;
-using MCR_Engine.Objects;
+using MCR_Engine.ObjectSystem;
 
 namespace JumpOn.Collectables;
 
@@ -33,12 +33,12 @@ public abstract class Collectable : NonSolidObject
         player = null;
         return false;
     }
-    public static void Update(List<Collectable> collectables)
+    public static void Update(Collectable[] collectables)
     {
         foreach (Collectable collectable in collectables)
             collectable.Update();
     }
-    public static int CollectedAmount<T>(List<T> collectables) where T : Collectable
+    public static int CollectedAmount<T>(T[] collectables) where T : Collectable
     {
         int sum = 0;
         foreach (T collectable in collectables)
@@ -46,6 +46,6 @@ public abstract class Collectable : NonSolidObject
                 sum++;
         return sum;
     }
-    public static bool AreAllCollected<T>(List<T> collectables) where T : Collectable => CollectedAmount(collectables) == collectables.Count;
-    public static List<Collectable> LoadCollectables(Objects objects) => objects.GetAllObjectsOfType<Collectable>();
+    public static bool AreAllCollected<T>(T[] collectables) where T : Collectable => CollectedAmount(collectables) == collectables.Length;
+    public static Collectable[] LoadCollectables(Objects objects) => objects.GetAllObjectsOfType<Collectable>();
 }

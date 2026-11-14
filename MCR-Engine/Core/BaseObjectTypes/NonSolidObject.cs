@@ -1,4 +1,4 @@
-﻿using MCR_Engine.Objects;
+﻿using MCR_Engine.ObjectSystem;
 
 namespace MCR_Engine.Core.BaseObjectTypes;
 
@@ -14,7 +14,7 @@ public class NonSolidObject : GameObject
         Amount = amount;
         ChangeVisibility(visible);
     }
-    public override GameObject? Clone(Objects.Objects objects) => new NonSolidObject(X, Y, Layer, Gravity, BaseTexture, TextureExpansion, Amount, Visible);
+    public override GameObject? Clone(ObjectSystem.Objects objects) => new NonSolidObject(X, Y, Layer, Gravity, BaseTexture, TextureExpansion, Amount, Visible);
     private static RGB?[,] GetTexture(RGB?[,] baseTexture, Direction? textureExpansion, int? amount)
     {
         if (!(textureExpansion.HasValue && amount.HasValue) || amount.Value <= 1)
