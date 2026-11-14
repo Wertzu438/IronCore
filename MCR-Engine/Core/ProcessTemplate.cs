@@ -1,6 +1,4 @@
-﻿using MCR_Engine.Core;
-
-namespace JumpOn.Core;
+﻿namespace MCR_Engine.Core;
 
 public abstract class ProcessTemplate
 {

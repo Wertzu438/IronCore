@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using JumpOn.Core;
 using MCR_Engine.Core;
 
 namespace MCR_Engine.InputSystem;
@@ -58,7 +57,7 @@ public class Input : ProcessTemplate
         }
         State = ProcessState.Stopped;
     }
-    public static bool IsOnePressed(List<Key> keys)
+    public static bool IsOnePressed(Key[] keys)
     {
         foreach (Key key in keys)
         {
