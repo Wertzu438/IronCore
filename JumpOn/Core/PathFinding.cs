@@ -122,7 +122,7 @@ public class PathFinding
         if (!_scene.ValidPixelCoordinates(x, y))
             return false;
         GameObject? sprite = _scene.Objects.GetObjectMapPixel(x, y);
-        if (sprite != null && sprite.Collision)
+        if (sprite != null && sprite.IsCollidable)
             return false;
         return true;
     }

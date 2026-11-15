@@ -64,7 +64,7 @@ public class Box : Entity
             MovingObject? gameObject = GetNearestObject(direction, [typeof(MovingObject)]) as MovingObject;
             if (gameObject == null || Math.Abs(gameObject.GetVelocity().X) < Math.Abs(objectVelocityX))
                 continue;
-            objectVelocityX = gameObject.GetVelocity().X;
+            objectVelocityX = gameObject.GetVelocity(true).X;
             isBox = gameObject.GetType() == typeof(Box);
             if ((direction is Direction.Left && objectVelocityX < 0) || (direction is Direction.Right && objectVelocityX > 0))
                 objectVelocityX = 0;

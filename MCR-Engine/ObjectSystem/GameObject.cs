@@ -5,9 +5,9 @@ namespace MCR_Engine.ObjectSystem;
 public abstract class GameObject : IComparable<GameObject>
 {
     public const int MinLayer = 0, MaxLayer = 8;
-    protected Objects? Objects;
-    protected double CurrentX,  CurrentY;
     protected readonly bool HasCollision;
+    protected double CurrentX,  CurrentY;
+    protected Objects? Objects;
     private int _layer;
     private RGB?[,] _texture;
     internal GameObject(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)

@@ -17,8 +17,10 @@ public class MovingObject : GameObject
         _objectBeneath = null;
     }
     public bool Move => Math.Abs(VelocityX) + Math.Abs(VelocityY) > 0;
-    protected virtual double CombinedVelocityX => VelocityX + (_objectBeneath == null ? 0 : _objectBeneath.CombinedVelocityX);
-    protected virtual double CombinedVelocityY => VelocityY + (_objectBeneath == null ? 0 : _objectBeneath.CombinedVelocityY);
+    protected virtual bool StopOnCollisionX => true;
+    protected virtual bool StopOnCollisionY => true;
+    protected virtual double CombinedVelocityX => VelocityX + (_objectBeneath is null ? 0 : _objectBeneath.CombinedVelocityX);
+    protected virtual double CombinedVelocityY => VelocityY + (_objectBeneath is null ? 0 : _objectBeneath.CombinedVelocityY);
     protected int MovingObjectsBeneath
     {
         get
@@ -28,18 +30,15 @@ public class MovingObject : GameObject
             while (a != null)
             {
                 amount++;
-                a = a.ObjectBeneath;
+                a = a._objectBeneath;
             }
             return amount;
         }
     }
-    private MovingObject? ObjectBeneath => _objectBeneath;
     public override void TickUpdate()
     {
         if (Gravity) 
             HandleGravity();
-        if (!Move) 
-            return;
         if (GetDistanceToNextObject(Direction.Down, false, [typeof(MovingObject)]) == 0)
         {
             _objectBeneath = GetNearestObject(Direction.Down, [typeof(MovingObject)]) as MovingObject;
@@ -147,7 +146,7 @@ public class MovingObject : GameObject
     {
         double xOld = CurrentX;
         CurrentX += xAdd;
-        if (!Collision || !IsBordersCollision(out _))
+        if (!HasCollision || !IsBordersCollision(out _))
             return true;
         CurrentX = xOld;
         return false;
@@ -171,5 +170,5 @@ public class MovingObject : GameObject
         }
         return velocitySteps;
     }
-    public override GameObject? Clone(Objects objects) => new MovingObject(X, Y, Layer, Collision, Gravity, _texture, Visible);
+    public override GameObject? Clone(Objects objects) => new MovingObject(X, Y, Layer, IsCollidable, Gravity, _texture, Visible);
 }
