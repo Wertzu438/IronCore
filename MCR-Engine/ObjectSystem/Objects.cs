@@ -65,7 +65,7 @@ public class Objects : IEnumerable<GameObject>
         for (int currentLayer = GameObject.MaxLayer - 1; currentLayer >= GameObject.MinLayer; currentLayer--)
         {
             GameObject? obj = _map[currentLayer][x, y];
-            if (obj is null || (searchFor != null && !searchFor.Any(t => t.IsAssignableFrom(obj.GetType()))) || (onlyWithCollision && !obj.Collision))
+            if (obj is null || (searchFor != null && !searchFor.Any(t => t.IsAssignableFrom(obj.GetType()))) || (onlyWithCollision && !obj.IsCollidable))
                 continue;
             return _map[currentLayer][x, y];
         }
@@ -93,7 +93,7 @@ public class Objects : IEnumerable<GameObject>
                 continue;
             if (currentGameObject == searchingGameObject)
                 continue;
-            if (!currentGameObject.Collision && searchFor is null)
+            if (!currentGameObject.IsCollidable && searchFor is null)
                 continue;
             if (!ObjectBordersTouching(currentGameObject, searchingGameObject))
                 continue;
@@ -105,7 +105,7 @@ public class Objects : IEnumerable<GameObject>
     }
     internal bool Collision(GameObject searchingGameObject, GameObject searchFor, bool searchExact)
     {
-        if (!searchFor.Collision)
+        if (!searchFor.IsCollidable)
             return false;
         if (!ObjectBordersTouching(searchingGameObject, searchFor))
             return false;
@@ -141,7 +141,7 @@ public class Objects : IEnumerable<GameObject>
                 }
                 GameObject? obj = GetObjectMapPixel(cX, cY, searchFor, onlyWithCollision);
                 if (obj is not null && (searchFor is null || searchFor.Any(t => t.IsInstanceOfType(obj!))) &&
-                (!onlyWithCollision || obj.Collision) && !gameObject.Equals(obj))
+                (!onlyWithCollision || obj.IsCollidable) && !gameObject.Equals(obj))
                     return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
             }
         } while (true);
