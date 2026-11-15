@@ -28,6 +28,7 @@ public class MovingObject : GameObject
             return amount;
         }
     }
+    private MovingObject? ObjectBeneath => _objectBeneath;
     public override (double X, double Y) GetVelocity(bool removeDeceleration = false)
     {
         if (!removeDeceleration)
@@ -45,7 +46,6 @@ public class MovingObject : GameObject
             vY = CombinedVelocityY - DefaultDeceleration * Objects.DeltaTime;
         return (vX, vY);
     }
-    private MovingObject? ObjectBeneath => _objectBeneath;
     protected internal override void UpdatePosition()
     {
         if (GetDistanceToNextObject(Direction.Down, false, [typeof(MovingObject)]) == 0)
@@ -58,5 +58,5 @@ public class MovingObject : GameObject
         MoveAndCheckForCollision(CombinedVelocityX, CombinedVelocityY);
         ApplyDeceleration();
     }
-    public override GameObject? Clone(ObjectSystem.Objects objects) => new MovingObject(X, Y, Layer, Collision, Gravity, _texture, Visible);
+    public override GameObject? Clone(Objects objects) => new MovingObject(X, Y, Layer, Collision, Gravity, _texture, Visible);
 }
