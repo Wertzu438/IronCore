@@ -10,13 +10,12 @@ public abstract class GameObject : IComparable<GameObject>
     protected Objects? Objects;
     private int _layer;
     private RGB?[,] _texture;
-    internal GameObject(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
+    internal GameObject(int x, int y, RGB?[,] texture, int layer, bool collision)
     {
         CurrentX  = x; CurrentY = y;
         _texture = texture;
         Layer = layer;
         HasCollision = collision;
-        Gravity = gravity;
         Visible = true;
     }
     public int Width => _texture.GetLength(0);
@@ -38,7 +37,6 @@ public abstract class GameObject : IComparable<GameObject>
         set => _layer = (value is >= MinLayer and < MaxLayer ? value : throw new ArgumentException($"Value must >= 0 and < {MaxLayer}. ({value})"));
     }
     public bool Visible { get; private set; }
-    protected virtual bool Gravity { get; }
     public virtual void TickUpdate() { }
     public int GetDistanceToNextObject(Direction direction, bool onlyWithCollision, Type[]? searchFor = null)
     {

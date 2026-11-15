@@ -7,7 +7,7 @@ namespace JumpOn.Traps;
 public class Ray : NonSolidObject
 {
     private readonly RGB?[,] _baseTexture;
-    public Ray(int x, int y, RGB?[,] baseTexture) : base(x, y, 1, false, baseTexture, Direction.Down)
+    public Ray(int x, int y, RGB?[,] baseTexture) : base(x, y, 1, baseTexture, Direction.Down)
     {
         _baseTexture = baseTexture;
     }

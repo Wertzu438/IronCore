@@ -9,18 +9,20 @@ public class MovingObject : GameObject
     protected double VelocityX, VelocityY;
     private readonly RGB?[,] _texture;
     private MovingObject? _objectBeneath;
-    public MovingObject(int x, int y, int layer, bool collision, bool gravity, RGB?[,] texture, bool visible = true) : base(x, y, texture, layer, collision, gravity)
+    public MovingObject(int x, int y, int layer, bool collision, bool gravity, RGB?[,] texture, bool visible = true) : base(x, y, texture, layer, collision)
     {
         VelocityX = VelocityY = 0;
         _texture = texture;
         ChangeVisibility(visible);
         _objectBeneath = null;
+        Gravity = gravity;
     }
     public bool Move => Math.Abs(VelocityX) + Math.Abs(VelocityY) > 0;
     protected virtual bool StopOnCollisionX => true;
     protected virtual bool StopOnCollisionY => true;
     protected virtual double CombinedVelocityX => VelocityX + (_objectBeneath is null ? 0 : _objectBeneath.CombinedVelocityX);
     protected virtual double CombinedVelocityY => VelocityY + (_objectBeneath is null ? 0 : _objectBeneath.CombinedVelocityY);
+    protected virtual bool Gravity { get; }
     protected int MovingObjectsBeneath
     {
         get

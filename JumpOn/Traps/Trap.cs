@@ -8,7 +8,7 @@ namespace JumpOn.Traps;
 public abstract class Trap : NonSolidObject
 {
     private readonly bool _criticalDamage;
-    protected Trap(int x, int y, RGB?[,] texture, bool criticalDamage) : base(x, y, 1, false, texture)
+    protected Trap(int x, int y, RGB?[,] texture, bool criticalDamage) : base(x, y, 1, texture)
     {
         _criticalDamage = criticalDamage;
     }

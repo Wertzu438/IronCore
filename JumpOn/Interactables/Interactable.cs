@@ -9,7 +9,7 @@ namespace JumpOn.Interactables;
 public abstract class Interactable : NonSolidObject
 {
     private readonly bool _ignoreHalfCoverage;
-    public Interactable(int x, int y, RGB?[,] texture, bool ignoreHalfCoverage) : base(x, y, 0, false, texture)
+    public Interactable(int x, int y, RGB?[,] texture, bool ignoreHalfCoverage) : base(x, y, 0, texture)
     {
         _ignoreHalfCoverage = ignoreHalfCoverage;
     }

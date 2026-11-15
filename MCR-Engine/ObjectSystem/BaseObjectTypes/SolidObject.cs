@@ -7,7 +7,7 @@ public class SolidObject : GameObject
     protected readonly RGB?[,] BaseTexture;
     protected readonly Direction? TextureExpansion;
     protected readonly int? Amount;
-    public SolidObject(int x, int y, int layer, RGB?[,] baseTexture, Direction? textureExpansion = null, int? amount = null, bool visible = true) : base(x, y, GetTexture(baseTexture, textureExpansion, amount), layer, true, false)
+    public SolidObject(int x, int y, int layer, RGB?[,] baseTexture, Direction? textureExpansion = null, int? amount = null, bool visible = true) : base(x, y, GetTexture(baseTexture, textureExpansion, amount), layer, true)
     {
         BaseTexture = baseTexture;
         TextureExpansion = textureExpansion;

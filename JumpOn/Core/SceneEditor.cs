@@ -1981,7 +1981,7 @@ internal enum ObjType
 /// <summary>Reines Vorschau-Sprite ohne Spiellogik (keine Kollision, keine Schwerkraft).</summary>
 internal sealed class EditorGameObject : NonSolidObject
 {
-    public EditorGameObject(int x, int y, RGB?[,] texture, int layer) : base(x, y, layer, false,texture)
+    public EditorGameObject(int x, int y, RGB?[,] texture, int layer) : base(x, y, layer,texture)
     {
     }
 

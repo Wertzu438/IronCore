@@ -10,7 +10,7 @@ namespace JumpOn.Collectables;
 public abstract class Collectable : NonSolidObject
 {
     protected bool Collected;
-    protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, 3, true, texture)
+    protected Collectable(int x, int y, RGB?[,] texture) : base(x, y, 3, texture)
     {
     }
     public virtual bool IsCollected

@@ -6,7 +6,7 @@ namespace JumpOn.Core;
 
 public class DecorationObject : NonSolidObject
 {
-    public DecorationObject(int x, int y, int layer, RGB?[,] baseTexture, Direction? textureExpansion = null, int? amount = null) : base(x, y, layer, true, baseTexture, textureExpansion, amount)
+    public DecorationObject(int x, int y, int layer, RGB?[,] baseTexture, Direction? textureExpansion = null, int? amount = null) : base(x, y, layer, baseTexture, textureExpansion, amount)
     {
         
     }
