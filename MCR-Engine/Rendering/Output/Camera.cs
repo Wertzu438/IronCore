@@ -41,7 +41,7 @@ public class Camera
         {
             if (_followedObject is null)
                 return 0;
-            return Math.Abs(_followedObject.X + _followedObject.Width / 2);
+            return _followedObject.X + _followedObject.Width / 2;
         }
     }
     private int ObjY
@@ -50,7 +50,7 @@ public class Camera
         {
             if (_followedObject is null)
                 return 0;
-            return Math.Abs((_followedObject.Y + _followedObject.Height / 2) / 2);
+            return (_followedObject.Y + _followedObject.Height / 2) / 2;
         }
     }
     private double ObjVelocityX
@@ -59,7 +59,7 @@ public class Camera
         {
             if (_followedObject is not MovingObject mO)
                 return 0;
-            return mO.GetVelocity().X;
+            return Math.Abs(mO.GetVelocity().X);
         }
     }
     private double ObjVelocityY
@@ -68,7 +68,7 @@ public class Camera
         {
             if (_followedObject is not MovingObject mO)
                 return 0;
-            return mO.GetVelocity().Y;
+            return Math.Abs(mO.GetVelocity().Y / 2);
         }
     }
     public void RecalculateOffset(float deltaTime)
