@@ -55,19 +55,9 @@ public class Objects : IEnumerable<GameObject>
             return -1;
         }
         public bool Remove(GameObject gameObject) => _objects.Remove(gameObject);
-        public bool ObjectOnScene(GameObject gameObject, Direction? searchingDirection = null)
-        {
-            if (searchingDirection is null)
-                return _scene.ValidPixelCoordinates(gameObject.X, gameObject.Y) && 
-                       _scene.ValidPixelCoordinates(gameObject.X + gameObject.Width, gameObject.Y + gameObject.Height);
-            if (searchingDirection is Direction.Up or Direction.Down)
-                return _scene.ValidPixelCoordinates(0, gameObject.Y) && 
-                       _scene.ValidPixelCoordinates(0, gameObject.Y + gameObject.Height);
-            if (searchingDirection is Direction.Left or Direction.Right)
-                return _scene.ValidPixelCoordinates(gameObject.X, 0) &&
-                       _scene.ValidPixelCoordinates(gameObject.X + gameObject.Width - 1, 0);
-            throw new ArgumentException($"Invalid direction {searchingDirection}");
-        }
+        public Objects Clone() => new Objects(_scene);
+        public bool Contains(GameObject gameObject) => _objects.Contains(gameObject);
+        public T[] GetAllObjectsOfType<T>() => _objects.OfType<T>().ToArray();
         public GameObject? GetObjectMapPixel(int x, int y, Type[]? searchFor = null, bool onlyWithCollision = false)
         {
             if (!_scene.ValidPixelCoordinates(x, y))
@@ -81,7 +71,20 @@ public class Objects : IEnumerable<GameObject>
             }
             return null;
         }
-        public bool Collision(GameObject searchingGameObject, bool searchExact, out GameObject? collidedGameObject, Type[]? searchFor = null)
+        internal bool ObjectOnScene(GameObject gameObject, Direction? searchingDirection = null)
+        {
+            if (searchingDirection is null)
+                return _scene.ValidPixelCoordinates(gameObject.X, gameObject.Y) && 
+                       _scene.ValidPixelCoordinates(gameObject.X + gameObject.Width, gameObject.Y + gameObject.Height);
+            if (searchingDirection is Direction.Up or Direction.Down)
+                return _scene.ValidPixelCoordinates(0, gameObject.Y) && 
+                       _scene.ValidPixelCoordinates(0, gameObject.Y + gameObject.Height);
+            if (searchingDirection is Direction.Left or Direction.Right)
+                return _scene.ValidPixelCoordinates(gameObject.X, 0) &&
+                       _scene.ValidPixelCoordinates(gameObject.X + gameObject.Width - 1, 0);
+            throw new ArgumentException($"Invalid direction {searchingDirection}");
+        }
+        internal bool Collision(GameObject searchingGameObject, bool searchExact, out GameObject? collidedGameObject, Type[]? searchFor = null)
         {
             collidedGameObject = null;
             foreach (var currentGameObject in _objects)
@@ -100,7 +103,7 @@ public class Objects : IEnumerable<GameObject>
             }
             return false;
         }
-        public bool Collision(GameObject searchingGameObject, GameObject searchFor, bool searchExact)
+        internal bool Collision(GameObject searchingGameObject, GameObject searchFor, bool searchExact)
         {
             if (!searchFor.Collision)
                 return false;
@@ -108,7 +111,7 @@ public class Objects : IEnumerable<GameObject>
                 return false;
             return !searchExact || ObjectsOverlap(searchingGameObject, searchFor);
         }
-        public int GetDistanceToNextObject(GameObject gameObject, Direction direction, bool onlyWithCollision, Type[]? searchFor = null)
+        internal int GetDistanceToNextObject(GameObject gameObject, Direction direction, bool onlyWithCollision, Type[]? searchFor = null)
         {
             if (direction is Direction.None)
                 throw new ArgumentException("Invalid direction.");
@@ -137,14 +140,13 @@ public class Objects : IEnumerable<GameObject>
                         return -1;
                     }
                     GameObject? obj = GetObjectMapPixel(cX, cY, searchFor, onlyWithCollision);
-                    if (obj is not null && (searchFor is null || searchFor.Any(t => t.IsAssignableFrom(obj!.GetType()))) &&
+                    if (obj is not null && (searchFor is null || searchFor.Any(t => t.IsInstanceOfType(obj!))) &&
                     (!onlyWithCollision || obj.Collision) && !gameObject.Equals(obj))
                         return Math.Abs(xAdd) + Math.Abs(yAdd) - 1;
                 }
             } while (true);
-            
         }
-        public GameObject? GetNearestObject(GameObject gameObject, Direction direction, Type[] searchFor)
+        internal GameObject? GetNearestObject(GameObject gameObject, Direction direction, Type[] searchFor)
         {
             if (searchFor.Length == 0 || direction is Direction.None)
                 throw new ArgumentException("The values are invalid.");
@@ -168,16 +170,11 @@ public class Objects : IEnumerable<GameObject>
                     if (!_scene.ValidPixelCoordinates(cX, cY))
                         return null;
                     GameObject? obj = GetObjectMapPixel(cX, cY, searchFor);
-                    if (obj is not null && !gameObject.Equals(obj) && searchFor.Any(type => type.IsAssignableFrom(obj!.GetType())))
+                    if (obj is not null && !gameObject.Equals(obj) && searchFor.Any(type => type.IsInstanceOfType(obj!)))
                         return obj;
                 }
             } while (true);
         }
-        public bool ObjectBordersTouching(GameObject o1, GameObject o2) 
-            => o1.X + o1.Width > o2.X && o1.Y + o1.Height > o2.Y && o1.X < o2.X + o2.Width && o1.Y < o2.Y + o2.Height;
-        public Objects Clone() => new Objects(_scene);
-        public bool Contains(GameObject gameObject) => _objects.Contains(gameObject);
-        public T[] GetAllObjectsOfType<T>() => _objects.OfType<T>().ToArray();
         private void MoveObjects()
         {
             foreach (GameObject gameObject in _objects)
@@ -209,7 +206,7 @@ public class Objects : IEnumerable<GameObject>
                     for (int x = 0; x < _scene.Width; x++)
                         _map[layer][x, y] = null;
         }
-        public static bool ObjectsOverlap(GameObject s1, GameObject s2)
+        private static bool ObjectsOverlap(GameObject s1, GameObject s2)
         {
             for (int y = 0; y < s1.Height; y++)
             {
@@ -220,6 +217,10 @@ public class Objects : IEnumerable<GameObject>
                 }
             }
             return false;
+        }
+        private static bool ObjectBordersTouching(GameObject o1, GameObject o2)
+        {
+            return o1.X + o1.Width > o2.X && o1.Y + o1.Height > o2.Y && o1.X < o2.X + o2.Width && o1.Y < o2.Y + o2.Height;
         }
         public IEnumerator<GameObject> GetEnumerator() => new ObjectsEnumerator(_objects);
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
