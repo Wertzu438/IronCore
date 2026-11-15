@@ -7,8 +7,7 @@ public abstract class GameObject : IComparable<GameObject>
     public const int MinLayer = 0, MaxLayer = 8;
     protected Objects? Objects;
     protected double CurrentX,  CurrentY;
-    private readonly bool _collision, _gravity;
-    private bool _visible;
+    protected readonly bool HasCollision;
     private int _layer;
     private RGB?[,] _texture;
     internal GameObject(int x, int y, RGB?[,] texture, int layer, bool collision, bool gravity)
@@ -16,14 +15,13 @@ public abstract class GameObject : IComparable<GameObject>
         CurrentX  = x; CurrentY = y;
         _texture = texture;
         Layer = layer;
-        _collision = collision;
-        _gravity = gravity;
-        _visible = true;
+        HasCollision = collision;
+        Gravity = gravity;
+        Visible = true;
     }
     public int Width => _texture.GetLength(0);
     public int Height => _texture.GetLength(1);
-    public bool Collision => _collision && Visible;
-    public bool Visible => _visible;
+    public bool IsCollidable => HasCollision && Visible;
     public int X
     {
         get => (int)Math.Round(CurrentX);
@@ -37,11 +35,10 @@ public abstract class GameObject : IComparable<GameObject>
     public int Layer
     {
         get => _layer; 
-        set => _layer = (value >= MinLayer && value < MaxLayer ? value : throw new ArgumentException($"Value must be equal or greater than 0 and smaller than {MaxLayer}. ({value})"));
+        set => _layer = (value is >= MinLayer and < MaxLayer ? value : throw new ArgumentException($"Value must >= 0 and < {MaxLayer}. ({value})"));
     }
-    protected virtual bool Gravity => _gravity;
-    protected virtual bool StopOnCollisionX => true;
-    protected virtual bool StopOnCollisionY => true;
+    public bool Visible { get; private set; }
+    protected virtual bool Gravity { get; }
     public virtual void TickUpdate() { }
     public int GetDistanceToNextObject(Direction direction, bool onlyWithCollision, Type[]? searchFor = null)
     {
@@ -79,7 +76,7 @@ public abstract class GameObject : IComparable<GameObject>
         return Objects.ObjectOnScene(this, searchingDirection);
     }
     public void SetObjectManager(Objects objects) => Objects = objects ?? throw new InvalidOperationException("Sprite manager is not set.");
-    public void ChangeVisibility(bool? value = null) => _visible = value ?? !_visible;
+    public void ChangeVisibility(bool? value = null) => Visible = value ?? !Visible;
     public RGB? GetColor(int x, int y) => _texture[x, y];
     public void SetNewTexture(RGB?[,] texture) => _texture = texture;
     public bool CoordinatesOnObject(int x, int y) => (x >= X && y >= Y && x < X + Width && y < Y + Height);
