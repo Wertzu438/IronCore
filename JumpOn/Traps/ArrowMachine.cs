@@ -15,7 +15,7 @@ public class ArrowMachine : Trap
     private readonly RGB?[,] _arrowTexture; 
     private readonly RGB?[,] _deviceTexture;
     private readonly Clock _clock;
-    private readonly List<TrapChildObject> _arrows;
+    private readonly List<Arrow> _arrows;
     private readonly Direction _direction;
     private readonly double _arrowOffset;
     private int _lastMsShot;
@@ -46,7 +46,7 @@ public class ArrowMachine : Trap
     public override GameObject? Clone(Objects objects) => new ArrowMachine(X, Y, _direction, _arrowOffset, _deviceTexture, _arrowTexture, _clock);
     protected override void Update()
     {
-        foreach (TrapChildObject arrow in _arrows)
+        foreach (Arrow arrow in _arrows)
         {
             if (arrow.Visible && arrow.OnScene() && arrow.GetDistanceToNextObject(_direction, false, [typeof(SolidObject), typeof(DecorationObject), typeof(Box), typeof(Scene)]) > 0)
             {
@@ -65,7 +65,7 @@ public class ArrowMachine : Trap
     }
     protected override bool IsSomeoneInTrap(out Entity? entity)
     {
-        foreach (TrapChildObject arrow in _arrows)
+        foreach (Arrow arrow in _arrows)
         {
             if (!arrow.Visible || !arrow.IsExactCollision(out GameObject? sprite, [typeof(Player)]))
                 continue;
@@ -87,7 +87,7 @@ public class ArrowMachine : Trap
             _arrows[i].SetNewVelocity(_direction, ArrowSpeed);
             return;
         }
-        TrapChildObject arrow = new TrapChildObject(ArrowStartX, ArrowStartY, _arrowTexture);
+        Arrow arrow = new Arrow(ArrowStartX, ArrowStartY, _arrowTexture);
         arrow.ChangeVisibility(true);
         arrow.SetNewVelocity(_direction, ArrowSpeed);
         Objects.Add(arrow);
