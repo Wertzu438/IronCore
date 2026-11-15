@@ -1,6 +1,7 @@
 ﻿using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
 using MCR_Engine.ObjectSystem;
+using MCR_Engine.ObjectSystem.BaseObjectTypes;
 
 namespace MCR_Engine.Rendering.Output;
 
@@ -40,7 +41,7 @@ public class Camera
         {
             if (_followedObject is null)
                 return 0;
-            return _followedObject.X + _followedObject.Width / 2;
+            return Math.Abs(_followedObject.X + _followedObject.Width / 2);
         }
     }
     private int ObjY
@@ -49,7 +50,25 @@ public class Camera
         {
             if (_followedObject is null)
                 return 0;
-            return (_followedObject.Y + _followedObject.Height / 2) / 2;
+            return Math.Abs((_followedObject.Y + _followedObject.Height / 2) / 2);
+        }
+    }
+    private double ObjVelocityX
+    {
+        get
+        {
+            if (_followedObject is not MovingObject mO)
+                return 0;
+            return mO.GetVelocity().X;
+        }
+    }
+    private double ObjVelocityY
+    {
+        get
+        {
+            if (_followedObject is not MovingObject mO)
+                return 0;
+            return mO.GetVelocity().Y;
         }
     }
     public void RecalculateOffset(float deltaTime)
@@ -152,7 +171,7 @@ public class Camera
             return CinematicSpeedX;
         if (_currentMaxVelocityX < MinMaxVelocityX)
             return MinMaxVelocityX;
-        return _currentMaxVelocityX + (Math.Abs(_followedObject.GetVelocity(true).X) - _currentMaxVelocityX) * 3 * deltaTime;
+        return _currentMaxVelocityX + (ObjVelocityX - _currentMaxVelocityX) * 3 * deltaTime;
     }
     private double GetMaxVelocityY(double deltaTime)
     {
@@ -160,7 +179,7 @@ public class Camera
             return CinematicSpeedY;
         if (_currentMaxVelocityY < MinMaxVelocityY)
             return MinMaxVelocityY;
-        return _currentMaxVelocityY + (Math.Abs(_followedObject.GetVelocity(true).Y / 2) - _currentMaxVelocityY) * 3 * deltaTime;
+        return _currentMaxVelocityY + (ObjVelocityY - _currentMaxVelocityY) * 3 * deltaTime;
     }
     private double ReduceCameraSpeed(double velocity, double reduction, double deltaTime)
     {
