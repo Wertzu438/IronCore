@@ -178,7 +178,7 @@ public class Objects : IEnumerable<GameObject>
     private void MoveObjects()
     {
         foreach (GameObject gameObject in _objects)
-            gameObject.UpdatePosition();
+            gameObject.TickUpdate();
     }
     private void UpdateMap()
     {
