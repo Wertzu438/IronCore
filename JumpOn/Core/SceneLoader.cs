@@ -41,7 +41,7 @@ public static class SceneLoader
                         "Bar" => new Bar(x, y, engine.Textures, int.Parse(line[3])),
                         "Switch" => new Switch(x, y, scene.Objects.Get(scene.Objects.Count - 1), engine.Input, engine.Camera, mobileInfoBox, engine.Textures, clock),
                         //TRAPS
-                        "Laser" => new Laser(x, y, int.Parse(line[3]), int.Parse(line[4]), engine.Textures, clock),
+                        "Laser" => new LaserDevice(x, y, int.Parse(line[3]), int.Parse(line[4]), engine.Textures, clock),
                         "ArrowMachine" => new ArrowMachine(x, y, Enum.Parse<Direction>(line[3]), int.Parse(line[4]), engine.Textures, clock),
                         "Spike" => new Spike(x, y, engine.Textures, int.Parse(line[3])),
                         //COLLECTABLES
