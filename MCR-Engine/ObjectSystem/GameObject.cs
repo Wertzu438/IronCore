@@ -42,7 +42,7 @@ public abstract class GameObject : IComparable<GameObject>
     protected virtual bool Gravity => _gravity;
     protected virtual bool StopOnCollisionX => true;
     protected virtual bool StopOnCollisionY => true;
-    public abstract void TickUpdate();
+    public virtual void TickUpdate() { }
     public int GetDistanceToNextObject(Direction direction, bool onlyWithCollision, Type[]? searchFor = null)
     {
         ArgumentNullException.ThrowIfNull(Objects);
