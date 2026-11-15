@@ -1,6 +1,7 @@
 ﻿using JumpOn.Entities.LivingEntities;
 using MCR_Engine.Core;
 using MCR_Engine.ObjectSystem;
+using MCR_Engine.ObjectSystem.BaseObjectTypes;
 
 namespace JumpOn.Entities.OtherEntities;
 
@@ -54,7 +55,7 @@ public class MovingPlatform : Entity
         }
         if (GetDistanceToNextObject(Direction.Up, true, [typeof(Entity)]) is 0)
         {
-            GameObject? obj = GetNearestObject(Direction.Up, [typeof(Entity)]) as Entity;
+            Entity? obj = GetNearestObject(Direction.Up, [typeof(Entity)]) as Entity;
             if (obj is null)
                 throw new ArgumentException("Object not found.");
 
@@ -68,7 +69,7 @@ public class MovingPlatform : Entity
         }
     }
     public override GameObject? Clone(Objects objects) => new MovingPlatform(_xSpawn, _ySpawn, _xVelocity, _yVelocity, _distance, Clock, _baseTexture, _amount);
-    protected override void UpdatePosition() => MoveAndCheckForCollision(VelocityX, VelocityY);
+    public override void TickUpdate() => MoveAndCheckForCollision(VelocityX, VelocityY);
     private static RGB?[,] GetTexture(RGB?[,] baseTexture, Direction? textureExpansion, int? amount)
     {
         if (!(textureExpansion.HasValue && amount.HasValue) || amount.Value <= 1)

@@ -52,7 +52,7 @@ public class Box : Entity
     protected override bool StopOnCollisionY => false;
     private static double DamagePerFall => DefaultMaxHealth / 2; 
     public override GameObject? Clone(Objects objects) => new Box(_xSpawn, _ySpawn, Clock, _undamagedTexture, _damagedTexture);
-    protected override void UpdatePosition()
+    public override void TickUpdate()
     {
         bool isBox = false;
         double objectVelocityX = 0d;
@@ -61,7 +61,7 @@ public class Box : Entity
             int distance = GetDistanceToNextObject(direction, true, [typeof(MovingObject)]);
             if (distance != 0)
                 continue;
-            GameObject? gameObject = GetNearestObject(direction, [typeof(MovingObject)]);
+            MovingObject? gameObject = GetNearestObject(direction, [typeof(MovingObject)]) as MovingObject;
             if (gameObject == null || Math.Abs(gameObject.GetVelocity().X) < Math.Abs(objectVelocityX))
                 continue;
             objectVelocityX = gameObject.GetVelocity().X;
@@ -71,7 +71,7 @@ public class Box : Entity
         }
         if (Math.Abs(objectVelocityX) > Math.Abs(VelocityX))
             VelocityX = objectVelocityX * (!isBox ? 0.6 : 1);
-        base.UpdatePosition();
+        base.TickUpdate();
     }
     public override void Update()
     {
