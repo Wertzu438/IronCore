@@ -6,7 +6,7 @@ using MCR_Engine.Rendering.UI;
 
 namespace MCR_Engine.Rendering.Output;
 
-internal class Renderer : ProcessTemplate
+internal class Renderer : ProcessBase
 {
     private readonly StringBuilder _output;
     private readonly StreamWriter _writer;
@@ -106,17 +106,6 @@ internal class Renderer : ProcessTemplate
             _currentBackgroundColor = rgb;
         }
         _output.Append(pair.Output);
-    }
-    private void WaitForProcessState(ProcessState state)
-    {
-        int ticks = 0;
-        while (State != state && ticks < 400)
-        {
-            ticks++;
-            Task.Delay(1).Wait();
-        }
-        if (ticks >= 400)
-            throw new Exception("Process state timed out");
     }
     private static PixelPair[,] CreatePairs(Scene scene)
     {

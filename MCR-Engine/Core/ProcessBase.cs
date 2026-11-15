@@ -1,10 +1,10 @@
 ﻿namespace MCR_Engine.Core;
 
-public abstract class ProcessTemplate
+public abstract class ProcessBase
 {
     protected ProcessAction? Action;
     protected ProcessState State;
-    internal ProcessTemplate()
+    internal ProcessBase()
     {
         Action = null;
         State = ProcessState.Ready;

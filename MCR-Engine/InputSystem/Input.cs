@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace MCR_Engine.InputSystem;
 
-public class Input : ProcessTemplate
+public class Input : ProcessBase
 {
     private readonly Dictionary<string, Key> _keys;
     private readonly Thread _thread;
