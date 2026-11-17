@@ -1,0 +1,205 @@
+[33m956dbc6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelopment[m[33m, [m[1;31morigin/development[m[33m)[m Reapply "Merge pull request #1 from slayworldspite/classlibrary"
+[33m898ca1f[m Revert "Merge pull request #1 from slayworldspite/classlibrary"
+[33mf735a7c[m Merge pull request #1 from slayworldspite/classlibrary
+[33mb31c8ea[m make engine a class library instead of an executable
+[33m89767be[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m Move gravity handling to moving objects
+[33m904b2f0[m Adjust camera target and velocity calculations
+[33m24d4a54[m Rename trap child object to Arrow
+[33mf5b0017[m Extract laser beam into a reusable Ray object
+[33m0331bd3[m Update collision and moving-object behavior
+[33m43f3bd4[m Refactor GameObject collision and visibility
+[33mb2bf29f[m Use IsCollidable in object collision checks
+[33m3b962aa[m Make GameObject.TickUpdate optional
+[33m71304df[m Make trap children moving objects
+[33m365a5e5[m Move physics updates into MovingObject
+[33m267810d[m Move boxes and platforms during tick updates
+[33m2a1b3d3[m Adjust camera follow position and velocity handling
+[33ma4eb428[m Normalize Objects class formatting
+[33m8ba1d04[m Encapsulate object collision helpers
+[33ma902822[m Configure NuGet package generation
+[33m18ff338[m Use Objects type in MovingObject.Clone
+[33m6e5e1db[m Rename ProcessTemplate to ProcessBase
+[33mcf486af[m Pause game when terminal loses focus
+[33m53598ab[m Restrict process construction and skip empty UI lines
+[33m9808e0c[m Compensate camera tracking for deceleration
+[33md2ca04c[m Remove obsolete camera comment
+[33mab64068[m Clear camera follow when renderer pairs change
+[33m4501d8d[m Move base object types into ObjectSystem
+[33m93e51cf[m Consolidate object cloning constructor
+[33m812ac7b[m Refactor scene object and dimension handling
+[33macbcbaa[m Initialize clock via Reset
+[33m857dfd3[m Align namespaces and input key API
+[33m8964d63[m Move object types into ObjectSystem namespace
+[33m0ad9985[m Migrate object collections to arrays
+[33m95ce287[m Handle scene-load errors and expose process state
+[33mdc9f851[m Rename MapEditor to SceneEditor
+[33meca7edc[m Extract shared process lifecycle template
+[33m62a9d37[m Refresh player sprite color palettes
+[33m25b5a10[m Tidy cinematic camera movement code
+[33mae596a0[m Tune camera movement and position locking
+[33m3036013[m Tune camera input and dead zones
+[33m11261c5[m Tune menu input timing
+[33m6502247[m Refine camera tracking and cinematic speeds
+[33ma6fe7fd[m Update camera follow and info box visibility
+[33ma6ad0fc[m Update camera offset in renderer loop
+[33md13ad7a[m Revise switch camera transition
+[33m0dff6d3[m Initialize input before renderer
+[33m01c1db7[m Add manual and coordinate-based camera movement
+[33m653713b[m Load start scene and update completion date
+[33m6e4ea21[m Add starting level scene layout
+[33m384f28b[m Make renderer state transitions more responsive
+[33m06e644a[m Count checkpoint respawns after first load
+[33m954d63a[m[33m ([m[1;33mtag: [m[1;33mv2.2[m[33m)[m Adjust moving platform axis bounds
+[33mf377b5e[m Initialize scene before remaining UI elements
+[33m71d9ad9[m Refine account name input timing
+[33m27648d1[m Add timed virtual key presses
+[33m855b05d[m Increase menu input polling delay
+[33m73b9e9a[m Synchronize renderer state changes
+[33m9626ef1[m Encapsulate entity max health
+[33md4ba271[m Add .NET SDK pin and project metadata
+[33ma7f216d[m Use ANSI codes to position renderer output
+[33m7f989ed[m Require zero distance before checking boxes
+[33m2680f36[m[33m ([m[1;33mtag: [m[1;33mv2.0[m[33m)[m Cap extreme fall damage at max health
+[33m899c95a[m Add sidebar visibility toggle
+[33m77d700e[m Expand and rebalance level layouts
+[33m6f924d4[m Split input mappings into key categories
+[33ma37460b[m Fix moving platform distance reversal
+[33m5bd02d4[m Reset cloned boxes to default health
+[33m33b4ad5[m Prevent jumping while moving upward
+[33mde08cd1[m Load moving platform direction
+[33ma8c2421[m Save progress after the final level
+[33mab49c6f[m Update levels and remove test scene
+[33macb28da[m Add player floor height setter
+[33mf912a39[m Allow static UI elements to disable X flipping
+[33m1e13285[m Refine game HUD and checkpoint reloads
+[33m62cde56[m Adjust entity fall damage handling
+[33m16ad5ff[m Track the latest activated checkpoint
+[33m2f62a22[m Format level completion stats as bullets
+[33m2121eeb[m Expose solid texture fields to subclasses
+[33ma9c7ab3[m Expose non-solid texture fields to subclasses
+[33m9fd8ab2[m Implement decoration object cloning
+[33md52e52d[m Move performance metrics to the sidebar
+[33m5793c4b[m Show level completion stats
+[33m86b4c49[m Set console title to JumpOn
+[33m30c61a6[m Show game timing and FPS
+[33m91736c7[m Expose renderer frame rate
+[33m61fc272[m Update IronCore.sln.DotSettings.user
+[33mc647684[m Use positive infinity for platform lifetime
+[33m7099b38[m Load boxes and moving platforms
+[33m642db74[m Add box and moving platform map editing
+[33m237f6a7[m Migrate gameplay objects to NonSolidObject
+[33m1db0ab0[m Simplify object distance queries
+[33m9a1c6c1[m Rename ObjectManager to Objects
+[33m2d2ec22[m Update Game.cs
+[33m0778f78[m Improve moving-object platform support
+[33me258250[m Add moving platform entity
+[33m8f96725[m Adjust living entity collision behavior
+[33m9de32bf[m Make entity collision configurable
+[33m353b8a7[m Adjust box collision physics
+[33mc3610b0[m Propagate velocity through stacked moving objects
+[33m917da4f[m Make collision stopping configurable per axis
+[33m7de7ce7[m Exclude querying object from object searches
+[33mc92b3e3[m Increase tree layer
+[33m618e280[m Refine damage handling and object queries
+[33m63170b8[m Add fall damage to boxes
+[33m074c740[m Update Box.cs
+[33m01e0f79[m Move pathfinding to the game object map
+[33m96eab41[m Restrict collision movement helper visibility
+[33m0bf5f72[m Move pushable boxes into JumpOn entities
+[33mf25aa9f[m Move player data into Core
+[33m7151c4c[m Track player healing statistics
+[33m2e06476[m Inline ladder floor detection
+[33mc70614a[m Use PlayerData for level stats
+[33m89eb134[m Generalize interactable collision handling
+[33mf3ad4be[m Refactor living entity behavior
+[33m310aacb[m Update object distance calls
+[33mb07c7c9[m Make moving objects block trap attacks
+[33m4979fa5[m Unify pushable objects with moving physics
+[33m19074e7[m Refactor movement collision handling
+[33m6dd53b7[m Fix directional object distance scanning
+[33m18adeab[m Add wood box texture
+[33m22d783f[m Fix object draw ordering and rename enumerator
+[33m034d254[m Tighten render layers and editor previews
+[33mce9df0d[m Expose position updates to subclasses
+[33m0097ce3[m Add pushable game object
+[33mb0acacf[m Add layer-aware object map lookups
+[33m34a865d[m Add moving-object collision and carry physics
+[33mdcc14b1[m Add moving object base type
+[33m39200b7[m Move base object types into MCR-Engine
+[33m2378990[m Refactor sprites into game objects
+[33m9c569c9[m Simplify scene updates and reset camera velocity
+[33m44fc7ff[m Add icons to menu statistics
+[33m1211836[m Track damage in level completion stats
+[33md395413[m Check interactables against each entity
+[33m213effc[m Update Game.cs
+[33m58da1ac[m Implement pathfinding logic and TestEnemy
+[33mde74e9f[m Removed PauseChecker and made name adjustments
+[33m5769099[m[33m ([m[1;33mtag: [m[1;33mv1.2[m[33m)[m Added level 7
+[33mf99f23e[m Create level6.txt
+[33m109bc84[m Update Game.cs
+[33m927246a[m Fixed namespaces
+[33mdd0544c[m Reworked Sprite class
+[33m016f997[m fixed conflict
+[33mfbe9fb1[m fix
+[33me75bdf3[m Fixed bug when respawning
+[33mec7ad20[m Added AppIcon
+[33m93708fb[m hfgh
+[33ma43269b[m removed debug output
+[33m4774f34[m[33m ([m[1;33mtag: [m[1;33mv1.1[m[33m)[m updated ms int to ms float
+[33m6d8a1fd[m[33m ([m[1;33mtag: [m[1;33mv1.0[m[33m)[m Fixed ladder ui bugs improved performance
+[33mf97550e[m Fixed some bugs
+[33m244c1a5[m Fixed output bug
+[33mef37757[m Created AccountMenu and updated levels
+[33ma51be9f[m nm
+[33ma66b780[m r
+[33m56e4649[m impelmented some ui fixes and reworked cloning
+[33mda101da[m testing ai mapeditor
+[33me8ac9c8[m Implemented clone logic and fixed some bugs related to respawning
+[33m97f9ba6[m Updated account logic and added repspawns per level
+[33m7911368[m td
+[33m0294566[m fjvb
+[33m61c1054[m xhjn
+[33mdcdc89d[m il
+[33m63761f3[m dsfber
+[33m7ded3dc[m hbvblehtag
+[33m0babef2[m abcd
+[33m389b1a0[m Camera done
+[33m23c3dda[m Camera v2.0
+[33mbefe0b5[m new update
+[33m8df7bff[m new update
+[33mc68f8cf[m update cam
+[33m1436ad4[m Added new Camera logic
+[33m14c4905[m added levels
+[33mecdaad8[m new update
+[33m6100aff[m Spikes no can have texture expansion
+[33mbf7e231[m fixed some bugs + added maps
+[33mec20626[m Fixed some bugs
+[33m4ee5125[m new update
+[33ma364013[m fixed a bug with distance to next sprite
+[33me5bff96[m Added new stuff and fixed repository
+[33m9bf18eb[m Merge branch 'development' of https://github.com/Wertzu438/IronCore into development
+[33m6d00dc7[m Added menus
+[33ma1339cf[m added checkpoints + goal
+[33m8b6ee9c[m Added Keys, Medkits and core for the Collectables
+[33m4597850[m Impelmented mobile and centered infobox and a switch
+[33m20b59c9[m Added interactable switch
+[33m047ea4f[m impemented arrows + bug fixes
+[33mb7aa953[m New Update
+[33md2f0775[m Fixed a renderer bug
+[33mfc31c4d[m Added class Arrow
+[33m11fe1d0[m Added traps (Laser + Spike)
+[33mfb95c85[m fixed ladder.
+[33m0adaff9[m fixing interactable related stuff
+[33mb7f8ef0[m Updated interactables related stuff.
+[33m86175ab[m Merge branch 'development' of https://github.com/Wertzu438/IronCore into development
+[33m92122e9[m New Patch
+[33m7f4cdde[m Removed comments.
+[33m86a87cb[m Update movement values.
+[33m0bf483f[m Added an anti jitter zone and changed movement values
+[33m086e347[m Changed movement values for better results.
+[33m033c08b[m Added methods to update the player texture
+[33m20f486f[m Fixed and improved logic of moving sprites.
+[33mc5b55b4[m Moved textures and Input and added test.txt
+[33m98147a9[m Added Textures
+[33m8a9988a[m Create .gitignore
+[33m9587dd0[m Adding game engine to GitHub.
