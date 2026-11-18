@@ -76,9 +76,9 @@ public class Camera
         if (_followedObject is null || LockPosition)
             return;
         int x = ObjX, y = ObjY;
-        int width = Console.WindowWidth, height = Console.WindowHeight;
+        int renderWidth = Math.Min(Console.WindowWidth, _render.PixelPairWidth), renderHeight = Math.Min(Console.WindowHeight, _render.PixelPairHeight);
         MoveCameraWithInput(deltaTime);
-        (Direction leftRight, Direction upDown) = GetCameraMoveDirections(_moveToX ?? x, _moveToY ?? y, width, height);
+        (Direction leftRight, Direction upDown) = GetCameraMoveDirections(_moveToX ?? x, _moveToY ?? y, renderWidth, renderHeight);
         
         _currentMaxVelocityX = GetMaxVelocityX(deltaTime);
         _currentMaxVelocityY = GetMaxVelocityY(deltaTime);
@@ -86,10 +86,10 @@ public class Camera
         _xVelocity = GetUpdatedVelocityX(leftRight, deltaTime);
         _yVelocity = GetUpdatedVelocityY(upDown, deltaTime);
         
-        MoveOnX(deltaTime, width);
-        MoveOnY(deltaTime, height);
+        MoveOnX(deltaTime, renderWidth);
+        MoveOnY(deltaTime, renderHeight);
         
-        UpdateCinematicCamera(width, height);
+        UpdateCinematicCamera(renderWidth, renderHeight);
     }
     public void GoToCoordinates(int x, int y)
     {
