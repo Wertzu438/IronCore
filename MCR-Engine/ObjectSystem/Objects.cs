@@ -201,9 +201,10 @@ public class Objects : IEnumerable<GameObject>
     }
     private void ClearMap()
     {
+        int sW = _scene.Width, sH = _scene.Height;
         for (int layer = GameObject.MinLayer; layer < GameObject.MaxLayer; layer++)
-            for (int y = 0; y < _scene.Height; y++)
-                for (int x = 0; x < _scene.Width; x++)
+            for (int y = 0; y < sH; y++)
+                for (int x = 0; x < sW; x++)
                     _map[layer][x, y] = null;
     }
     private static bool ObjectsOverlap(GameObject s1, GameObject s2)
