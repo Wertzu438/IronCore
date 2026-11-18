@@ -1,4 +1,5 @@
-﻿using JumpOn.Interactables;
+﻿using JumpOn.Entities.OtherEntities;
+using JumpOn.Interactables;
 using MCR_Engine.Core;
 
 namespace JumpOn.Entities.LivingEntities;
@@ -7,7 +8,7 @@ public abstract class LivingEntity : Entity
 {
     protected readonly RGB?[,] DeadTexture;
     private Interactable? _currentInteractable;
-    protected LivingEntity(int x, int y, int maxHealth, Clock clock, Textures textures) : base(x, y, true, maxHealth, clock)
+    protected LivingEntity(int x, int y, int maxHealth, Clock clock, Textures textures) : base(x, y, maxHealth, clock)
     {
         DeadTexture = textures.Get("deadEntity");
         _currentInteractable = null;
@@ -17,13 +18,12 @@ public abstract class LivingEntity : Entity
     protected abstract double HangingSpeed { get; }
     protected abstract bool IsInteractingWithInteractable { get; }
     protected override bool StopOnCollisionX => false;
-    protected override bool Gravity => !IsInteractingWithInteractable;
     protected override bool ResetFallDamage => base.ResetFallDamage || OnLadder || OnBar;
     private bool OnLadder => _currentInteractable is Ladder;
     private bool OnBar => _currentInteractable is Bar;
     public abstract override void Update();
     public void SetInteractable(Interactable? interactable) => _currentInteractable = interactable;
-    protected override bool IsFloorBeneath() => base.IsFloorBeneath() || Ladder.IsEntityOnTopOfLadder(this);
+    protected override bool IsFloorBeneath() => base.IsFloorBeneath() || Ladder.IsEntityOnTopOfLadder(this) || GetDistanceToNextObject(Direction.Down, false, [typeof(MovingPlatform)]) == 0;
     protected bool Walk(Direction direction)
     {
         if (Engine.Contains(direction, [Direction.None, Direction.Up, Direction.Down]))
@@ -41,6 +41,8 @@ public abstract class LivingEntity : Entity
                 MoveOnX(direction, 299, ClimbingSpeed);
             return !IsFloorBeneath();
         }
+        if (Ladder.IsEntityOnTopOfLadder(this) && direction is Direction.Down)
+            Y++;
         StopMovingX();
         ((Ladder)_currentInteractable!).CenterEntity(this);
         MoveOnY(direction, ClimbingSpeed);

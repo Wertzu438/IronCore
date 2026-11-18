@@ -46,8 +46,10 @@ public class Player : LivingEntity
         if (!Alive)
         {
             SetNewTexture(DeadTexture);
+            PauseGravity = false;
             return;
         }
+        PauseGravity = IsInteractingWithInteractable;
         if (GetFallDamage(out double fallDamage))
             Damage(fallDamage, true, true);
         _action = GetAction(GetDirection());

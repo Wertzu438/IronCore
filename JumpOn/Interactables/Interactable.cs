@@ -39,7 +39,6 @@ public abstract class Interactable : NonSolidObject
                     ((LivingEntity)entity).SetInteractable(interactable);
             }
         }
-            
     }
     public static Interactable[] LoadInteractables(Objects objects) => objects.GetAllObjectsOfType<Interactable>();
 }
