@@ -12,14 +12,14 @@ public class Box : Entity
     private readonly RGB?[,] _undamagedTexture;
     private readonly RGB?[,] _damagedTexture;
     private readonly int _xSpawn, _ySpawn;
-    public Box(int x, int y, Clock clock, Textures textures) : base(x, y, true, DefaultMaxHealth, clock)
+    public Box(int x, int y, Clock clock, Textures textures) : base(x, y, DefaultMaxHealth, clock)
     {
         _xSpawn = x; _ySpawn = y;
         _undamagedTexture = textures.Get(BoxUndamagedName);
         _damagedTexture = textures.Get(BoxDamagedName);
         SetNewTexture(_undamagedTexture);
     }
-    private Box(int x, int y, Clock clock, RGB?[,] undamagedTexture, RGB?[,] damagedTexture) : base(x, y, true, DefaultMaxHealth, clock)
+    private Box(int x, int y, Clock clock, RGB?[,] undamagedTexture, RGB?[,] damagedTexture) : base(x, y, DefaultMaxHealth, clock)
     {
         _xSpawn = x; _ySpawn = y;
         _undamagedTexture = undamagedTexture;
@@ -64,7 +64,7 @@ public class Box : Entity
             MovingObject? gameObject = GetNearestObject(direction, [typeof(MovingObject)]) as MovingObject;
             if (gameObject == null || Math.Abs(gameObject.GetVelocity().X) < Math.Abs(objectVelocityX))
                 continue;
-            objectVelocityX = gameObject.GetVelocity(true).X;
+            objectVelocityX = gameObject.GetVelocity().X;
             isBox = gameObject.GetType() == typeof(Box);
             if ((direction is Direction.Left && objectVelocityX < 0) || (direction is Direction.Right && objectVelocityX > 0))
                 objectVelocityX = 0;

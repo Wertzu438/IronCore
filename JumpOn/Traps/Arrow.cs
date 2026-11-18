@@ -6,7 +6,7 @@ namespace JumpOn.Traps;
 
 public class Arrow : MovingObject
 {
-    public Arrow(int x, int y, RGB?[,] texture) : base(x, y, 1, false, false, texture)
+    public Arrow(int x, int y, RGB?[,] texture) : base(x, y, 0, false, texture)
     {
         
     }

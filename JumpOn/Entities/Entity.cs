@@ -6,7 +6,7 @@ using MCR_Engine.ObjectSystem.BaseObjectTypes;
 
 namespace JumpOn.Entities;
 
-public abstract class Entity : MovingObject
+public abstract class Entity : GravityObject
 {
     private const int DamageTickOffsetMs = 850;
     protected readonly Clock Clock;
@@ -14,7 +14,7 @@ public abstract class Entity : MovingObject
     private readonly double _maxHealth;
     private double _currentHealth;
     private int _lastDamageTimeMs;
-    protected Entity(int x, int y, bool collision, double maxHealth, Clock clock) : base(x, y, 1, collision, true, Textures.DebuggingTexture(6, 4))
+    protected Entity(int x, int y, double maxHealth, Clock clock) : base(x, y, 1, Textures.DebuggingTexture(6, 4))
     {
         _maxHealth = maxHealth;
         _currentHealth = maxHealth;
