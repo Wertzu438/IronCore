@@ -59,6 +59,10 @@ internal class Renderer : ProcessBase
         {
             _lastDeltaTime = (float)_stopwatch.ElapsedTicks / Stopwatch.Frequency;
             _stopwatch.Restart();
+            if (!Engine.TerminalInForeground)
+            {
+                Console.ResetColor(); Console.Clear(); 
+            }
             while (Action is ProcessAction.Pause || _pairs is null || !Engine.TerminalInForeground)
             {
                 State = ProcessState.Paused;

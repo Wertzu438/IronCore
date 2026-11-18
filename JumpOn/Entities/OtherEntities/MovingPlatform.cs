@@ -54,20 +54,6 @@ public class MovingPlatform : MovingObject
             Y = _ySpawn - DistanceY;
             VelocityY *= -1;
         }
-        /*if (GetDistanceToNextObject(Direction.Up, true, [typeof(Entity)]) is 0)
-        {
-            Entity? obj = GetNearestObject(Direction.Up, [typeof(Entity)]) as Entity;
-            if (obj is null)
-                throw new ArgumentException("Object not found.");
-
-            int entityY = obj.Y + obj.Height;
-
-            if (entityY >= Y && entityY < Y + obj.Height / 2)
-            {
-                obj.Y = Y - obj.Height;
-                obj.StopMovingY();
-            }
-        }*/
     }
     public override GameObject? Clone(Objects objects) => new MovingPlatform(_xSpawn, _ySpawn, _xVelocity, _yVelocity, _distance, _baseTexture, _amount);
     private static RGB?[,] GetTexture(RGB?[,] baseTexture, Direction? textureExpansion, int? amount)
