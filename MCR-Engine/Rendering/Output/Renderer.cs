@@ -71,10 +71,10 @@ internal class Renderer : ProcessBase
             State = ProcessState.Running;
             _camera.RecalculateOffset(_lastDeltaTime);
             _output.Clear();
+            _ui.UpdateMap();
             int startX, startY, maxX, maxY;
             lock (_camera)
             {
-                _ui.UpdateMap();
                 startX = _camera.XOffset; startY = _camera.YOffset;
                 maxX = _camera.GetRenderBorderX(startX); maxY = _camera.GetRenderBorderY(startY);
             }
