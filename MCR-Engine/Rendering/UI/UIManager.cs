@@ -18,7 +18,16 @@ public class UIManager
             _backgroundColor = new RGB(0, 0, 0);
             _elements = [];
         }
-        public int Count => _elements.Count;
+        public int Count
+        {
+            get
+            {
+                lock (_elements)
+                {
+                    return _elements.Count;
+                }
+            }
+        }
         public void UpdateMap()
         {
             lock (_elements)
@@ -45,7 +54,7 @@ public class UIManager
         }
         public void Clear()
         {
-            lock  (_elements)
+            lock (_elements)
             {
                 _elements.Clear();
             }
