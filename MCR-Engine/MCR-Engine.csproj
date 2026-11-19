@@ -15,6 +15,8 @@
     <PackageTags>game engine;2d;gamedev</PackageTags>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <Copyright>Simon Straubinger</Copyright>
 </PropertyGroup>
 
 </Project>
