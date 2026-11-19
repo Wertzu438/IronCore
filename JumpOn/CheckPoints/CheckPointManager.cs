@@ -49,7 +49,6 @@ public class CheckPointManager
         _lastCheckPointIndex = manager._lastCheckPointIndex;
     }
     public Objects SnapShot => _checkPointSnapShot;
-    private bool OneCollected => Collectable.CollectedAmount(_checkPoints) != 0;
     public void ResetPlayerToCheckPoint(Player player, bool firstLoad)
     {
         if (_checkPoints.Length <= 0)
@@ -66,7 +65,7 @@ public class CheckPointManager
     public void ShowRespawnInfo() => _centeredInfoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
     private async Task ShowSavedInfo()
     {
-        if (_infoBox.Visible)
+        if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
             return;
         _infoBox.UpdateSize(25, 3);
         _infoBox.X = 2;
@@ -87,7 +86,7 @@ public class CheckPointManager
             _lastCheckPointIndex = i;
         }
         _checkPointSnapShot = _scene.Objects.Clone();
-        _lastSecondSaved = _clock.PassedSeconds;
         ShowSavedInfo();
+        _lastSecondSaved = _clock.PassedSeconds;
     }
 }
