@@ -16,26 +16,26 @@ public class Switch : Interactable
     private readonly RGB?[,] _pulledTexture;
     private readonly RGB?[,] _unpulledTexture;
     private readonly Key _interactingKey;
-    private readonly GameObject _connectedGameObject;
+    private readonly GameObject _connectedObject;
     private readonly Camera _camera;
     private readonly Clock _clock;
     private int _lastMsPulled;
     private bool _pulled;
-    public Switch(int x, int y, GameObject connectedGameObject, Input input, Camera camera, MobileInfoBox infoBox, Textures textures, Clock clock) : base(x, y, textures.Get(TextureName), true)
+    public Switch(int x, int y, GameObject connectedObject, Input input, Camera camera, MobileInfoBox infoBox, Textures textures, Clock clock) : base(x, y, textures.Get(TextureName), true)
     {
         _infoBox = infoBox;
         _unpulledTexture = textures.Get(TextureName);
         _pulledTexture = Textures.MirrorLeftRight(textures.Get(TextureName));
         _interactingKey = input.Get(KeyName);
-        _connectedGameObject = connectedGameObject;
+        _connectedObject = connectedObject;
         _camera = camera;
         _clock = clock;
         _lastMsPulled = 0;
         _pulled = false;
     }
-    private Switch(int x, int y, GameObject connectedGameObject, Key interactingKey, Camera camera, MobileInfoBox infoBox, RGB?[,] pulledTexture, RGB?[,] unpulledTexture, Clock clock) : base(x, y, unpulledTexture, true)
+    private Switch(int x, int y, GameObject connectedObject, Key interactingKey, Camera camera, MobileInfoBox infoBox, RGB?[,] pulledTexture, RGB?[,] unpulledTexture, Clock clock) : base(x, y, unpulledTexture, true)
     {
-        _connectedGameObject = connectedGameObject;
+        _connectedObject = connectedObject;
         _interactingKey = interactingKey;
         _camera = camera;
         _infoBox = infoBox;
@@ -75,11 +75,14 @@ public class Switch : Interactable
         if (_camera.CinematicCamera)
             throw new ArgumentException("Cinematic camera not supported");
         await Task.Delay(1);
-        _camera.GoToCoordinates(_connectedGameObject.X + _connectedGameObject.Width / 2, _connectedGameObject.Y + _connectedGameObject.Height / 2);
+        bool inView = _camera.InView(_connectedObject.X + _connectedObject.Width / 2, (_connectedObject.Y + _connectedObject.Height / 2)/ 2);
+        _camera.GoToCoordinates(_connectedObject.X + _connectedObject.Width / 2, _connectedObject.Y + _connectedObject.Height / 2);
         _camera.LockPosition = true;
-        await Task.Delay(700);
-        _connectedGameObject.ChangeVisibility();
-        await Task.Delay(300);
+        if (!inView)
+            await Task.Delay(700);
+        _connectedObject.ChangeVisibility();
+        if (!inView)
+            await Task.Delay(300);
         _camera.LockPosition = false;
     }
 }
