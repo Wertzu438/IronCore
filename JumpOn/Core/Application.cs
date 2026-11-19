@@ -13,7 +13,7 @@ public class Application : IGameProject
     private readonly Engine _engine;
     private readonly MenuManager _menus;
     private readonly Account _account;
-    public Application(Engine engine)
+    private Application(Engine engine)
     {
         _account = Account.GetAccount(SceneLoader.GetSceneAmount());
         _engine = engine;
@@ -60,6 +60,7 @@ public class Application : IGameProject
         Console.OutputEncoding = Encoding.UTF8;
         Engine engine = new Engine();
         Application app = new Application(engine);
+        Thread.Sleep(2000);
         engine.Run(app);
     }
     public static string[] GetGameHeading()
