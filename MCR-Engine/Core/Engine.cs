@@ -56,7 +56,6 @@ public class Engine
     public void UpdateRenderAction(ProcessAction newAction) => _renderer.ChangeAction(newAction);
     public void UpdateInputAction(ProcessAction newAction) => _input.ChangeAction(newAction);
     public static bool Contains<T>(T searchedType, T[] types) => types.Contains(searchedType);
-    public static void Main() => throw new ArgumentException("Should never be called => Start with game project");
     [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
     [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId( IntPtr hWnd, out uint processId);
     static bool IsTerminalInForeground()
