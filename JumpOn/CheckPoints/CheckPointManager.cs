@@ -67,10 +67,7 @@ public class CheckPointManager
     {
         if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
             return;
-        _infoBox.UpdateSize(25, 3);
-        _infoBox.X = 2;
-        _infoBox.Y = Console.WindowHeight - 2 - _infoBox.Height;
-        _infoBox.UpdateContent([[$"-💾 Gespeichert: {DateTime.Now.ToShortTimeString()}"]]);
+        _infoBox.UpdateContent([[$"💾 Gespeichert: {DateTime.Now.ToShortTimeString()}"]]);
         _infoBox.Visible = true;
         await Task.Delay(SavingOffsetSeconds * 1000);
         _infoBox.Visible = false;

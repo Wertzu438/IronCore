@@ -43,13 +43,13 @@ public class Game
         _clock = new Clock();
         _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _otherInfoBoxes = [
-            UI.Add(new UIElement(0, 0, 0, 0, true)),
-            UI.Add(new UIElement(20, 4, 2, 1, true, dontFlipX: true)),
+            UI.Add(new UIElement(25, 3, 2, 1, true, dontFlipX: false, dontFlipY: false)),
+            UI.Add(new UIElement(20, 4, 2, 1, true)),
         ];
         _sideBar = [
-            UI.Add(new UIElement(20, 6, 2, 1, true)), 
-            UI.Add(new UIElement(20, 6, 2, 8, true)), 
-            UI.Add(new UIElement(20, 8, 2, 15, true)),
+            UI.Add(new UIElement(22, 6, 2, 1, true, dontFlipX: false)), 
+            UI.Add(new UIElement(22, 6, 2, 8, true, dontFlipX: false)), 
+            UI.Add(new UIElement(22, 8, 2, 15, true, dontFlipX: false)),
         ];
         _player = (Player)_scene.Objects.Add(new Player(0, 0, Textures, Input, _clock));
         _pathFinding = new PathFinding(_scene);
