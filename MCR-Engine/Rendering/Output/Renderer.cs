@@ -12,8 +12,6 @@ internal class Renderer : ProcessBase
     private readonly StreamWriter _writer;
     private readonly Stopwatch _stopwatch;
     private readonly Thread _thread;
-    private readonly UIManager _ui;
-    private readonly Camera _camera;
     private Pixel[,]? _pairs;
     private RGB _currentForegroundColor;
     private RGB _currentBackgroundColor;
@@ -24,16 +22,16 @@ internal class Renderer : ProcessBase
         _stopwatch = new Stopwatch();
         _writer =  new StreamWriter(Console.OpenStandardOutput());
         _thread = new Thread(Loop);
-        _camera = new Camera(this, input);
-        _ui = new UIManager(this);
+        Camera = new Camera(this, input);
+        UI = new UIManager(this);
         _currentBackgroundColor = default;
         _currentForegroundColor = default;
         _pairs = null;
         _thread.Priority = ThreadPriority.AboveNormal;
         _lastDeltaTime = 0;
     }
-    public UIManager UI => _ui;
-    public Camera Camera => _camera;
+    public UIManager UI { get; }
+    public Camera Camera { get; }
     public int PixelMapWidth => (_pairs is null ? Console.WindowWidth : _pairs.GetLength(0));
     public int PixelMapHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1));
     public int FramesPerSecond => (int)(1 / _lastDeltaTime); 
@@ -63,20 +61,20 @@ internal class Renderer : ProcessBase
                 Thread.Sleep(100);
             }
             State = ProcessState.Running;
-            _camera.RecalculateOffset(_lastDeltaTime);
+            Camera.RecalculateOffset(_lastDeltaTime);
             _output.Clear();
-            _ui.UpdateMap();
+            UI.UpdateMap();
             int startX, startY, maxX, maxY;
-            lock (_camera)
+            lock (Camera)
             {
-                startX = _camera.XOffset; startY = _camera.YOffset;
-                maxX = _camera.GetRenderBorderX(startX); maxY = _camera.GetRenderBorderY(startY);
+                startX = Camera.XOffset; startY = Camera.YOffset;
+                maxX = Camera.GetRenderBorderX(startX); maxY = Camera.GetRenderBorderY(startY);
             }
             for (int y = startY; y < maxY; y += 2)
             {
                 for (int x = startX; x < maxX; x++)
                 {
-                    UIPixel? uiPixel = _ui.GetUIPixelOutput(x - startX, y / 2 - startY / 2);
+                    UIPixel? uiPixel = UI.GetUIPixelOutput(x - startX, y / 2 - startY / 2);
                     if (uiPixel is not null)
                     {
                         AppendUIPixel(uiPixel);
