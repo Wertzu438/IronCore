@@ -76,10 +76,10 @@ public class Camera
     }
     public void RecalculateOffset(float deltaTime)
     {
+        _lastWindowWidth = Console.WindowWidth; _lastWindowHeight = Console.WindowHeight * 2 - 1;
         if (_followedObject is null || LockPosition)
             return;
         int x = ObjX, y = ObjY;
-        _lastWindowWidth = Console.WindowWidth; _lastWindowHeight = Console.WindowHeight * 2 - 1;
         int renderWidth = Math.Min(_lastWindowWidth, _render.PixelMapWidth), renderHeight = Math.Min(_lastWindowHeight, _render.PixelMapHeight);
         MoveCameraWithInput(deltaTime);
         (Direction leftRight, Direction upDown) = GetCameraMoveDirections(_moveToX ?? x, _moveToY ?? y, renderWidth, renderHeight);
@@ -134,7 +134,7 @@ public class Camera
     {
         return (direction) switch
         {
-            Direction.Left =>  _xOffset > 0,
+            Direction.Left => _xOffset > 0,
             Direction.Right => _xOffset + width < _render.PixelMapWidth,
             Direction.Up => _yOffset > 0,
             Direction.Down => _yOffset + height < _render.PixelMapHeight,
