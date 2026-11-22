@@ -37,7 +37,7 @@ public class UIElement
         }
         public int Y
         {
-            get => _staticBox ? (_dontFlipY ? _y : UI.UIMapHeight - _y - Height) : _y - UI.LastYOffset;
+            get => _staticBox ? (_dontFlipY ? _y : UI.UIMapHeight - _y - Height) : _y - UI.LastYOffset / 2;
             set => _y = (value < 0 ? 0 : value);
         }
         public int Width => _buffer.GetLength(0);
@@ -138,6 +138,8 @@ public class UIElement
             if (buffer < 0)
                 return line;
             buffer /= 2;
+            if (--buffer < 0)
+                buffer = 0;
             return new string(' ', buffer) + line;
         }
         private bool OnDesign(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
