@@ -83,7 +83,7 @@ public class Scene
         else
         {
             xStart = _camera.XOffset; xEnd = _camera.GetRenderBorderX(xStart);
-            yStart = _camera.YOffset * 2; yEnd = _camera.GetRenderBorderY(yStart) * 2;
+            yStart = _camera.YOffset; yEnd = _camera.GetRenderBorderY(yStart);
         }
         return (xStart, xEnd, yStart, yEnd);
     }

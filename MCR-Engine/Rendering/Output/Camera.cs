@@ -7,11 +7,11 @@ namespace MCR_Engine.Rendering.Output;
 
 public class Camera
 {
-    private const double CameraInputSpeedX = 90, CameraInputSpeedY = 70;
+    private const double CameraInputSpeedX = 90, CameraInputSpeedY = 90;
     private const double CameraDeadZoneLeft = 0.23, CameraDeadZoneRight = 0.30;
     private const double CameraDeadZoneTop = 0.25, CameraDeadZoneBottom = 0.20;
-    private const double CinematicSpeedX = 80, CinematicSpeedY = CinematicSpeedX / 2;
-    private const double MinMaxVelocityX = 20, MinMaxVelocityY = MinMaxVelocityX / 2;
+    private const double CinematicSpeedX = 80, CinematicSpeedY = CinematicSpeedX;
+    private const double MinMaxVelocityX = 20, MinMaxVelocityY = MinMaxVelocityX;
     private const string UpKey = "Up", DownKey = "Down", LeftKey = "Left", RightKey = "Right";
     private readonly Renderer _render;
     private readonly Key[] _movementKeys;
@@ -19,6 +19,7 @@ public class Camera
     private double _xVelocity, _yVelocity;
     private double _xOffset, _yOffset;
     private double _currentMaxVelocityX, _currentMaxVelocityY;
+    private int _lastWindowWidth, _lastWindowHeight;
     private int? _moveToX, _moveToY;
     internal Camera(Renderer render, Input input)
     {
@@ -30,11 +31,13 @@ public class Camera
         _moveToX = _moveToY = null;
         _followedObject = null;
         LockPosition = false;
+        _lastWindowWidth = Console.WindowWidth - 1;
+        _lastWindowHeight = Console.WindowHeight * 2 - 3;
     }
-    public bool LockPosition { private get; set; }
     public int XOffset => (int)Math.Round(_xOffset);
     public int YOffset => (int)Math.Round(_yOffset);
     public bool CinematicCamera => _moveToX is  not null || _moveToY is not null;
+    public bool LockPosition { private get; set; }
     private int ObjX
     {
         get
@@ -50,7 +53,7 @@ public class Camera
         {
             if (_followedObject is null)
                 return 0;
-            return (_followedObject.Y + _followedObject.Height / 2) / 2;
+            return _followedObject.Y + _followedObject.Height / 2;
         }
     }
     private double ObjVelocityX
@@ -68,7 +71,7 @@ public class Camera
         {
             if (_followedObject is not MovingObject mO)
                 return 0;
-            return Math.Abs(mO.GetVelocity().Y / 2);
+            return Math.Abs(mO.GetVelocity().Y);
         }
     }
     public void RecalculateOffset(float deltaTime)
@@ -76,7 +79,8 @@ public class Camera
         if (_followedObject is null || LockPosition)
             return;
         int x = ObjX, y = ObjY;
-        int renderWidth = Math.Min(Console.WindowWidth, _render.PixelPairWidth), renderHeight = Math.Min(Console.WindowHeight, _render.PixelPairHeight);
+        _lastWindowWidth = Console.WindowWidth; _lastWindowHeight = Console.WindowHeight * 2 - 1;
+        int renderWidth = Math.Min(_lastWindowWidth, _render.PixelMapWidth), renderHeight = Math.Min(_lastWindowHeight, _render.PixelMapHeight);
         MoveCameraWithInput(deltaTime);
         (Direction leftRight, Direction upDown) = GetCameraMoveDirections(_moveToX ?? x, _moveToY ?? y, renderWidth, renderHeight);
         
@@ -94,7 +98,7 @@ public class Camera
     public void GoToCoordinates(int x, int y)
     {
         _moveToX = x;
-        _moveToY = y / 2;
+        _moveToY = y;
         while (CinematicCamera)
         {
             Thread.Sleep(10);
@@ -111,9 +115,9 @@ public class Camera
         _yOffset = y;
     }
     public void ResetOffset() => _xOffset = _yOffset = 0;
-    public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + Console.WindowWidth && y < YOffset + Console.WindowHeight;
-    public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelPairWidth, xOffset + Console.WindowWidth);
-    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelPairHeight, yOffset + Console.WindowHeight);
+    public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + _lastWindowWidth && y < YOffset + _lastWindowHeight;
+    public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelMapWidth, xOffset + _lastWindowWidth);
+    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelMapHeight, yOffset + _lastWindowHeight);
     private void MoveCameraWithInput(float deltaTime)
     {
         if (_movementKeys[0].Pressed)
@@ -131,9 +135,9 @@ public class Camera
         return (direction) switch
         {
             Direction.Left =>  _xOffset > 0,
-            Direction.Right => _xOffset + width < _render.PixelPairWidth,
+            Direction.Right => _xOffset + width < _render.PixelMapWidth,
             Direction.Up => _yOffset > 0,
-            Direction.Down => _yOffset + height < _render.PixelPairHeight,
+            Direction.Down => _yOffset + height < _render.PixelMapHeight,
             _ => false
         };
     }
@@ -213,8 +217,8 @@ public class Camera
         _xOffset += _xVelocity * deltaTime;
         if (_xOffset < 0)
             _xOffset = 0;
-        else if (_xOffset + windowWidth >= _render.PixelPairWidth)
-            _xOffset = _render.PixelPairWidth - windowWidth;
+        else if (_xOffset + windowWidth >= _render.PixelMapWidth)
+            _xOffset = _render.PixelMapWidth - windowWidth;
     }
     private void MoveOnY(float deltaTime, int windowHeight)
     {
@@ -223,8 +227,8 @@ public class Camera
         _yOffset += _yVelocity * deltaTime;
         if (_yOffset < 0)
             _yOffset = 0;
-        else if (_yOffset + windowHeight >= _render.PixelPairHeight)
-            _yOffset = _render.PixelPairHeight - windowHeight;
+        else if (_yOffset + windowHeight >= _render.PixelMapHeight)
+            _yOffset = _render.PixelMapHeight - windowHeight;
     }
     private void UpdateCinematicCamera(int width, int height)
     {

@@ -14,7 +14,7 @@ internal class Renderer : ProcessBase
     private readonly Thread _thread;
     private readonly UIManager _ui;
     private readonly Camera _camera;
-    private PixelPair[,]? _pairs;
+    private Pixel[,]? _pairs;
     private RGB _currentForegroundColor;
     private RGB _currentBackgroundColor;
     private float _lastDeltaTime;
@@ -34,8 +34,8 @@ internal class Renderer : ProcessBase
     }
     public UIManager UI => _ui;
     public Camera Camera => _camera;
-    public int PixelPairWidth => (_pairs is null ? Console.WindowWidth : _pairs.GetLength(0));
-    public int PixelPairHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1));
+    public int PixelMapWidth => (_pairs is null ? Console.WindowWidth : _pairs.GetLength(0));
+    public int PixelMapHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1));
     public int FramesPerSecond => (int)(1 / _lastDeltaTime); 
     public Scene SetScene
     {
@@ -45,13 +45,7 @@ internal class Renderer : ProcessBase
             _pairs = CreatePairs(value);
         }
     }
-    public PixelPair GetPixelPair(int x, int y)
-    {
-        if (_pairs is null || !ValidPairCoordinates(x, y))
-            throw new ArgumentException("Invalid pair coordinates or no scene set.");
-        return _pairs[x, y];
-    }
-    public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelPairWidth && y < PixelPairHeight;
+    public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelMapWidth && y < PixelMapHeight;
     protected override void StartLoop() => _thread.Start();
     private void Loop()
     {
@@ -78,16 +72,16 @@ internal class Renderer : ProcessBase
                 startX = _camera.XOffset; startY = _camera.YOffset;
                 maxX = _camera.GetRenderBorderX(startX); maxY = _camera.GetRenderBorderY(startY);
             }
-            for (int y = startY; y < maxY; y++)
+            for (int y = startY; y < maxY; y += 2)
             {
                 for (int x = startX; x < maxX; x++)
                 {
-                    UIPixel? uiPixel = _ui.GetUIPixelOutput(x - startX, y - startY);
+                    UIPixel? uiPixel = _ui.GetUIPixelOutput(x - startX, y / 2 - startY / 2);
                     if (uiPixel is not null)
                     {
                         AppendUIPixel(uiPixel);
                     }
-                    else AppendPair(_pairs[x, y]);
+                    else AppendPair(_pairs[x, y], _pairs[x, y + 1]);
                 }
                 if (y != maxY - 1)
                     _output.AppendLine();
@@ -118,15 +112,14 @@ internal class Renderer : ProcessBase
         }
         _output.Append(output);
     }
-    private void AppendPair(PixelPair pair) => AppendOutput(pair.UpperRGB, pair.LowerRGB, PixelPair.Output.ToString());
+    private void AppendPair(Pixel upperPixel, Pixel lowerPixel) => AppendOutput(upperPixel.GetRGB(), lowerPixel.GetRGB(), Pixel.Output.ToString());
     private void AppendUIPixel(UIPixel uiPixel) => AppendOutput(uiPixel.ForegroundColor, uiPixel.BackgroundColor, uiPixel.Output);
-    private static PixelPair[,] CreatePairs(Scene scene)
+    private static Pixel[,] CreatePairs(Scene scene)
     {
-        int height = scene.Height / 2 + scene.Height % 2;
-        PixelPair[,] newPairs = new PixelPair[scene.Width, height];
-        for (int y = 0; y < height; y++)
+        var newPixelMap = new Pixel[scene.Width, scene.Height];
+        for (int y = 0; y < scene.Height; y++)
         for (int x = 0; x < scene.Width; x++)
-            newPairs[x, y] = new PixelPair(scene.GetPixel(x, y * 2), scene.GetPixel(x, y * 2 + 1));
-        return newPairs;
+            newPixelMap[x, y] = scene.GetPixel(x, y);
+        return newPixelMap;
     }
 }
