@@ -97,8 +97,10 @@ public class Game
             }
             else if (Input.Get(PauseKeyName).Pressed || !Engine.TerminalInForeground)
             {
+                Camera.LockPosition = true;
                 ChangeSideBarVisibility(true);
                 _centeredInfoBox.Show(24, 5, [["!⏸️ PAUSIERT"], [$"-Fortfahren mit {CenteredInfoBox.ConfirmKeyName}"]], true);
+                Camera.LockPosition = false;
                 stopwatch.Restart();
             }
             else if (Input.Get(SideBarVisiblityKeyName).Pressed && _lastChangedSideBarVisibilityMs + 500 < _clock.PassedMilliSeconds)
