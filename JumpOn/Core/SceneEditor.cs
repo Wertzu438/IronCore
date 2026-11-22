@@ -1937,7 +1937,7 @@ public class SceneEditor
         if (s.Length == 0)
             return " ";
         char c = s[0];
-        return c is '-' or '!' or UIElement.Separator ? " " + s : s;
+        return c is '-' or '!' or '▬' ? " " + s : s;
     }
 
     private static List<string> Wrap(string text, int width)
