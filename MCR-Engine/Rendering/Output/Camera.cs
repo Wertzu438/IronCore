@@ -217,8 +217,8 @@ public class Camera
         _xOffset += _xVelocity * deltaTime;
         if (_xOffset < 0)
             _xOffset = 0;
-        else if (_xOffset + windowWidth >= _render.PixelMapWidth)
-            _xOffset = _render.PixelMapWidth - windowWidth;
+        else if (_xOffset + windowWidth >= _render.PixelMapWidth - 1)
+            _xOffset = _render.PixelMapWidth - windowWidth - 1;
     }
     private void MoveOnY(float deltaTime, int windowHeight)
     {
@@ -227,8 +227,8 @@ public class Camera
         _yOffset += _yVelocity * deltaTime;
         if (_yOffset < 0)
             _yOffset = 0;
-        else if (_yOffset + windowHeight >= _render.PixelMapHeight)
-            _yOffset = _render.PixelMapHeight - windowHeight;
+        else if (_yOffset + windowHeight >= _render.PixelMapHeight - 1)
+            _yOffset = _render.PixelMapHeight - windowHeight - 1;
     }
     private void UpdateCinematicCamera(int width, int height)
     {

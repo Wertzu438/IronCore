@@ -62,7 +62,7 @@ public class CheckPointManager
             return;
         player.AddRespawn();
     }
-    public void ShowRespawnInfo() => _centeredInfoBox.Show(21, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
+    public void ShowRespawnInfo() => _centeredInfoBox.Show(23, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
     private async Task ShowSavedInfo()
     {
         if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
