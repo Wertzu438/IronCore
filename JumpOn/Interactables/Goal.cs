@@ -58,9 +58,9 @@ public class Goal : Interactable
         {
             if(CollectedAllKeys)
             {
-                _infoBox.Show(this, X + 7, Y / 2, 14, 1, [[$"!{KeyName} - Öffnen"]]);
+                _infoBox.Show(this, X + 7, Y, 16, 1, [[$"!{KeyName} - Öffnen"]]);
             }
-            else _infoBox.Show(this, X + 7, Y / 2, 13, 1, [[$"-Keys: {CollectedKeysAmount}/{KeysAmount}"]]);
+            else _infoBox.Show(this, X + 7, Y, 15, 1, [[$"-Keys: {CollectedKeysAmount}/{KeysAmount}"]]);
         }
         else if (_infoBox.UsedBy == this)
         {

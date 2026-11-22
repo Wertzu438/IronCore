@@ -42,7 +42,7 @@ public class Medkit : Collectable
     {
         if (interacting)
         {
-            _infoBox.Show(this, X + 5, Y / 2 - 2, 12, 1, [[$"!{KeyName} - Nehmen"]]);
+            _infoBox.Show(this, X + 5, Y - 2, 14, 1, [[$"!{KeyName} - Nehmen"]]);
         }
         else if (_infoBox.UsedBy == this)
         {

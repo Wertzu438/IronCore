@@ -23,7 +23,7 @@ public class MobileInfoBox : UIElement
     public void Show(GameObject usedBy, int x, int y, int width, int height, string[][] content)
     {
         UsedBy = usedBy;
-        X = x; Y = y;
+        X = x; Y = y / 2 - 1;
         UpdateSize(width, height + 2);
         UpdateContent(content);
         Visible = true;

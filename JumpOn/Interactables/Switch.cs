@@ -62,7 +62,7 @@ public class Switch : Interactable
     {
         if (playerInteracting)
         {
-            _infoBox.Show(this, X + 5, Y / 2 - 2, 14, 1, [[$"!{KeyName} - Benutzen"]]);
+            _infoBox.Show(this, X + 5, Y - 2, 16, 1, [[$"!{KeyName} - Benutzen"]]);
         }
         else if (_infoBox.UsedBy == this)
         {
@@ -75,7 +75,7 @@ public class Switch : Interactable
         if (_camera.CinematicCamera)
             throw new ArgumentException("Cinematic camera not supported");
         await Task.Delay(1);
-        bool inView = _camera.InView(_connectedObject.X + _connectedObject.Width / 2, (_connectedObject.Y + _connectedObject.Height / 2)/ 2);
+        bool inView = _camera.InView(_connectedObject.X + _connectedObject.Width / 2, _connectedObject.Y + _connectedObject.Height / 2);
         _camera.GoToCoordinates(_connectedObject.X + _connectedObject.Width / 2, _connectedObject.Y + _connectedObject.Height / 2);
         _camera.LockPosition = true;
         if (!inView)
