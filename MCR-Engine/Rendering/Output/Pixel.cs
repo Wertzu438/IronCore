@@ -4,6 +4,7 @@ namespace MCR_Engine.Rendering.Output;
 
 internal class Pixel
 {
+    public const char Output = '▀';
     private RGB _rgb;
     public Pixel(RGB rgb)
     {
