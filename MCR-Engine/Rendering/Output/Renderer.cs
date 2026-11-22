@@ -81,7 +81,14 @@ internal class Renderer : ProcessBase
             for (int y = startY; y < maxY; y++)
             {
                 for (int x = startX; x < maxX; x++)
-                    AppendPair(_pairs[x, y]);
+                {
+                    UIPixel? uiPixel = _ui.GetUIPixelOutput(x - startX, y - startY);
+                    if (uiPixel is not null)
+                    {
+                        AppendUIPixel(uiPixel);
+                    }
+                    else AppendPair(_pairs[x, y]);
+                }
                 if (y != maxY - 1)
                     _output.AppendLine();
             }
@@ -95,22 +102,24 @@ internal class Renderer : ProcessBase
         _writer.Write(_output.ToString());
         _writer.Flush();
     }
-    private void AppendPair(PixelPair pair)
+    private void AppendOutput(RGB foregroundColor, RGB backgroundColor, string output)
     {
-        RGB rgb = pair.UpperRGB;
+        RGB rgb = foregroundColor;
         if (!rgb.Equals(_currentForegroundColor))
         {
             _output.Append($"\e[38;2;{rgb.Red};{rgb.Green};{rgb.Blue}m");
             _currentForegroundColor = rgb;
         }
-        rgb = pair.LowerRGB;
+        rgb = backgroundColor;
         if (!rgb.Equals(_currentBackgroundColor))
         {
             _output.Append($"\e[48;2;{rgb.Red};{rgb.Green};{rgb.Blue}m");
             _currentBackgroundColor = rgb;
         }
-        _output.Append(pair.Output);
+        _output.Append(output);
     }
+    private void AppendPair(PixelPair pair) => AppendOutput(pair.UpperRGB, pair.LowerRGB, PixelPair.Output.ToString());
+    private void AppendUIPixel(UIPixel uiPixel) => AppendOutput(uiPixel.ForegroundColor, uiPixel.BackgroundColor, uiPixel.Output);
     private static PixelPair[,] CreatePairs(Scene scene)
     {
         int height = scene.Height / 2 + scene.Height % 2;
