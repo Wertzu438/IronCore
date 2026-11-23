@@ -36,19 +36,4 @@ public class InfoIndicator : UIElement //TODO: Pfeile löschen in game + methode
             throw new ArgumentException("Width and height must be 1.");
         return new UIPixel[,] { {new(_emoji ?? "  ", _foregroundColor, _backgroundColor)}, {new("", _foregroundColor, _backgroundColor)} };
     }
-    private string GetArrow()
-    {
-        return (_directions) switch
-        {
-            (-1, -1) => "◤",
-            (0, -1) => "▲",
-            (1, -1) => "◥",
-            (-1, 0) => "◀",
-            (1, 0) => "▶",
-            (-1, 1) => "◣",
-            (0, 1) => "▼",
-            (1, 1) => "◢",
-            _ => " "
-        };
-    }
 }
