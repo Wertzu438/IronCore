@@ -135,9 +135,9 @@ public class Camera
         return (direction) switch
         {
             Direction.Left => _xOffset > 0,
-            Direction.Right => _xOffset + width < _render.PixelMapWidth,
+            Direction.Right => _xOffset + width < _render.PixelMapWidth - 1,
             Direction.Up => _yOffset > 0,
-            Direction.Down => _yOffset + height < _render.PixelMapHeight,
+            Direction.Down => _yOffset + height < _render.PixelMapHeight - 1,
             _ => false
         };
     }
