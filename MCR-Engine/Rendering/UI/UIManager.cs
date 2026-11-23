@@ -34,9 +34,9 @@ public class UIManager
             ClearUIPairs();
             foreach (UIElement element in _elements)
             {
-                if (!(OnOutput(element.X, element.Y) && OnOutput(element.X + element.Width, element.Y + element.Height) && element.Visible))
+                element.Update();
+                if (!(OnOutput(element.X, element.Y) && OnOutput(element.X + element.Width - 1, element.Y + element.Height - 1) && element.Visible))
                     continue;
-                element.UpdateBuffer();
                 AddElementToOutput(element);
             }
         }
