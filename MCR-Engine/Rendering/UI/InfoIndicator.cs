@@ -1,32 +1,52 @@
-﻿using System.Data;
-using MCR_Engine.Core;
+﻿using MCR_Engine.Core;
 using MCR_Engine.ObjectSystem;
 
 namespace MCR_Engine.Rendering.UI;
 
-public class InfoIndicator : UIElement
+public class InfoIndicator : UIElement //TODO: Pfeile löschen in game + methode in uimanager zum nur pfiele löschen
 {
-    private GameObject _followingObject;
-    public InfoIndicator(GameObject followingObject) : base(6, 3, 0, 0, true)
+    private readonly GameObject _followingObject;
+    private readonly RGB _backgroundColor, _foregroundColor;
+    private (int X, int Y) _directions;
+    public InfoIndicator(GameObject followingObject) : base(1, 1, 0, 0, true)
     {
         _followingObject = followingObject;
-    }
-    internal override void Update()
-    {
-        X = GetX();
-        Y = GetY();
-        Visible = !(ObjX >= 0 && ObjY / 2 >= 0 && ObjX < UI.UIMapWidth && ObjY / 2 < UI.UIMapHeight); 
+        _foregroundColor = new RGB(255, 255, 150);
+        _backgroundColor = new RGB(0, 0, 0);
+        _directions = (0, 0);
     }
     private int ObjX => _followingObject.X - UI.LastXOffset;
     private int ObjY => _followingObject.Y - UI.LastYOffset;
+    internal override void Update()
+    {
+        _directions.X = (ObjX < 0 ? -1 : (ObjX >= UI.UIMapWidth ? 1 : 0));
+        _directions.Y = (ObjY / 2 < 0 ? -1 : (ObjY / 2 >= UI.UIMapHeight ? 1 : 0));
+        
+        Visible = (_directions.X != 0 || _directions.Y != 0) && _followingObject.Visible;
+        
+        X = Math.Clamp(ObjX, 0, UI.UIMapWidth - Width);
+        Y = Math.Clamp(ObjY / 2, 0, UI.UIMapHeight - Height);
+        Buffer = CreateBuffer(Width, Height);
+    }
     protected override UIPixel[,] CreateBuffer(int width, int height)
     {
-        UIPixel[,] buffer = base.CreateBuffer(width, height);
-        for (int y = 0; y < height; y++)
-        for (int x = 0; x < width; x++)
-            buffer[x, y] = new UIPixel(" ", new RGB(), new RGB());
-        return buffer;
+        if (width != 1 || height != 1)
+            throw new ArgumentException("Width and height must be 1.");
+        return new UIPixel[,] { {new(GetArrow(), _foregroundColor, _backgroundColor)} };
     }
-    private int GetX() => Math.Clamp(ObjX, 0, UI.UIMapWidth - Width);
-    private int GetY() => Math.Clamp(ObjY / 2, 0, UI.UIMapHeight - Height);
+    private string GetArrow()
+    {
+        return (_directions) switch
+        {
+            (-1, -1) => "◤",
+            (0, -1) => "▲",
+            (1, -1) => "◥",
+            (-1, 0) => "◀",
+            (1, 0) => "▶",
+            (-1, 1) => "◣",
+            (0, 1) => "▼",
+            (1, 1) => "◢",
+            _ => " "
+        };
+    }
 }
