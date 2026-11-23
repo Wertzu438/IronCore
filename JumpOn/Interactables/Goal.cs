@@ -6,6 +6,7 @@ using JumpOn.UI.InfoBoxes;
 using MCR_Engine.Core;
 using MCR_Engine.InputSystem;
 using MCR_Engine.ObjectSystem;
+using MCR_Engine.Rendering.UI;
 
 namespace JumpOn.Interactables;
 
@@ -67,12 +68,14 @@ public class Goal : Interactable
             _infoBox.UsedBy = null;
         }
     }
-    public static Goal LoadGoal(Objects objects)
+    public static Goal LoadGoal(Objects objects, UIManager ui)
     {
         Goal[] goals = objects.GetAllObjectsOfType<Goal>();
         if (goals.Length != 1)
             throw new ArgumentException("Invalid amount of goals");
         goals[0]._keys = objects.GetAllObjectsOfType<GameKey>();
+        foreach (GameKey key in goals[0].Keys)
+            ui.Add(new InfoIndicator(key, "🗝️"));
         return goals[0];
     }
 }

@@ -129,12 +129,13 @@ public class Game
     }
     private void LoadContent(bool firstLoad)
     {
+        UI.Clear(typeof(InfoIndicator));
         _mobileInfoBox.Visible = false;
         _interactables = Interactable.LoadInteractables(_scene.Objects);
         _collectables = Collectable.LoadCollectables(_scene.Objects);
         _traps = Trap.LoadTraps(_scene.Objects);
         _entities = Entity.LoadEntities(_scene.Objects);
-        _goal = Goal.LoadGoal(_scene.Objects);
+        _goal = Goal.LoadGoal(_scene.Objects, UI);
         if (firstLoad)
         {
             _checkPoints = new CheckPointManager(_scene, _clock, _centeredInfoBox, _otherInfoBoxes[0]);
