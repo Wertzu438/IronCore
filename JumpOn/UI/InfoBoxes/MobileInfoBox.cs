@@ -3,7 +3,7 @@ using MCR_Engine.Rendering.UI;
 
 namespace JumpOn.UI.InfoBoxes;
 
-public class MobileInfoBox : UIElement
+public class MobileInfoBox : InfoBox
 {
     private GameObject? _usedBy;
     public MobileInfoBox() : base(3, 3, 0, 0, false, false)

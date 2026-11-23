@@ -124,7 +124,7 @@ public class SceneEditor
     private readonly List<string> _solidTextures = [], _backgrounds = [];
     private readonly HashSet<string> _missingTextures = [];
     private readonly List<EditorLevel> _undo = [], _redo = [];
-    private readonly UIElement _statusBox, _brushBox, _messageBox, _helpBox, _modalBox;
+    private readonly InfoBox _statusBox, _brushBox, _messageBox, _helpBox, _modalBox;
 
     private EditorLevel _level = new();
     private EditorObject _brush = new();
@@ -143,11 +143,11 @@ public class SceneEditor
         _textures = engine.Textures;
         _camera = engine.Camera;
         _ui = engine.UI;
-        _statusBox = new UIElement(PanelWidth, 7, PanelMargin, 1, true, false);
-        _brushBox = new UIElement(PanelWidth, 10, PanelMargin, 9, true, false);
-        _messageBox = new UIElement(PanelWidth, 7, PanelMargin, 20, true, false);
-        _helpBox = new UIElement(66, 24, 0, 1, true, false);
-        _modalBox = new UIElement(44, 8, 0, 1, true, false);
+        _statusBox = new InfoBox(PanelWidth, 7, PanelMargin, 1, true, false);
+        _brushBox = new InfoBox(PanelWidth, 10, PanelMargin, 9, true, false);
+        _messageBox = new InfoBox(PanelWidth, 7, PanelMargin, 20, true, false);
+        _helpBox = new InfoBox(66, 24, 0, 1, true, false);
+        _modalBox = new InfoBox(44, 8, 0, 1, true, false);
     }
 
     // ------------------------------------------------------------------ Start / Hauptschleife

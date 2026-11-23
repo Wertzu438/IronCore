@@ -20,11 +20,11 @@ public class Game
     private readonly Scene _scene;
     private readonly Account _account;
     private readonly Clock _clock;
-    private readonly UIElement[] _sideBar;
+    private readonly InfoBox[] _sideBar;
     private readonly Player _player;
     private readonly CenteredInfoBox _centeredInfoBox;
     private readonly MobileInfoBox _mobileInfoBox;
-    private readonly UIElement[] _otherInfoBoxes;
+    private readonly InfoBox[] _otherInfoBoxes;
     private readonly PathFinding _pathFinding;
     private int _lastUpdatedPerformanceMs;
     private int _lastChangedSideBarVisibilityMs;
@@ -43,13 +43,13 @@ public class Game
         _clock = new Clock();
         _engine.SetRenderScene(_scene = SceneLoader.Read($"level{level}", _engine, _mobileInfoBox, _clock));
         _otherInfoBoxes = [
-            UI.Add(new UIElement(25, 3, 2, 1, true, dontFlipX: false, dontFlipY: false)),
-            UI.Add(new UIElement(20, 4, 2, 1, true)),
+            (InfoBox)UI.Add(new InfoBox(25, 3, 2, 1, true, dontFlipX: false, dontFlipY: false)),
+            (InfoBox)UI.Add(new InfoBox(20, 4, 2, 1, true)),
         ];
         _sideBar = [
-            UI.Add(new UIElement(22, 6, 2, 1, true, dontFlipX: false)), 
-            UI.Add(new UIElement(22, 6, 2, 8, true, dontFlipX: false)), 
-            UI.Add(new UIElement(22, 8, 2, 15, true, dontFlipX: false)),
+            (InfoBox)UI.Add(new InfoBox(22, 6, 2, 1, true, dontFlipX: false)), 
+            (InfoBox)UI.Add(new InfoBox(22, 6, 2, 8, true, dontFlipX: false)), 
+            (InfoBox)UI.Add(new InfoBox(22, 8, 2, 15, true, dontFlipX: false)),
         ];
         _player = (Player)_scene.Objects.Add(new Player(0, 0, Textures, Input, _clock));
         _pathFinding = new PathFinding(_scene);

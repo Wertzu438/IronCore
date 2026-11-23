@@ -13,7 +13,7 @@ public abstract class Menu
         Keys = keys;
         Input = input;
     }
-    public ProgramState Launch(UIElement infoBox, out Type? nextScreen)
+    public ProgramState Launch(InfoBox infoBox, out Type? nextScreen)
     {
         infoBox.UpdateContent(UpdateContent());
         AfterUpdateContent(infoBox);

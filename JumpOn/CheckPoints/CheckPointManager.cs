@@ -14,13 +14,13 @@ public class CheckPointManager
     private const int SavingOffsetSeconds = 3;
     private readonly CheckPoint[] _checkPoints;
     private readonly CenteredInfoBox _centeredInfoBox;
-    private readonly UIElement _infoBox;
+    private readonly InfoBox _infoBox;
     private readonly Scene _scene;
     private readonly Clock _clock;
     private int _lastSecondSaved;
     private int _lastCheckPointIndex;
     private Objects _checkPointSnapShot;
-    public CheckPointManager(Scene scene, Clock clock, CenteredInfoBox centeredInfoBox, UIElement infoBox)
+    public CheckPointManager(Scene scene, Clock clock, CenteredInfoBox centeredInfoBox, InfoBox infoBox)
     {
         _scene = scene;
         _infoBox = infoBox;

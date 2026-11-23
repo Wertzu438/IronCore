@@ -3,7 +3,7 @@ using MCR_Engine.Rendering.UI;
 
 namespace JumpOn.UI.InfoBoxes;
 
-public class CenteredInfoBox : UIElement
+public class CenteredInfoBox : InfoBox
 {
     public const string ConfirmKeyName = "Enter";
     private readonly Key _confirmKey;

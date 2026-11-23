@@ -6,11 +6,11 @@ namespace MCR_Engine.Menus;
 public class MenuManager
     {
         private const int MenuWidthPercent = 50;
-        private readonly UIElement _infoBox;
+        private readonly InfoBox _infoBox;
         private readonly List<Menu> _menus;
         internal MenuManager()
         {
-            _infoBox = new UIElement(MenuWidth, MenuHeight, InfoBoxX, InfoBoxY, true, true);
+            _infoBox = new InfoBox(MenuWidth, MenuHeight, InfoBoxX, InfoBoxY, true, true);
             _menus = [];
         }
         public static int InfoBoxX => (Console.WindowWidth - 2) / 2 - MenuWidth / 2;
