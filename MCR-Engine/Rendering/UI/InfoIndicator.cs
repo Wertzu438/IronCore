@@ -19,7 +19,7 @@ public class InfoIndicator : UIElement //TODO: Pfeile löschen in game + methode
     private int ObjY => _followingObject.Y - UI.LastYOffset;
     internal override void Update()
     {
-        Visible = !(ObjX >= 0 && ObjY / 2 >= 0 && ObjX < UI.UIMapWidth && ObjY / 2 < UI.UIMapHeight); 
+        Visible = !(ObjX >= 0 && ObjY / 2 >= 0 && ObjX < UI.UIMapWidth && ObjY / 2 < UI.UIMapHeight) && _followingObject.Visible; 
         
         X = Math.Clamp(ObjX, 0, UI.UIMapWidth - Width);
         Y = Math.Clamp(ObjY / 2, 0, UI.UIMapHeight - Height - 0);
