@@ -46,8 +46,7 @@ public abstract class UIElement
         return Buffer[x, y];
     }
     public void SetUIManager(UIManager ui) => _ui = ui;
-    internal abstract void UpdateBuffer();
-    protected abstract void ClearBuffer();
+    internal abstract void Update();
     protected virtual UIPixel[,] CreateBuffer(int width, int height) => new UIPixel[width, height];
     private bool OnDesign(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
 }

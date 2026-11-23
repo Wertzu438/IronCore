@@ -22,7 +22,7 @@ public class InfoBox : UIElement
         _content = [];
     }
     public void UpdateContent(string[][] content) => _content = content;
-    internal override void UpdateBuffer()
+    internal override void Update()
     {
         SetUIBorderInBuffer();
         SetContentInBuffer(_content);
@@ -35,7 +35,7 @@ public class InfoBox : UIElement
             design[x, y] = new UIPixel(" ", _textColor, _backgroundColor);
         return design;
     }
-    protected override void ClearBuffer()
+    private void ClearBuffer()
     {
         for (int y = 1; y < Height - 1; y++)
         for (int x = 1; x < Width - 1; x++)
