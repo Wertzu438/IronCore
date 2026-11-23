@@ -7,10 +7,12 @@ public class InfoIndicator : UIElement //TODO: Pfeile löschen in game + methode
 {
     private readonly GameObject _followingObject;
     private readonly RGB _backgroundColor, _foregroundColor;
+    private readonly string _emoji;
     private (int X, int Y) _directions;
-    public InfoIndicator(GameObject followingObject) : base(1, 1, 0, 0, true)
+    public InfoIndicator(GameObject followingObject, string emoji) : base(1, 1, 0, 0, true)
     {
         _followingObject = followingObject;
+        _emoji = emoji;
         _foregroundColor = new RGB(255, 255, 150);
         _backgroundColor = new RGB(0, 0, 0);
         _directions = (0, 0);
@@ -25,14 +27,14 @@ public class InfoIndicator : UIElement //TODO: Pfeile löschen in game + methode
         Visible = (_directions.X != 0 || _directions.Y != 0) && _followingObject.Visible;
         
         X = Math.Clamp(ObjX, 0, UI.UIMapWidth - Width);
-        Y = Math.Clamp(ObjY / 2, 0, UI.UIMapHeight - Height);
-        Buffer = CreateBuffer(Width, Height);
+        Y = Math.Clamp(ObjY / 2, 0, UI.UIMapHeight - Height - 0);
+        Buffer = CreateBuffer(1, 1);
     }
     protected override UIPixel[,] CreateBuffer(int width, int height)
     {
         if (width != 1 || height != 1)
             throw new ArgumentException("Width and height must be 1.");
-        return new UIPixel[,] { {new(GetArrow(), _foregroundColor, _backgroundColor)} };
+        return new UIPixel[,] { {new(_emoji ?? "  ", _foregroundColor, _backgroundColor)}, {new("", _foregroundColor, _backgroundColor)} };
     }
     private string GetArrow()
     {

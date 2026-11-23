@@ -5,8 +5,8 @@ namespace MCR_Engine.Rendering.UI;
 
 public class UIManager
     {
-        private readonly List<UIElement> _elements;
         private readonly Renderer _render;
+        private List<UIElement> _elements;
         private UIPixel?[,] _output;
         internal UIManager(Renderer render)
         {
@@ -26,7 +26,22 @@ public class UIManager
             uiElement.SetUIManager(this);
             return uiElement;
         }
-        public void Clear() => _elements.Clear();
+        public void Clear(Type? type = null)
+        {
+            if (type == null)
+            {
+                _elements.Clear();
+            }
+            else if (type == typeof(InfoBox))
+            {
+                _elements = _elements.Where(e => e is not InfoBox).ToList();
+            }
+            else if (type == typeof(InfoIndicator))
+            {
+                _elements = _elements.Where(e => e is not InfoIndicator).ToList();
+            }
+            else throw new ArgumentException("Invalid type");
+        }
         public UIPixel? GetUIPixelOutput(int x, int y) => !OnOutput(x, y) ? null : _output[x, y];
         internal void UpdateMap()
         {
