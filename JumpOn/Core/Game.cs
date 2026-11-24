@@ -159,10 +159,9 @@ public class Game
     private void ChangeSideBarVisibility(bool? value = null)
     {
         if (value is null)
-            value = !_sideBar[0].Visible;
-        foreach (UIElement uiElement in _sideBar)
-            uiElement.Visible = value.Value;
-        foreach (UIElement uiElement in _otherInfoBoxes)
-            uiElement.Visible = value.Value;
+        {
+            UI.HideUI = !UI.HideUI;
+        }
+        else UI.HideUI = !value.Value;
     }
 }
