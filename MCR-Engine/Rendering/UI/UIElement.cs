@@ -9,7 +9,7 @@ public abstract class UIElement
     private readonly bool _staticElement;
     private UIManager? _ui;
     private int _x, _y;
-    public UIElement(int width, int height, int x, int y, bool staticElement, bool visible = true, bool dontFlipX = true, bool dontFlipY = true)
+    protected UIElement(int width, int height, int x, int y, bool staticElement, bool visible = true, bool dontFlipX = true, bool dontFlipY = true)
     {
         if (width < 0 || height < 0)
             throw new ArgumentException("Width and height must be positive");

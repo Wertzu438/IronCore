@@ -7,10 +7,10 @@ namespace MCR_Engine.Rendering.Output;
 
 public class Camera
 {
-    private const double CameraInputSpeedX = 90, CameraInputSpeedY = 90;
+    private const double CameraInputSpeedX = 110, CameraInputSpeedY = 110;
     private const double CameraDeadZoneLeft = 0.23, CameraDeadZoneRight = 0.30;
     private const double CameraDeadZoneTop = 0.25, CameraDeadZoneBottom = 0.20;
-    private const double CinematicSpeedX = 120, CinematicSpeedY = 110;
+    private const double CinematicSpeedX = 80, CinematicSpeedY = 80;
     private const double MinMaxVelocityX = 20, MinMaxVelocityY = MinMaxVelocityX;
     private const string UpKey = "Up", DownKey = "Down", LeftKey = "Left", RightKey = "Right";
     private readonly Renderer _render;
