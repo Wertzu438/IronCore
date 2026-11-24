@@ -16,6 +16,7 @@ public class UIManager
             LastXOffset = LastYOffset = 0;
         }
         public int Count => _elements.Count;
+        public bool HideUI { get; set; }
         internal int UIMapWidth => _output.GetLength(0);
         internal int UIMapHeight => _output.GetLength(1);
         internal int LastXOffset { get; private set; }
@@ -47,6 +48,8 @@ public class UIManager
         {
             LastXOffset = _render.Camera.XOffset; LastYOffset = _render.Camera.YOffset;
             ClearUIPairs();
+            if (HideUI)
+                return;
             foreach (UIElement element in _elements)
             {
                 element.Update();
