@@ -22,7 +22,7 @@ public abstract class Menu
     protected virtual void AfterUpdateContent(UIElement infoBox) { }
     protected abstract string[][] UpdateContent();
     protected abstract ProgramState OpenNewWindow(Key key, out Type? nextScreen);
-    private Key? GetKey(UIElement infoBox)
+    private Key? GetKey(InfoBox infoBox)
     {
         while (Keys.Length > 0)
         {
@@ -36,7 +36,7 @@ public abstract class Menu
         }
         return null;
     }
-    private static void SetInfoBoxStats(UIElement infoBox)
+    private static void SetInfoBoxStats(InfoBox infoBox)
     {
         infoBox.X = MenuManager.InfoBoxX; infoBox.Y = MenuManager.InfoBoxY;
         infoBox.UpdateSize(MenuManager.MenuWidth, MenuManager.MenuHeight);
