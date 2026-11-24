@@ -4,7 +4,7 @@ namespace MCR_Engine.Rendering.UI;
 
 public abstract class UIElement
 {
-    protected UIPixel?[,] Buffer;
+    protected UIPixel[,] Buffer;
     private readonly bool _dontFlipX, _dontFlipY;
     private readonly bool _staticElement;
     private UIManager? _ui;
@@ -33,12 +33,6 @@ public abstract class UIElement
     public int Height => Buffer.GetLength(1);
     public bool Visible { get; set; }
     protected UIManager UI => _ui ?? throw new NullReferenceException("UI element has not been initialized");
-    public void UpdateSize(int width, int height)
-    {
-        if (width < 0 || height < 0)
-            throw new ArgumentException("Width and height must be positive");
-        Buffer = CreateBuffer(width, height);
-    }
     public UIPixel? GetUIPixel(int x, int y)
     {
         if (!OnDesign(x, y))
