@@ -19,7 +19,6 @@ public class CheckPointManager
     private readonly Clock _clock;
     private int _lastSecondSaved;
     private int _lastCheckPointIndex;
-    private Objects _checkPointSnapShot;
     public CheckPointManager(Scene scene, Clock clock, CenteredInfoBox centeredInfoBox, InfoBox infoBox)
     {
         _scene = scene;
@@ -32,7 +31,7 @@ public class CheckPointManager
         _lastSecondSaved = int.MinValue;
         _infoBox.Visible = false;
         _lastCheckPointIndex = 0;
-        _checkPointSnapShot = _scene.Objects.Clone();
+        SnapShot = _scene.Objects.Clone();
     }
     public CheckPointManager(CheckPointManager manager)
     {
@@ -45,10 +44,10 @@ public class CheckPointManager
         _clock = manager._clock;
         _lastSecondSaved = int.MinValue;
         _infoBox.Visible = false;
-        _checkPointSnapShot = _scene.Objects.Clone();
+        SnapShot = _scene.Objects.Clone();
         _lastCheckPointIndex = manager._lastCheckPointIndex;
     }
-    public Objects SnapShot => _checkPointSnapShot;
+    public Objects SnapShot { get; private set; }
     public void ResetPlayerToCheckPoint(Player player, bool firstLoad)
     {
         if (_checkPoints.Length <= 0)
@@ -62,17 +61,7 @@ public class CheckPointManager
             return;
         player.AddRespawn();
     }
-    public void ShowRespawnInfo() => _centeredInfoBox.Show(23, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
-    private async Task ShowSavedInfo()
-    {
-        if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
-            return;
-        _infoBox.UpdateContent([[$"💾 Gespeichert: {DateTime.Now.ToShortTimeString()}"]]);
-        _infoBox.Visible = true;
-        await Task.Delay(SavingOffsetSeconds * 1000);
-        _infoBox.Visible = false;
-    }
-    public async Task MakeSnapshot(CheckPoint checkPoint)
+    public void MakeSnapshot(CheckPoint checkPoint)
     {
         if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
             return;
@@ -82,8 +71,18 @@ public class CheckPointManager
                 continue;
             _lastCheckPointIndex = i;
         }
-        _checkPointSnapShot = _scene.Objects.Clone();
+        SnapShot = _scene.Objects.Clone();
         ShowSavedInfo();
         _lastSecondSaved = _clock.PassedSeconds;
+    }
+    public void ShowRespawnInfo() => _centeredInfoBox.Show(23, 5, [["!RESPAWNEN"], [$"-Respawnen mit {CenteredInfoBox.ConfirmKeyName}"]], true);
+    private async Task ShowSavedInfo()
+    {
+        if (_lastSecondSaved + SavingOffsetSeconds > _clock.PassedSeconds)
+            return;
+        _infoBox.UpdateContent([[$"💾 Gespeichert: {DateTime.Now.ToShortTimeString()}"]]);
+        _infoBox.Visible = true;
+        await Task.Delay(SavingOffsetSeconds * 1000);
+        _infoBox.Visible = false;
     }
 }
