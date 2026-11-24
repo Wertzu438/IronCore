@@ -8,7 +8,6 @@ public class InfoBox : UIElement
     private const char FrameOutput = '▀', Separator = '▬';
     private const char CenterChar = '-', SpecialTextAndCenterChar = '!';
     private readonly RGB _textColor, _specialTextColor, _borderColor, _backgroundColor;
-    private bool _updateDesign;
     private string[][] _content;
     public InfoBox(int width, int height, int x, int y, bool staticBox, bool visible = true, bool dontFlipX = true, bool dontFlipY = true) : 
         base(width, height, x, y, staticBox, visible, dontFlipX, dontFlipY)
@@ -20,7 +19,6 @@ public class InfoBox : UIElement
         _textColor = new RGB(255, 255, 255);
         _borderColor = new RGB(120, 120, 120);
         _backgroundColor = new RGB(0, 0, 0);
-        _updateDesign = true;
         _content = [];
     }
     public void UpdateSize(int width, int height)
@@ -28,20 +26,12 @@ public class InfoBox : UIElement
         if (width < 0 || height < 0)
             throw new ArgumentException("Width and height must be positive");
         Buffer = CreateBuffer(width, height);
-        _updateDesign = true;
     }
-    public void UpdateContent(string[][] content)
-    {
-        _updateDesign = true;
-        _content = content;
-    }
+    public void UpdateContent(string[][] content) => _content = content;
     internal override void Update()
     {
-        if (!_updateDesign)
-            return;
         SetUIBorderInBuffer();
         SetContentInBuffer(_content);
-        _updateDesign = false;
     }
     protected override UIPixel[,] CreateBuffer(int width, int height)
     {
