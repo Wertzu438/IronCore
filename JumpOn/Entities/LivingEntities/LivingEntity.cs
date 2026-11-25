@@ -19,15 +19,11 @@ public abstract class LivingEntity : Entity
     protected abstract bool IsInteractingWithInteractable { get; }
     protected override bool StopOnCollisionX => false;
     protected override bool ResetFallDamage => base.ResetFallDamage || OnLadder || OnBar;
-    protected bool OnBar => _currentInteractable is Bar;
+    private bool OnBar => _currentInteractable is Bar;
     private bool OnLadder => _currentInteractable is Ladder;
     public abstract override void Update();
     public void SetInteractable(Interactable? interactable) => _currentInteractable = interactable;
-    protected override bool GetFallDamage(out double fallDamage)
-    {
-        return base.GetFallDamage(out fallDamage) && !OnBar;
-    }
-
+    protected override bool GetFallDamage(out double fallDamage) => base.GetFallDamage(out fallDamage) && !OnBar;
     protected override bool IsFloorBeneath() => base.IsFloorBeneath() || Ladder.IsEntityOnTopOfLadder(this) || GetDistanceToNextObject(Direction.Down, false, [typeof(MovingPlatform)]) == 0;
     protected bool Walk(Direction direction)
     {
