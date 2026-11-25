@@ -1,4 +1,5 @@
 ﻿using MCR_Engine.Core;
+using MCR_Engine.Rendering.Output;
 
 namespace MCR_Engine.Rendering.UI;
 
@@ -21,12 +22,12 @@ public abstract class UIElement
     }
     public int X
     {
-        get => _staticElement ? (_dontFlipX ? _x : UI.UIMapWidth - _x - Width) : _x - UI.LastXOffset;
+        get => _staticElement ? (_dontFlipX ? _x : UI.UIMapWidth - _x - Width) : _x * Renderer.Zoom - UI.LastXOffset;
         set => _x = (value < 0 ? 0 : value);
     }
     public int Y
     {
-        get => _staticElement ? (_dontFlipY ? _y : UI.UIMapHeight - _y - Height) : _y - UI.LastYOffset / 2;
+        get => _staticElement ? (_dontFlipY ? _y : UI.UIMapHeight - _y - Height) : _y * Renderer.Zoom - UI.LastYOffset / 2;
         set => _y = (value < 0 ? 0 : value);
     }
     public int Width => Buffer.GetLength(0);
