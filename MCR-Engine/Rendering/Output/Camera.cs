@@ -44,7 +44,7 @@ public class Camera
         {
             if (_followedObject is null)
                 return 0;
-            return _followedObject.X + _followedObject.Width / 2;
+            return (_followedObject.X + _followedObject.Width / 2) * Renderer.Zoom;
         }
     }
     private int ObjY
@@ -53,7 +53,7 @@ public class Camera
         {
             if (_followedObject is null)
                 return 0;
-            return _followedObject.Y + _followedObject.Height / 2;
+            return (_followedObject.Y + _followedObject.Height / 2) * Renderer.Zoom;
         }
     }
     private double ObjVelocityX
@@ -214,7 +214,7 @@ public class Camera
     {
         if (_xVelocity == 0)
             return;
-        _xOffset += _xVelocity * deltaTime;
+        _xOffset += _xVelocity * deltaTime * Renderer.Zoom;
         if (_xOffset + windowWidth >= _render.PixelMapWidth - 1)
             _xOffset = _render.PixelMapWidth - windowWidth - 1;
         if (_xOffset < 0)
@@ -224,7 +224,7 @@ public class Camera
     {
         if (_yVelocity == 0)
             return;
-        _yOffset += _yVelocity * deltaTime;
+        _yOffset += _yVelocity * deltaTime * Renderer.Zoom;
         if (_yOffset + windowHeight >= _render.PixelMapHeight - 1)
             _yOffset = _render.PixelMapHeight - windowHeight - 1;
         if (_yOffset < 0)
