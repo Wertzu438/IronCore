@@ -8,6 +8,7 @@ namespace MCR_Engine.Rendering.Output;
 
 internal class Renderer : ProcessBase
 {
+    public const int Zoom = 2;
     private readonly StringBuilder _output;
     private readonly StreamWriter _writer;
     private readonly Stopwatch _stopwatch;
@@ -32,8 +33,8 @@ internal class Renderer : ProcessBase
     }
     public UIManager UI { get; }
     public Camera Camera { get; }
-    public int PixelMapWidth => (_pairs is null ? Console.WindowWidth : _pairs.GetLength(0));
-    public int PixelMapHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1));
+    public int PixelMapWidth => (_pairs is null ? Console.WindowWidth : _pairs.GetLength(0)) * Zoom;
+    public int PixelMapHeight => (_pairs is null ? Console.WindowHeight : _pairs.GetLength(1)) * Zoom;
     public int FramesPerSecond => (int)(1 / _lastDeltaTime); 
     public Scene SetScene
     {
@@ -70,7 +71,7 @@ internal class Renderer : ProcessBase
                 startX = Camera.XOffset; startY = Camera.YOffset;
                 maxX = Camera.GetRenderBorderX(startX); maxY = Camera.GetRenderBorderY(startY);
             }
-            for (int y = startY; y < maxY; y += 2)
+            for (int y = startY; y < maxY - 2; y += 2)
             {
                 for (int x = startX; x < maxX; x++)
                 {
@@ -79,7 +80,7 @@ internal class Renderer : ProcessBase
                     {
                         AppendUIPixel(uiPixel);
                     }
-                    else AppendPair(_pairs[x, y], _pairs[x, y + 1]);
+                    else AppendPair(_pairs[x / Zoom, y / Zoom], _pairs[x / Zoom, y / Zoom + 1]);
                 }
                 if (y != maxY - 1)
                     _output.AppendLine();
