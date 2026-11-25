@@ -75,7 +75,8 @@ public class Goal : Interactable
             throw new ArgumentException("Invalid amount of goals");
         goals[0]._keys = objects.GetAllObjectsOfType<GameKey>();
         foreach (GameKey key in goals[0].Keys)
-            ui.Add(new InfoIndicator(key, "🗝️"));
+            ui.Add(new InfoIndicator(key, "🗝️", () => true));
+        ui.Add(new InfoIndicator(goals[0], "🚩", () => goals[0].CollectedAllKeys));
         return goals[0];
     }
 }
