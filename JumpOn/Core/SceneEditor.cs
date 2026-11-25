@@ -143,11 +143,11 @@ public class SceneEditor
         _textures = engine.Textures;
         _camera = engine.Camera;
         _ui = engine.UI;
-        _statusBox = new InfoBox(PanelWidth, 7, PanelMargin, 1, true, false);
-        _brushBox = new InfoBox(PanelWidth, 10, PanelMargin, 9, true, false);
-        _messageBox = new InfoBox(PanelWidth, 7, PanelMargin, 20, true, false);
-        _helpBox = new InfoBox(66, 24, 0, 1, true, false);
-        _modalBox = new InfoBox(44, 8, 0, 1, true, false);
+        _statusBox = new InfoBox(PanelWidth, 7, PanelMargin, 1, true, false, dontFlipX: false);
+        _brushBox = new InfoBox(PanelWidth, 10, PanelMargin, 9, true, false, dontFlipX: false);
+        _messageBox = new InfoBox(PanelWidth, 7, PanelMargin, 20, true, false, dontFlipX: false);
+        _helpBox = new InfoBox(66, 24, 0, 1, true, false, dontFlipX: false);
+        _modalBox = new InfoBox(44, 8, 0, 1, true, false, dontFlipX: false);
     }
 
     // ------------------------------------------------------------------ Start / Hauptschleife
