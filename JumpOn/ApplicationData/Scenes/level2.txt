@@ -23,8 +23,8 @@ SolidObj,368,104,2,brickBlock,Down,2
 SolidObj,375,88,2,brickBlock,Down,1
 SolidObj,370,120,2,metalWall,Down,9
 Switch,319,105
-Decoration,319,81,1,flowers,Right,2
-Decoration,345,74,1,tree1,Down,1
+Decoration,318,81,1,flowers,Right,2
+Decoration,344,74,1,tree1,Down,1
 Decoration,364,81,1,flowers,Down,1
 SolidObj,375,143,2,dirtBlock,Right,8
 SolidObj,367,151,2,brickBlock,Right,10
@@ -41,7 +41,7 @@ SolidObj,272,44,2,brickBlock,Down,2
 SolidObj,280,44,2,brickBlock,Down,1
 SolidObj,288,44,2,brickBlock,Down,1
 SolidObj,304,40,2,metalPlatform,Down,1
-SolidObj,330,40,2,metalPlatform,Down,1
+SolidObj,329,40,2,metalPlatform,Down,1
 SolidObj,359,40,2,metalPlatform,Right,4
 SolidObj,223,40,2,brickBlock,Right,4
 SolidObj,255,-1,2,brickBlock,Down,2
@@ -50,7 +50,7 @@ Switch,377,33
 SolidObj,359,-4,2,brickBlock,Right,4
 SolidObj,263,-4,2,brickBlock,Right,6
 SolidObj,391,-4,2,brickBlock,Down,6
-Goal,132,108
+Goal,126,108
 Bar,160,43,21
 Ladder,231,16,6
 SolidObj,199,17,2,metalPlatform,Right,4
@@ -66,7 +66,7 @@ ArrowMachine,308,114,Left,1500
 Spike,337,140,1
 ArrowMachine,382,106,Right,1800
 SolidObj,359,44,2,brickBlock,Right,5
-Laser,376,52,700,2000
+Laser,332,44,700,2000
 Laser,359,4,1100,1000
 Laser,275,60,700,2600
 Spike,291,37,1
@@ -83,12 +83,12 @@ SolidObj,24,-2,2,brickBlock,Right,2
 CheckPoint,11,108
 CheckPoint,301,131
 CheckPoint,277,28
-Key,200,10
+Key,200,11
 Key,437,137
 Key,244,57
 Key,18,57
 Key,211,106
-Medkit,245,34
+Medkit,245,35
 Medkit,282,83
 Medkit,151,64
 Decoration,170,113,0,flowers,Right,3
@@ -99,7 +99,7 @@ SolidObj,9,94,0,metalPlatform,Right,2
 Box,17,86
 Box,27,112
 SolidObj,56,96,3,brickBlock,Down,3
-ArrowMachine,62,116,Right,2000
+ArrowMachine,62,117,Right,2000
 MovingPlatform,147,13,20,0,28,4
 SolidObj,191,13,0,brickBlock,Right,1
 SolidObj,112,13,3,brickBlock,Right,1
@@ -111,3 +111,6 @@ SolidObj,120,21,0,brickBlock,Down,2
 Spike,118,18,2
 Spike,85,18,1
 Spike,60,18,1
+SolidObj,332,40,2,metalPlatform,Down,1
+SolidObj,64,113,0,metalPlatform,None,1
+Decoration,141,113,0,flowers,Right,1

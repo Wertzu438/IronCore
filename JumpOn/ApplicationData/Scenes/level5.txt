@@ -92,7 +92,7 @@ Laser,156,138,1300,1000
 SolidObj,272,182,2,brickBlock,Right,2
 SolidObj,281,122,2,brickBlock,Down,8
 Ladder,272,142,10
-Medkit,261,135
+Medkit,261,138
 SolidObj,245,143,1,metalWall,Right,7
 Spike,253,179,2
 Laser,247,146,900,1200
@@ -107,10 +107,10 @@ Decoration,241,44,4,tree1,Down,1
 ArrowMachine,191,53,Right,1000
 Laser,273,43,700,1200
 Key,153,84
-Key,19,59
-Key,59,82
+Key,22,62
+Key,59,84
 Key,19,167
-Key,247,135
+Key,247,137
 Key,227,153
 Key,244,100
 Key,216,52
@@ -121,6 +121,6 @@ CheckPoint,90,170
 CheckPoint,157,110
 Ladder,176,49,11
 Bar,71,93,4
-Medkit,10,62
-Medkit,273,81
+Medkit,10,63
+Medkit,273,82
 SolidObj,145,102,1,metalWall,Down,1
