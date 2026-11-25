@@ -7,6 +7,7 @@ using MCR_Engine.Core;
 using MCR_Engine.Menus;
 
 namespace JumpOn.Core;
+//TODO: Nicht bewegen in Kamera, Ziel anzeigen, Bar kein Falldamage
 
 public class Application : IGameProject
 {
