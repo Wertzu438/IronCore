@@ -27,12 +27,11 @@ public class InfoIndicator : UIElement
         X = Math.Clamp(ObjX, 0, UI.UIMapWidth - Width);
         Y = Math.Clamp(ObjY / 2, 0, UI.UIMapHeight - Height - 0);
     }
-    protected override UIPixel[,] CreateBuffer(int width, int height)
+    protected override UIPixel[,] CreateBuffer(int width, int height) 
+    => new UIPixel[,]
     {
-        if (width != 1 || height != 1)
-            throw new ArgumentException("Width and height must be 1.");
-        return new UIPixel[,] { {new(_emoji ?? "  ", _foregroundColor, _backgroundColor)}, {new("", _foregroundColor, _backgroundColor)} };
-    }
+        {new(_emoji ?? "  ", _foregroundColor, _backgroundColor)}, {new("", _foregroundColor, _backgroundColor)}
+    };
     private static bool IsEmoji(string symbol)
     {
         if (string.IsNullOrEmpty(symbol))
