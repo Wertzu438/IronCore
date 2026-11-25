@@ -82,8 +82,10 @@ public class Scene
         }
         else
         {
-            xStart = Math.Max(0, _camera.XOffset - 2); xEnd = Math.Min(_camera.GetRenderBorderX(xStart) + 4, Width);
-            yStart = Math.Max(0, _camera.YOffset - 2); yEnd = Math.Min(_camera.GetRenderBorderY(yStart) + 4, Height);
+            xStart = Math.Max(0, _camera.XOffset - 2); xEnd = Math.Min(_camera.GetRenderBorderX(xStart) / Renderer.Zoom + 4, Width);
+            yStart = Math.Max(0, _camera.YOffset - 2); yEnd = Math.Min(_camera.GetRenderBorderY(yStart) / Renderer.Zoom + 4, Height);
+            xStart /= Renderer.Zoom;
+            yStart /= Renderer.Zoom;
         }
         return (xStart, xEnd, yStart, yEnd);
     }
