@@ -75,7 +75,8 @@ public class Game
             Trap.Update(_traps);
             Interactable.Update(_interactables, _entities);
             Collectable.Update(_collectables);
-            Entity.Update(_entities, _scene);
+            if (!Camera.CinematicCamera)
+                Entity.Update(_entities, _scene);
             _scene.Update(deltaTime);
             UpdateSideBar();
             bool respawnPressed = Input.Get(RespawnKeyName).Pressed;
