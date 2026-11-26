@@ -97,8 +97,8 @@ public class Camera
     }
     public void GoToCoordinates(int x, int y)
     {
-        _moveToX = x;
-        _moveToY = y;
+        _moveToX = x * Renderer.Zoom;
+        _moveToY = y * Renderer.Zoom;
         while (CinematicCamera)
         {
             Thread.Sleep(10);
@@ -117,7 +117,7 @@ public class Camera
     public void ResetOffset() => _xOffset = _yOffset = 0;
     public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + _lastWindowWidth && y < YOffset + _lastWindowHeight;
     public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelMapWidth, xOffset + _lastWindowWidth);
-    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelMapHeight, yOffset + _lastWindowHeight);
+    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelMapHeight - 2, yOffset + _lastWindowHeight);
     private void MoveCameraWithInput(float deltaTime)
     {
         if (_movementKeys[0].Pressed)

@@ -71,7 +71,7 @@ internal class Renderer : ProcessBase
                 startX = Camera.XOffset; startY = Camera.YOffset;
                 maxX = Camera.GetRenderBorderX(startX); maxY = Camera.GetRenderBorderY(startY);
             }
-            for (int y = startY; y < maxY - 2; y += 2)
+            for (int y = startY; y < maxY; y += 2)
             {
                 for (int x = startX; x < maxX; x++)
                 {

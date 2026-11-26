@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using MCR_Engine.Core;
 using MCR_Engine.ObjectSystem;
+using MCR_Engine.Rendering.Output;
 
 namespace MCR_Engine.Rendering.UI;
 
@@ -19,8 +20,8 @@ public class InfoIndicator : UIElement
         Buffer = CreateBuffer(1, 1);
         _showWhen = showWhen;
     }
-    private int ObjX => _followingObject.X + _followingObject.Width/2 - UI.LastXOffset;
-    private int ObjY => _followingObject.Y + _followingObject.Height/2 - UI.LastYOffset;
+    private int ObjX => (_followingObject.X + _followingObject.Width/2) * Renderer.Zoom - UI.LastXOffset;
+    private int ObjY => (_followingObject.Y + _followingObject.Height/2) * Renderer.Zoom - UI.LastYOffset;
     internal override void Update()
     {
         Visible = !(ObjX >= 0 && ObjY / 2 >= 0 && ObjX < UI.UIMapWidth && ObjY / 2 < UI.UIMapHeight) && _followingObject.Visible && _showWhen(); 
