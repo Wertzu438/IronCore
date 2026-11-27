@@ -12,11 +12,11 @@ public struct RGB : IEquatable<RGB>
         Blue = blue;
     }
     public override int GetHashCode() => HashCode.Combine(Red, Green, Blue);
-    public bool Equals(RGB other) => GetHashCode() == other.GetHashCode();
     public override bool Equals(object? obj)
     {
         return obj is RGB other && Equals(other);
     }
+    public bool Equals(RGB other) => Red == other.Red && Green == other.Green && Blue == other.Blue;
     public static bool operator ==(RGB a, RGB b) => a.Equals(b);
     public static bool operator !=(RGB a, RGB b) => !a.Equals(b);
 }
