@@ -72,7 +72,7 @@ internal class Renderer : ProcessBase
                 maxX = Camera.GetRenderBorderX(startX); maxY = Camera.GetRenderBorderY(startY);
                 maxHeight = _pairs.GetLength(1) - 1;
             }
-            for (int y = startY; y < maxY - 1; y += 2)
+            for (int y = startY; y < maxY; y += 2)
             {
                 for (int x = startX; x < maxX; x++)
                 {
@@ -86,7 +86,7 @@ internal class Renderer : ProcessBase
                     }
                     else AppendUIPixel(uiPixel);
                 }
-                if (y != maxY - 1)
+                if (y + 2 < maxY)
                     _output.AppendLine();
             }
             RenderStringBuilder();
