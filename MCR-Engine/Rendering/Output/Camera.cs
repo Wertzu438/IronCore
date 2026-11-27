@@ -114,8 +114,6 @@ public class Camera
         _xOffset = x;
         _yOffset = y;
     }
-    public void ResetOffset() => _xOffset = _yOffset = 0;
-    public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + _lastWindowWidth && y < YOffset + _lastWindowHeight;
     public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelMapWidth, xOffset + _lastWindowWidth);
     public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelMapHeight, yOffset + _lastWindowHeight);
     private void MoveCameraWithInput(float deltaTime)
@@ -246,4 +244,6 @@ public class Camera
             _moveToX = _moveToY = null;
         }
     }
+    private bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + _lastWindowWidth && y < YOffset + _lastWindowHeight;
+    private void ResetOffset() => _xOffset = _yOffset = 0;
 }

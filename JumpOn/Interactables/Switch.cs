@@ -75,14 +75,13 @@ public class Switch : Interactable
         if (_camera.CinematicCamera)
             throw new ArgumentException("Cinematic camera not supported");
         await Task.Delay(1);
-        bool inView = _camera.InView(_connectedObject.X + _connectedObject.Width / 2, _connectedObject.Y + _connectedObject.Height / 2);
         _camera.GoToCoordinates(_connectedObject.X + _connectedObject.Width / 2, _connectedObject.Y + _connectedObject.Height / 2);
         _camera.LockPosition = true;
-        if (!inView)
-            await Task.Delay(700);
+        if (!_camera.CinematicCamera)
+            await Task.Delay(100);
+        await Task.Delay(200);
         _connectedObject.ChangeVisibility();
-        if (!inView)
-            await Task.Delay(300);
+        await Task.Delay(200);
         _camera.LockPosition = false;
     }
 }
