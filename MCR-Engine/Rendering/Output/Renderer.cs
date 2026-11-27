@@ -71,7 +71,7 @@ internal class Renderer : ProcessBase
                 startX = Camera.XOffset; startY = Camera.YOffset;
                 maxX = Camera.GetRenderBorderX(startX); maxY = Camera.GetRenderBorderY(startY);
             }
-            for (int y = startY; y < maxY; y += 2)
+            for (int y = startY; y < maxY - 1; y += 2)
             {
                 for (int x = startX; x < maxX; x++)
                 {
@@ -92,7 +92,7 @@ internal class Renderer : ProcessBase
     private void RenderStringBuilder()
     {
         _output.Append("\e[H\e[3J");
-        _writer.Write(_output.ToString());
+        _writer.Write(_output);
         _writer.Flush();
     }
     private void AppendOutput(RGB foregroundColor, RGB backgroundColor, string output)
@@ -100,13 +100,25 @@ internal class Renderer : ProcessBase
         RGB rgb = foregroundColor;
         if (!rgb.Equals(_currentForegroundColor))
         {
-            _output.Append($"\e[38;2;{rgb.Red};{rgb.Green};{rgb.Blue}m");
+            _output.Append("\e[38;2;");
+            _output.Append(rgb.Red);
+            _output.Append(';');
+            _output.Append(rgb.Green);
+            _output.Append(';');
+            _output.Append(rgb.Blue);
+            _output.Append('m');
             _currentForegroundColor = rgb;
         }
         rgb = backgroundColor;
         if (!rgb.Equals(_currentBackgroundColor))
         {
-            _output.Append($"\e[48;2;{rgb.Red};{rgb.Green};{rgb.Blue}m");
+            _output.Append("\e[48;2;");
+            _output.Append(rgb.Red);
+            _output.Append(';');
+            _output.Append(rgb.Green);
+            _output.Append(';');
+            _output.Append(rgb.Blue);
+            _output.Append('m');
             _currentBackgroundColor = rgb;
         }
         _output.Append(output);
