@@ -65,22 +65,26 @@ internal class Renderer : ProcessBase
             Camera.RecalculateOffset(_lastDeltaTime);
             _output.Clear();
             UI.UpdateMap();
-            int startX, startY, maxX, maxY;
+            int startX, startY, maxX, maxY, maxHeight;
             lock (Camera)
             {
                 startX = Camera.XOffset; startY = Camera.YOffset;
                 maxX = Camera.GetRenderBorderX(startX); maxY = Camera.GetRenderBorderY(startY);
+                maxHeight = _pairs.GetLength(1) - 1;
             }
             for (int y = startY; y < maxY - 1; y += 2)
             {
                 for (int x = startX; x < maxX; x++)
                 {
                     UIPixel? uiPixel = UI.GetUIPixelOutput(x - startX, y / 2 - startY / 2);
-                    if (uiPixel is not null)
+                    if (uiPixel is null)
                     {
-                        AppendUIPixel(uiPixel);
+                        int zoomX = x / Zoom;
+                        int upperZoomY = y / Zoom;
+                        int lowerZoomY = Math.Min((y + 1) / Zoom, maxHeight);
+                        AppendPair(_pairs[zoomX, upperZoomY], _pairs[zoomX, lowerZoomY]);
                     }
-                    else AppendPair(_pairs[x / Zoom, y / Zoom], _pairs[x / Zoom, y / Zoom + 1]);
+                    else AppendUIPixel(uiPixel);
                 }
                 if (y != maxY - 1)
                     _output.AppendLine();
