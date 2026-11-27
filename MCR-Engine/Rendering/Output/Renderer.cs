@@ -112,9 +112,9 @@ internal class Renderer : ProcessBase
         }
         _output.Append(output);
     }
-    private void AppendRGBToOutput(string a, RGB color)
+    private void AppendRGBToOutput(string where, RGB color)
     {
-        _output.Append(a);
+        _output.Append(where);
         _output.Append(color.Red).Append(';').Append(color.Green).Append(';').Append(color.Blue);
         _output.Append('m');
     }
