@@ -9,6 +9,7 @@ namespace MCR_Engine.Rendering.Output;
 internal class Renderer : ProcessBase
 {
     public const int Zoom = 2;
+    private const string ANSIForeground = "\e[38;2;", ANSIBackground = "\e[48;2;";
     private readonly StringBuilder _output;
     private readonly StreamWriter _writer;
     private readonly Stopwatch _stopwatch;
@@ -78,9 +79,8 @@ internal class Renderer : ProcessBase
                     UIPixel? uiPixel = UI.GetUIPixelOutput(x - startX, y / 2 - startY / 2);
                     if (uiPixel is null)
                     {
-                        int zoomX = x / Zoom;
-                        int upperZoomY = y / Zoom;
-                        int lowerZoomY = (y + 1) / Zoom;//Math.Min((y + 1) / Zoom, maxHeight);
+                        int zoomX = x / Zoom, upperZoomY = y / Zoom,
+                        lowerZoomY = (y + 1) / Zoom;
                         AppendPair(_pairs[zoomX, upperZoomY], _pairs[zoomX, lowerZoomY]);
                     }
                     else AppendUIPixel(uiPixel);
@@ -103,28 +103,20 @@ internal class Renderer : ProcessBase
         RGB rgb = foregroundColor;
         if (!rgb.Equals(_currentForegroundColor))
         {
-            _output.Append("\e[38;2;");
-            _output.Append(rgb.Red);
-            _output.Append(';');
-            _output.Append(rgb.Green);
-            _output.Append(';');
-            _output.Append(rgb.Blue);
-            _output.Append('m');
-            _currentForegroundColor = rgb;
+            AppendRGBToOutput(ANSIForeground, _currentForegroundColor = rgb);
         }
         rgb = backgroundColor;
         if (!rgb.Equals(_currentBackgroundColor))
         {
-            _output.Append("\e[48;2;");
-            _output.Append(rgb.Red);
-            _output.Append(';');
-            _output.Append(rgb.Green);
-            _output.Append(';');
-            _output.Append(rgb.Blue);
-            _output.Append('m');
-            _currentBackgroundColor = rgb;
+            AppendRGBToOutput(ANSIBackground, _currentBackgroundColor = rgb);
         }
         _output.Append(output);
+    }
+    private void AppendRGBToOutput(string a, RGB color)
+    {
+        _output.Append(a);
+        _output.Append(color.Red).Append(';').Append(color.Green).Append(';').Append(color.Blue);
+        _output.Append('m');
     }
     private void AppendPair(Pixel upperPixel, Pixel lowerPixel) => AppendOutput(upperPixel.GetRGB(), lowerPixel.GetRGB(), Pixel.Output.ToString());
     private void AppendUIPixel(UIPixel uiPixel) => AppendOutput(uiPixel.ForegroundColor, uiPixel.BackgroundColor, uiPixel.Output);
