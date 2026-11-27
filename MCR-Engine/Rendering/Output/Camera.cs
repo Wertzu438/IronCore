@@ -7,10 +7,10 @@ namespace MCR_Engine.Rendering.Output;
 
 public class Camera
 {
-    private const double CameraInputSpeedX = 110, CameraInputSpeedY = 110;
+    private const double CameraInputSpeedX = 110 * Renderer.Zoom, CameraInputSpeedY = 110 * Renderer.Zoom;
     private const double CameraDeadZoneLeft = 0.23, CameraDeadZoneRight = 0.30;
     private const double CameraDeadZoneTop = 0.25, CameraDeadZoneBottom = 0.20;
-    private const double CinematicSpeedX = 80, CinematicSpeedY = 80;
+    private const double CinematicSpeedX = 80 * Renderer.Zoom, CinematicSpeedY = 80 * Renderer.Zoom;
     private const double MinMaxVelocityX = 20, MinMaxVelocityY = MinMaxVelocityX;
     private const string UpKey = "Up", DownKey = "Down", LeftKey = "Left", RightKey = "Right";
     private readonly Renderer _render;
@@ -34,8 +34,8 @@ public class Camera
         _lastWindowWidth = Console.WindowWidth - 1;
         _lastWindowHeight = Console.WindowHeight * 2 - 3;
     }
-    public int XOffset => (int)Math.Round(_xOffset);
-    public int YOffset => (int)Math.Round(_yOffset);
+    public int XOffset => (int)_xOffset;
+    public int YOffset => (int)_yOffset;
     public bool CinematicCamera => _moveToX is  not null || _moveToY is not null;
     public bool LockPosition { private get; set; }
     private int ObjX
@@ -62,7 +62,7 @@ public class Camera
         {
             if (_followedObject is not MovingObject mO)
                 return 0;
-            return Math.Abs(mO.GetVelocity().X);
+            return Math.Abs(mO.GetVelocity().X) * Renderer.Zoom;
         }
     }
     private double ObjVelocityY
@@ -71,7 +71,7 @@ public class Camera
         {
             if (_followedObject is not MovingObject mO)
                 return 0;
-            return Math.Abs(mO.GetVelocity().Y);
+            return Math.Abs(mO.GetVelocity().Y) * Renderer.Zoom;
         }
     }
     public void RecalculateOffset(float deltaTime)
@@ -117,7 +117,7 @@ public class Camera
     public void ResetOffset() => _xOffset = _yOffset = 0;
     public bool InView(int x, int y) => _render.ValidPairCoordinates(x, y) && x >= XOffset && y >= YOffset && x < XOffset + _lastWindowWidth && y < YOffset + _lastWindowHeight;
     public int GetRenderBorderX(int xOffset) => Math.Min(_render.PixelMapWidth, xOffset + _lastWindowWidth);
-    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelMapHeight - 2, yOffset + _lastWindowHeight);
+    public int GetRenderBorderY(int yOffset) => Math.Min(_render.PixelMapHeight, yOffset + _lastWindowHeight);
     private void MoveCameraWithInput(float deltaTime)
     {
         if (_movementKeys[0].Pressed)
@@ -214,7 +214,7 @@ public class Camera
     {
         if (_xVelocity == 0)
             return;
-        _xOffset += _xVelocity * deltaTime * Renderer.Zoom;
+        _xOffset += _xVelocity * deltaTime;
         if (_xOffset + windowWidth >= _render.PixelMapWidth - 1)
             _xOffset = _render.PixelMapWidth - windowWidth - 1;
         if (_xOffset < 0)
@@ -224,7 +224,7 @@ public class Camera
     {
         if (_yVelocity == 0)
             return;
-        _yOffset += _yVelocity * deltaTime * Renderer.Zoom;
+        _yOffset += _yVelocity * deltaTime;
         if (_yOffset + windowHeight >= _render.PixelMapHeight - 1)
             _yOffset = _render.PixelMapHeight - windowHeight - 1;
         if (_yOffset < 0)
