@@ -55,6 +55,8 @@ public class UIManager
             element.Update();
             if (!(OnOutput(element.X, element.Y) && OnOutput(element.X + element.Width - 1, element.Y + element.Height - 1) && element.Visible))
                 continue;
+            if (OverlapWithUIElements(element.X, element.Y) || OverlapWithUIElements(element.X+element.Width-1, element.Y+element.Height-1))
+                continue;
             AddElementToOutput(element);
         }
     }
@@ -65,5 +67,6 @@ public class UIManager
             _output[element.X + x, element.Y + y] = element.GetUIPixel(x, y);
     }
     private bool OnOutput(int x, int y) => x >= 0 && x < UIMapWidth && y >= 0 && y < UIMapHeight;
+    private bool OverlapWithUIElements(int x, int y) => _output[x, y] is not null;
     private void ClearUIPairs() => _output = new UIPixel[Console.WindowWidth, Console.WindowHeight];
 }
