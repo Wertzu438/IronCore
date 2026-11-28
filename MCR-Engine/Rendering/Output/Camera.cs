@@ -11,7 +11,7 @@ public class Camera
     private const double CameraDeadZoneLeft = 0.23, CameraDeadZoneRight = 0.30;
     private const double CameraDeadZoneTop = 0.25, CameraDeadZoneBottom = 0.20;
     private const double CinematicSpeedX = 80 * Renderer.Zoom, CinematicSpeedY = 80 * Renderer.Zoom;
-    private const double MinMaxVelocityX = 20, MinMaxVelocityY = MinMaxVelocityX;
+    private const double MinMaxVelocityX = 20 * Renderer.Zoom, MinMaxVelocityY = MinMaxVelocityX;
     private const string UpKey = "Up", DownKey = "Down", LeftKey = "Left", RightKey = "Right";
     private readonly Renderer _render;
     private readonly Key[] _movementKeys;
@@ -36,7 +36,7 @@ public class Camera
     }
     public int XOffset => (int)_xOffset;
     public int YOffset => (int)_yOffset;
-    public bool CinematicCamera => _moveToX is  not null || _moveToY is not null;
+    public bool CinematicCamera => _moveToX is not null || _moveToY is not null;
     public bool LockPosition { private get; set; }
     private int ObjX
     {
