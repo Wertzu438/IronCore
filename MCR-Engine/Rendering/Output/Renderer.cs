@@ -42,7 +42,7 @@ internal class Renderer : ProcessBase
         set
         {
             Camera.SetFollowedObject(null);
-            _pairs = CreatePairs(value);
+            _pairs = CreateMap(value);
         }
     }
     public bool ValidPairCoordinates(int x, int y) => x >= 0 && y >= 0 && x < PixelMapWidth && y < PixelMapHeight;
@@ -120,7 +120,7 @@ internal class Renderer : ProcessBase
     }
     private void AppendPair(Pixel upperPixel, Pixel lowerPixel) => AppendOutput(upperPixel.GetRGB(), lowerPixel.GetRGB(), Pixel.Output.ToString());
     private void AppendUIPixel(UIPixel uiPixel) => AppendOutput(uiPixel.ForegroundColor, uiPixel.BackgroundColor, uiPixel.Output);
-    private static Pixel[,] CreatePairs(Scene scene)
+    private static Pixel[,] CreateMap(Scene scene)
     {
         var newPixelMap = new Pixel[scene.Width, scene.Height];
         for (int y = 0; y < scene.Height; y++)
