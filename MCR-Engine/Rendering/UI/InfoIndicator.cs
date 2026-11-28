@@ -11,13 +11,13 @@ public class InfoIndicator : UIElement
     private readonly RGB _backgroundColor, _foregroundColor;
     private readonly string _emoji;
     private readonly Func<bool> _showWhen;
-    public InfoIndicator(GameObject followingObject, string emoji, Func<bool> showWhen) : base(1, 1, 0, 0, true)
+    public InfoIndicator(GameObject followingObject, string emoji, Func<bool> showWhen) : base(2, 1, 0, 0, true)
     {
         _followingObject = followingObject;
         _emoji = IsEmoji(emoji) ? emoji : "??";
         _foregroundColor = new RGB(255, 255, 255);
         _backgroundColor = new RGB(40, 30, 20);
-        Buffer = CreateBuffer(1, 1);
+        Buffer = CreateBuffer(2, 1);
         _showWhen = showWhen;
     }
     private int ObjX => (_followingObject.X + _followingObject.Width/2) * Renderer.Zoom - UI.LastXOffset;
